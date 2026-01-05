@@ -1,0 +1,8 @@
+/* Gnome Game Component Styles */
+
+canvas {
+  background-color: #333333;
+  width: 60vw;
+  display: block;
+  margin: 0 auto;
+}

@@ -1,0 +1,65 @@
+export const AGGREGATE_ID = "aggregateId";
+export const CMD_TYPE = "commandType";
+
+export class CommandGateway {
+  eventStore = new EventStore();
+
+  constructor(handlers, projectors) {
+    this.handlers = handlers;
+    this.projectors = projectors;
+  }
+
+  handle(cmd) {
+    try {
+      const events = this.eventStore.findAllEvents();
+      console.log('cmd ', this.handlers.get(cmd[CMD_TYPE]))
+      const newEvents = this.handlers.get(cmd[CMD_TYPE])(events, cmd);
+      this.eventStore.append(newEvents);
+      return Result.success();
+    } catch (e) {
+      return Result.failure(`${JSON.stringify(cmd)} error: ${e}`)
+    }
+  }
+
+  updateState(state) {
+    const events = this.eventStore.findAllEvents();
+    return this.projectors.reduce((state, projector) => projector(state, events), state)
+  }
+}
+
+export class Result {
+  constructor(success = null, error = null) {
+    this.success = success;
+    this.error = error;
+  }
+
+  static success(obj = "OK") {
+    return new Result(obj, null);
+  }
+
+  static failure(error) {
+    return new Result(null, error);
+  }
+
+  get value() {
+    return this.success;
+  }
+
+  get isFailure() {
+    return this.error;
+  }
+}
+
+class EventStore {
+  events = [];
+
+  append(events) {
+    this.events.push(...events);
+  }
+
+  findAllEvents() {
+    return this.events;
+  }
+}
+
+
