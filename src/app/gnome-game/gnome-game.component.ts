@@ -25,18 +25,13 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
       }]
     ]))
   private readonly stateProjector;
+  private gameState = gameStartState;
 
   constructor(private readonly gameTokenService: GameTokenService) {
     this.stateProjector = this.eventSourcingTemplate.composeProjectors([locationProjector])
   }
 
   ngOnInit(): void {
-    this.eventSourcingTemplate.handle({
-      [CMD_TYPE]: 'select-token-cmd',
-      [AGGREGATE_ID]: 'gnome'
-    })
-    const newState = this.stateProjector(gameStartState);
-    console.log('newState', newState);
   }
 
   ngAfterViewInit(): void {
@@ -55,7 +50,13 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
 
     const selectedId = this.gameTokenService.getClickedTokenId(x, y);
 
+
     if (selectedId === 'gnome-token') {
+      this.eventSourcingTemplate.handle({
+        [CMD_TYPE]: 'select-token-cmd',
+        [AGGREGATE_ID]: 'gnome'
+      })
+      this.gameState = this.stateProjector(gameStartState);
       this.gameTokenService.toggleTokenSize(selectedId);
       this.redrawCanvas();
     }
@@ -99,8 +100,6 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
 
 }
 const locationProjector: Projector<GnomeGameState> = (state: GnomeGameState, events: any[]) => {
-  console.log('checkEvents', events
-    .filter(event => event[EVENT_TYPE] == 'went-to-location'))
   const currentLocation = events
     .filter(event => event[EVENT_TYPE] == 'went-to-location')
     .map(event => event.location)
