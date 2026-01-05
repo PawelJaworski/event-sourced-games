@@ -1,7 +1,8 @@
 import {Component, OnInit, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
 import {AGGREGATE_ID, CommandGateway} from '../event-sourcing/event-sourcing-template.js';
 import {GameTokenService} from './service/game-token.service';
-import {CMD_TYPE} from "../event-sourcing/event-sourcing-template";
+import {CMD_TYPE, EVENT_TYPE, Projector} from "../event-sourcing/event-sourcing-template";
+import {gameStartState, GnomeGameState, Locations} from "./gnome-game.state";
 
 @Component({
   selector: 'app-gnome-game',
@@ -17,23 +18,25 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
       ['select-token-cmd', (events: any[], cmd: any) => {
         console.log('handling ', cmd);
       return [{
-          [AGGREGATE_ID]: cmd[AGGREGATE_ID]
+          [AGGREGATE_ID]: cmd[AGGREGATE_ID],
+          [EVENT_TYPE]: 'went-to-location',
+          location: Locations.GNOMES_HUT
         }];
       }]
-    ]),
-    [
-      (state: any, events: any[]) => {
-        return {...state, events };
-      }
-    ])
+    ]))
+  private readonly stateProjector;
 
-  constructor(private readonly gameTokenService: GameTokenService) {}
+  constructor(private readonly gameTokenService: GameTokenService) {
+    this.stateProjector = this.eventSourcingTemplate.composeProjectors([locationProjector])
+  }
 
   ngOnInit(): void {
     this.eventSourcingTemplate.handle({
       [CMD_TYPE]: 'select-token-cmd',
       [AGGREGATE_ID]: 'gnome'
     })
+    const newState = this.stateProjector(gameStartState);
+    console.log('newState', newState);
   }
 
   ngAfterViewInit(): void {
@@ -94,4 +97,17 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
     mapImg.src = '/assets/img/map.png';
   }
 
+}
+const locationProjector: Projector<GnomeGameState> = (state: GnomeGameState, events: any[]) => {
+  console.log('checkEvents', events
+    .filter(event => event[EVENT_TYPE] == 'went-to-location'))
+  const currentLocation = events
+    .filter(event => event[EVENT_TYPE] == 'went-to-location')
+    .map(event => event.location)
+    .reduce((f, s) => s);
+  console.log('chec', currentLocation)
+  return {
+    ...state,
+    currentLocation
+  };
 }

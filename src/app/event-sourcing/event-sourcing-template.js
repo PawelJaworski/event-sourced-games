@@ -1,5 +1,8 @@
+import {Projector} from "./event-sourcing-template";
+
 export const AGGREGATE_ID = "aggregateId";
 export const CMD_TYPE = "commandType";
+export const EVENT_TYPE = "eventType";
 
 export class CommandGateway {
   eventStore = new EventStore();
@@ -21,9 +24,10 @@ export class CommandGateway {
     }
   }
 
-  updateState(state) {
+  composeProjectors(projectors) {
+    console.log('projectors ', projectors)
     const events = this.eventStore.findAllEvents();
-    return this.projectors.reduce((state, projector) => projector(state, events), state)
+    return (state) => projectors.reduce((state, projector) => projector(state, events), state)
   }
 }
 

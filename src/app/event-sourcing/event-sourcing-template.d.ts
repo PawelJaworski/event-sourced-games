@@ -1,18 +1,20 @@
 export declare const AGGREGATE_ID: string;
 export declare const CMD_TYPE: string;
+export declare const EVENT_TYPE: string;
 
 export declare class CommandGateway {
   handlers: any[];
   projectors: any[];
 
-  constructor(handlers: Map<String, CommandHandler>, projectors: Projector[]);
+  constructor(handlers: Map<String, CommandHandler>);
 
   handle(cmd: any): Result;
-  updateState<T>(state: T): T;
+  composeProjectors<T>(projectors: Projector<T>[]): (state: T) => T;
 }
 
 export type CommandHandler = (events: any[], cmd: any) => any[];
-export type Projector = <T>(state: T, events: any[]) => T;
+export type Projector<T> = (state: T, events: any[]) => T;
+export function composeProjectors<T>(projectors: Projector<T>[]):T;
 
 export declare class Result {
   success: any;
