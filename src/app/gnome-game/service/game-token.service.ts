@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+import {GnomeGameState} from '../gnome-game.state';
+import {Locations} from '../gnome-game.state';
 
 export interface GameToken {
   x: number;
@@ -83,7 +85,7 @@ export class GameTokenService {
 
   getClickedTokenId(event: MouseEvent, canvas: HTMLCanvasElement): string | null {
     const { x, y } = this.getCanvasCoordinates(event, canvas);
-    
+
     for (const [id, token] of this.tokens) {
       const tokenCenterX = token.x + token.size / 2;
       const tokenCenterY = token.y + token.size / 2;
@@ -131,5 +133,27 @@ export class GameTokenService {
     for (const token of this.tokens.values()) {
       this.drawRoundToken(ctx, token);
     }
+  }
+
+  renderTokens(gameState: GnomeGameState, ctx: CanvasRenderingContext2D): void {
+    const gnomeToken = this.tokens.get('gnome-token');
+    if (!gnomeToken) return;
+
+    // Update token size based on location
+    const targetSize = gameState.currentLocation === Locations.GNOMES_HUT
+      ? this.enlargedTokenSize
+      : this.originalTokenSize;
+    console.log('rendering', JSON.stringify(gameState))
+    if (gnomeToken.size !== targetSize) {
+      const currentCenterX = gnomeToken.x + gnomeToken.size / 2;
+      const currentCenterY = gnomeToken.y + gnomeToken.size / 2;
+
+      gnomeToken.size = targetSize;
+      gnomeToken.x = currentCenterX - gnomeToken.size / 2;
+      gnomeToken.y = currentCenterY - gnomeToken.size / 2;
+    }
+
+    // Redraw all tokens
+    this.drawAllTokens(ctx);
   }
 }

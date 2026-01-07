@@ -1,5 +1,6 @@
 export enum Locations {
-  GNOMES_HUT = 'GNOMES-HUT'
+  GNOMES_HUT = 'GNOMES-HUT',
+  FISHERY_GROUND = 'FISHERY_GROUND'
 }
 
 export interface GnomeGameState {
