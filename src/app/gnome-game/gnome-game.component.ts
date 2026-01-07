@@ -3,7 +3,7 @@ import {AGGREGATE_ID, CommandGateway} from '../event-sourcing/event-sourcing-tem
 import {GameTokenService} from './service/game-token.service';
 import {CMD_TYPE, EVENT_TYPE, Projector} from "../event-sourcing/event-sourcing-template";
 import {gameStartState, GnomeGameState, Locations} from "./gnome-game.state";
-import {EventType, WENT_TO_LOCATION} from "./events/events";
+import {WENT_TO_LOCATION} from "./events/events";
 import {GO_TO_GNOME_HUT} from "./commands/commands";
 
 @Component({
@@ -42,14 +42,7 @@ class GnomeGameComponent implements OnInit, AfterViewInit {
   onCanvasClick(event: MouseEvent): void {
     if (!this.canvas) return;
 
-    const rect = this.canvas.nativeElement.getBoundingClientRect();
-    const scaleX = this.canvas.nativeElement.width / rect.width;
-    const scaleY = this.canvas.nativeElement.height / rect.height;
-
-    const x = (event.clientX - rect.left) * scaleX;
-    const y = (event.clientY - rect.top) * scaleY;
-
-    const selectedId = this.gameTokenService.getClickedTokenId(x, y);
+    const selectedId = this.gameTokenService.getClickedTokenId(event, this.canvas.nativeElement);
 
     if (selectedId === 'gnome-token') {
       const events = this.eventSourcingTemplate.handle({

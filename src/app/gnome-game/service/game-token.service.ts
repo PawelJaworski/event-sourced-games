@@ -81,7 +81,9 @@ export class GameTokenService {
     this.tokens.set('gnome-token', gnomeToken);
   }
 
-  getClickedTokenId(x: number, y: number): string | null {
+  getClickedTokenId(event: MouseEvent, canvas: HTMLCanvasElement): string | null {
+    const { x, y } = this.getCanvasCoordinates(event, canvas);
+    
     for (const [id, token] of this.tokens) {
       const tokenCenterX = token.x + token.size / 2;
       const tokenCenterY = token.y + token.size / 2;
@@ -95,6 +97,17 @@ export class GameTokenService {
       }
     }
     return null;
+  }
+
+  private getCanvasCoordinates(event: MouseEvent, canvas: HTMLCanvasElement): { x: number; y: number } {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    return {
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY
+    };
   }
 
   toggleTokenSize(tokenId: string): void {
