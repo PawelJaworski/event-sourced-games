@@ -5,12 +5,6 @@ export interface GameToken {
   y: number;
   size: number;
   imageUrl: string;
-  borderColor?: string;
-  borderWidth?: number;
-  shadowColor?: string;
-  shadowBlur?: number;
-  shadowOffsetX?: number;
-  shadowOffsetY?: number;
 }
 
 @Injectable({
@@ -78,11 +72,7 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: '/assets/img/gnome-house.png',
-      shadowColor: 'rgba(0, 0, 0, 0.6)',
-      shadowBlur: 12,
-      shadowOffsetX: 4,
-      shadowOffsetY: 4
+      imageUrl: '/assets/img/gnome-house.png'
     };
   }
 
@@ -95,11 +85,11 @@ export class GameTokenService {
     for (const [id, token] of this.tokens) {
       const tokenCenterX = token.x + token.size / 2;
       const tokenCenterY = token.y + token.size / 2;
-      
+
       const distance = Math.sqrt(
         Math.pow(x - tokenCenterX, 2) + Math.pow(y - tokenCenterY, 2)
       );
-      
+
       if (distance <= token.size / 2) {
         return id;
       }
