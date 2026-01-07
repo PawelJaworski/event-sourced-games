@@ -8,22 +8,22 @@ export declare class CommandGateway {
 
   constructor(handlers: Map<String, CommandHandler>);
 
-  handle(cmd: any): Result;
-  composeProjectors<T>(projectors: Projector<T>[]): (state: T) => T;
+  handle(cmd: any): Result<any[]>;
+  composeProjectors<T>(projectors: Projector<T>[]): (state: T, events: any[]) => T;
 }
 
 export type CommandHandler = (events: any[], cmd: any) => any[];
 export type Projector<T> = (state: T, events: any[]) => T;
 export function composeProjectors<T>(projectors: Projector<T>[]):T;
 
-export declare class Result {
-  success: any;
+export declare class Result<T> {
+  success: T;
   error: any;
 
   constructor(success?: any, error?: any);
 
-  static success(obj?: any): Result;
-  static failure(error: any): Result;
+  static success<T>(obj?: any): Result<T>;
+  static failure<T>(error: any): Result<T>;
 
   get value(): any;
   get isFailure(): any;

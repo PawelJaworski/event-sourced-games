@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {GnomeGameComponent} from './gnome-game.component';
+import GnomeGameComponent from './gnome-game.component';
 
 describe('GnomeGameComponent', () => {
   let component: GnomeGameComponent;

@@ -7,27 +7,24 @@ export const EVENT_TYPE = "eventType";
 export class CommandGateway {
   eventStore = new EventStore();
 
-  constructor(handlers, projectors) {
+  constructor(handlers) {
     this.handlers = handlers;
-    this.projectors = projectors;
   }
 
   handle(cmd) {
     try {
       const events = this.eventStore.findAllEvents();
-      console.log('cmd ', this.handlers.get(cmd[CMD_TYPE]))
       const newEvents = this.handlers.get(cmd[CMD_TYPE])(events, cmd);
       this.eventStore.append(newEvents);
-      return Result.success();
+      return Result.success(newEvents);
     } catch (e) {
+      console.error('Error when handling cmd', e);
       return Result.failure(`${JSON.stringify(cmd)} error: ${e}`)
     }
   }
 
   composeProjectors(projectors) {
-    console.log('projectors ', projectors)
-    const events = this.eventStore.findAllEvents();
-    return (state) => projectors.reduce((state, projector) => projector(state, events), state)
+    return (state, events) => projectors.reduce((state, projector) => projector(state, events), state)
   }
 }
 

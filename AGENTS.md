@@ -1,20 +1,19 @@
-# AGENTS.md - Development Guidelines for front-angular
+# AGENTS.md - Development Guidelines for event-sourced-games
 
-This document provides comprehensive guidelines for agentic coding assistants working on the front-angular project. Follow these conventions to maintain code quality and consistency.
+This document provides comprehensive guidelines for agentic coding assistants working on the event-sourced-games project. Follow these conventions to maintain code quality and consistency.
 
 ## Build, Lint, and Test Commands
 
 ### Build Commands
 - **Full build**: `npm run build` - Creates production build with optimizations
-- **Development build**: `npm run build -- --configuration=development` - Development build with source maps
+- **Development build**: `npm run build --configuration=development` - Development build with source maps
 - **Watch mode**: `npm run watch` - Continuous development build with file watching
 
 ### Test Commands
 - **Run all tests**: `npm test` - Runs all unit tests using Karma with Jasmine (headless Chrome)
-- **Run single test file**: `npm test -- --include="**/map.service.spec.ts"` - Run specific test file
-- **Run tests by pattern**: `npm test -- --grep="should create service"` - Run tests matching name pattern
-- **Run tests in watch mode**: `npm test -- --watch` - Watch mode for continuous testing
-- **Run tests with coverage**: `npm test -- --code-coverage` - Generate test coverage report
+- **Run specific test file**: Use `ng test --include="**/path/to/file.spec.ts"` - Run specific test file
+- **Run tests by pattern**: `ng test --grep="test name pattern"` - Run tests matching name pattern
+- **Default test settings**: Tests run in headless mode (no watch)
 
 ### Development Commands
 - **Start development server**: `npm start` - Starts Angular dev server with hot reload
@@ -23,67 +22,69 @@ This document provides comprehensive guidelines for agentic coding assistants wo
 ## Code Style Guidelines
 
 ### TypeScript Configuration
-- **Strict mode**: Enabled - all TypeScript strict checks are mandatory
-- **Target**: ES2022 modules
-- **Module resolution**: Node.js style
+- **Strict mode**: Enabled with all Angular strict template options
+- **Target**: ES2022 with ES2020 modules
+- **Module resolution**: bundler (Node.js style)
 - **Decorators**: Experimental decorators enabled for Angular
-- **Null checks**: Strict null checks enabled - use optional chaining (`?.`) and non-null assertion (`!`) appropriately
+- **Strict templates**: Enabled - all template type checking is enforced
 
 ### Import Conventions
 ```typescript
 // Group imports by Angular/core first, then third-party, then local
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Subject} from 'rxjs';
 
 // Local imports with relative paths
-import {MapService} from '../service/map.service';
-import {AppState} from '../../state/app.state';
+import {GameTokenService} from './service/game-token.service';
+import {GameStartState} from '../state/app.state';
 
-// Type-only imports when only types are needed
-import type {MapRegion} from '../region/state/region.state';
+// Mixed imports for event sourcing
+import {AGGREGATE_ID, CommandGateway} from '../event-sourcing/event-sourcing-template.js';
 ```
 
 ### Naming Conventions
-- **Classes**: PascalCase (e.g., `MapService`, `RegionModel`)
-- **Interfaces**: PascalCase with 'I' suffix avoided (e.g., `AppState`, `AttributeChange`)
-- **Enums**: PascalCase (e.g., `RegionAttributeType`)
-- **Methods/Properties**: camelCase (e.g., `calculateBorder`, `getRegion`)
-- **Constants**: UPPER_SNAKE_CASE for enum values, camelCase for readonly properties
-- **Files**: kebab-case (e.g., `map.service.ts`, `region.model.ts`)
+- **Classes**: PascalCase (e.g., `GnomeGameComponent`, `GameTokenService`)
+- **Interfaces**: PascalCase with 'I' suffix avoided (e.g., `AppState`, `GnomeGameState`)
+- **Enums**: PascalCase (e.g., `CMD_TYPE`, `EVENT_TYPE`)
+- **Methods/Properties**: camelCase (e.g., `loadMapImage`, `onCanvasClick`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `AGGREGATE_ID`, `Locations.GNOMES_HUT`)
+- **Files**: kebab-case (e.g., `gnome-game.component.ts`, `game-token.service.ts`)
 - **Test files**: Same name as source with `.spec.ts` suffix
 
 ### Component Structure
 ```typescript
 @Component({
-  selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css']
+  selector: 'app-gnome-game',
+  templateUrl: './gnome-game.component.html',
+  styleUrls: ['./gnome-game.component.css'],
+  standalone: false
 })
-export class MapComponent implements OnInit, OnDestroy {
-  // Public properties first
-  regions: Array<MapRegion> = [];
-
+export class GnomeGameComponent implements OnInit, AfterViewInit {
   // ViewChild references
   @ViewChild('canvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
   // Private properties
-  private destroyed$ = new Subject();
+  private readonly eventSourcingTemplate;
+  private readonly stateProjector;
+  private gameState = gameStartState;
 
   // Constructor with readonly dependency injection
-  constructor(
-    private readonly store: Store<AppState>,
-    private readonly mapService: MapService
-  ) {}
+  constructor(private readonly gameTokenService: GameTokenService) {}
 
   ngOnInit(): void {
     // Initialization logic
   }
 
-  ngOnDestroy(): void {
-    this.destroyed$.next(true);
-    this.destroyed$.complete();
+  // Public methods
+  onCanvasClick(event: MouseEvent): void {
+    // Implementation
+  }
+
+  // Private methods
+  private redrawCanvas(): void {
+    // Implementation
   }
 }
 ```
@@ -93,72 +94,71 @@ export class MapComponent implements OnInit, OnDestroy {
 @Injectable({
   providedIn: 'root'
 })
-export class MapService implements OnInit, OnDestroy {
-  private destroyed$ = new Subject();
-  private readonly scenario = scenario1;
-
-  constructor(private readonly store: Store<AppState>) {}
+export class GameTokenService {
+  constructor() {}
 
   // Public methods
-  loadMap(gameStarter: GameStarter): void {
+  getClickedTokenId(x: number, y: number): string {
     // Implementation
   }
 
   // Private methods
-  private calculateBorder(regionDef: RegionDef): MapRegion {
+  private initializeTokens(ctx: CanvasRenderingContext2D): void {
     // Implementation
   }
 }
 ```
 
-### State Management (NgRx)
+### Event Sourcing Patterns
 ```typescript
-// Actions
-export const initRegions = createAction(
-  '[Map] Init regions',
-  props<{regions: Array<MapRegion>}>()
-);
+// Command handling
+private readonly eventSourcingTemplate = new CommandGateway(
+  new Map([
+    ['select-token-cmd', (events: any[], cmd: any) => {
+      return [{
+        [AGGREGATE_ID]: cmd[AGGREGATE_ID],
+        [EVENT_TYPE]: 'went-to-location',
+        location: Locations.GNOMES_HUT
+      }];
+    }]
+  ])
+)
 
-// Reducer
-export const mapReducer = createReducer(
-  mapInitialState,
-  on(initRegions, (state, {regions}) => ({
+// Projectors
+const locationProjector: Projector<GnomeGameState> = (state: GnomeGameState, events: any[]) => {
+  return {
     ...state,
-    regions
-  }))
-);
-
-// State interface
-export interface MapState {
-  regions: MapRegion[];
-  neighbours: string[][];
-  regionDetails?: MapRegion;
+    currentLocation: events
+      .filter(event => event[EVENT_TYPE] == 'went-to-location')
+      .map(event => event.location)
+      .reduce((f, s) => s)
+  };
 }
 ```
 
 ### Error Handling
 - Use optional chaining (`?.`) for safe property access
-- Use non-null assertion (`!`) when null checks are guaranteed by business logic
-- Implement proper subscription cleanup with `destroyed$` pattern
-- Handle async operations with appropriate error states in components
+- Check for null/undefined canvas context elements before usage
+- Handle image loading with `onload` callbacks
+- Use non-null assertion (`!`) when null checks are guaranteed
 
 ### Type Safety
-- Prefer interfaces over classes for data transfer objects
-- Use union types for related but distinct types
-- Leverage enum types for constrained values
-- Use generic types appropriately (e.g., `Array<T>`, `Map<K, V>`)
+- Use TypeScript strict mode with strict templates
+- Leverage NgRx for state management type safety
+- Use union types for event/command types
+- Prefer interfaces for state definitions
 
 ### Code Formatting
-- **Indentation**: 2 spaces (configured in .editorconfig)
+- **Indentation**: 2 spaces
 - **Quotes**: Single quotes for strings
 - **Semicolons**: Required
-- **Line length**: No strict limit, but prefer readable line breaks
+- **Line length**: No strict limit, but prefer readability
 - **Braces**: Same line for control structures
 
 ### Testing Patterns
 ```typescript
-describe('MapService', () => {
-  let service: MapService;
+describe('AppService', () => {
+  let service: AppService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -166,85 +166,62 @@ describe('MapService', () => {
         StoreModule.forRoot(reducers)
       ]
     });
-    service = TestBed.inject(MapService);
+    service = TestBed.inject(AppService);
   });
 
-describe('MapComponent', () => {
-  let component: MapComponent;
-  let fixture: ComponentFixture<MapComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ MapComponent ],
-      imports: [
-        StoreModule.forRoot(reducers)
-      ]
-    })
-    .compileComponents();
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
+});
 ```
 
 ### File Organization
 ```
-src/app/
-├── component/          # UI components
-├── service/           # Business logic services
-├── model/            # Data models and interfaces
-├── state/            # NgRx state management
-│   ├── *.state.ts    # State interfaces
-│   ├── *.reducer.ts  # State reducers
-│   └── *.state.ts    # State selectors
-├── plugin/           # Plugin extensions
-└── [feature]/        # Feature modules
+src/
+├── app/
+│   ├── gnome-game/           # Main game component
+│   │   ├── service/          # Game-specific services
+│   │   ├── gnome-game.state.ts # Game state definitions
+│   │   └── *.component.*     # Component files
+│   ├── event-sourcing/       # Event sourcing infrastructure
+│   ├── rendering/            # Rendering utilities
+│   ├── state/                # NgRx state management
+│   └── app.*.ts              # Main app files
+├── assets/                   # Static assets
+│   └── img/                  # Game images
+└── environments/             # Environment configurations
 ```
 
 ### Performance Considerations
-- Use `OnPush` change detection for components when appropriate
+- Load images once and reuse references
+- Use Canvas for efficient game rendering
 - Implement proper unsubscribing from observables
-- Use lazy loading for feature modules
-- Optimize bundle size by tree-shaking unused imports
-- Use `trackBy` function in `*ngFor` directives
+- Optimize bundle size for game assets
 
-### Security Best Practices
-- Avoid storing sensitive data in local storage
-- Use HTTPS for all external API calls
-- Validate user inputs on both client and server side
-- Avoid inline event handlers that could expose sensitive data
-- Use Content Security Policy headers
-
-### Commit Message Conventions
-- Use imperative mood (e.g., "Add feature" not "Added feature")
-- Start with component/area (e.g., "[Map] Add region selection")
-- Keep messages concise but descriptive
-- Reference issue numbers when applicable
-
-## Development Workflow
+### Development Workflow
 
 1. **Before starting work**: Run `npm test` to ensure all tests pass
 2. **During development**: Use `npm start` for live development
 3. **Before committing**: Run `npm run build` to verify production build works
-4. **Testing**: Write unit tests for new functionality, maintain test coverage
-5. **Code review**: Ensure all TypeScript strict checks pass, follow established patterns
+4. **Testing**: Write unit tests for new functionality
+5. **Code review**: Ensure all TypeScript strict checks pass
 
 ## Tooling Configuration
 
-- **Change node version** `nvm use 22.12.0`
-- **Package Manager**: Node from nvm
-- **Testing Framework**: Karma with Jasmine (headless Chrome)
+- **Angular Version**: 21.0.6
+- **Node.js Version**: v22.12.0
+- **Testing Framework**: Karma with Jasmine
 - **State Management**: NgRx Store
-- **UI Library**: Angular Material (if used in components)
-- **Build Tool**: Angular CLI with custom webpack configuration
-- **Angular Version**: 21
+- **Build Tool**: Angular CLI
 
-## Known Issues After Angular 21 Upgrade
+## Project Structure Notes
 
-⚠️ **Build System**: Using Angular 20 with browser builder. Configuration updated for Angular 20 (buildTarget instead of browserTarget in serve and extract-i18n sections).
+This is an event-sourced game application featuring:
+- Canvas-based game rendering with interactive token selection
+- Event sourcing architecture using custom CommandGateway
+- NgRx state management for application state
+- Angular components with traditional NgModule structure (`standalone: false`)
+- Game assets stored in `/assets/img/` directory
 
-⚠️ **Test Configuration**: Using Angular's default Karma + Jasmine testing framework with headless Chrome. Components are explicitly marked as `standalone: false` to work with traditional NgModule-based testing.
-
-⚠️ **Angular 21 Upgrade**: Attempted upgrade to Angular 21.0.6 resulted in module resolution errors (`@angular/core/primitives/di` not found). Angular 20.0.7 provides excellent stability and modern features.
-
-✅ **Node.js Version**: Updated to v22.12.0 - fully compatible with Angular 20.
-
-Remember: This codebase uses Angular's strict mode extensively. Always prefer type safety, immutability, and reactive patterns over imperative approaches.</content>
+Remember: This codebase uses Angular's strict mode extensively with event sourcing patterns. Always prefer type safety and immutable state updates.</content>
 <parameter name="filePath">AGENTS.md
