@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {AGGREGATE_ID, CommandGateway} from '../event-sourcing/event-sourcing-template.js';
+import {CommandGateway} from '../event-sourcing/event-sourcing-template.js';
 import {GameTokenService} from './service/game-token.service';
-import {CMD_TYPE, EVENT_TYPE, Projector} from "../event-sourcing/event-sourcing-template";
+import {Projector} from "../event-sourcing/event-sourcing-template";
 import {gameStartState, GnomeGameState, Locations} from "./gnome-game.state";
-import {WENT_TO_LOCATION} from "./events/events";
-import {GO_TO_LOCATION} from "./commands/commands";
+import {GoToLocationCmd} from "./commands/go-to-location-cmd";
+import {WentToLocationEvent} from "./events/went-to-location";
 
 @Component({
   selector: 'app-gnome-game',
@@ -17,13 +17,9 @@ class GnomeGameComponent implements OnInit, AfterViewInit {
   canvas?: ElementRef<HTMLCanvasElement>;
   private readonly eventSourcingTemplate = new CommandGateway(
     new Map([
-      [GO_TO_LOCATION, (events: any[], cmd: any) => {
-      return [{
-          [AGGREGATE_ID]: cmd[AGGREGATE_ID],
-          [EVENT_TYPE]: WENT_TO_LOCATION,
-          currentLocation: cmd.currentLocation
-        }];
-      }]
+      [
+        GoToLocationCmd, (events: any[], cmd: GoToLocationCmd) => [new WentToLocationEvent(cmd.location)]
+      ]
     ]))
   private readonly stateProjector;
   private gameState = gameStartState;
@@ -42,21 +38,17 @@ class GnomeGameComponent implements OnInit, AfterViewInit {
   onCanvasClick(event: MouseEvent): void {
     if (!this.canvas) return;
 
-    const selectedId = this.gameTokenService.getClickedTokenId(event, this.canvas.nativeElement);
-    console.log('selectedId', selectedId)
-    var currentLocation = Locations.GNOMES_HUT;
-    if (selectedId === 'gnome-token') {
-      currentLocation = Locations.GNOMES_HUT;
-    } else {
-      currentLocation = Locations.FISHERY_GROUND;
+    const currentLocation = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
+
+    const events = this.eventSourcingTemplate
+      .handle(new GoToLocationCmd(currentLocation))
+      .success
+
+    const newState = this.stateProjector(this.gameState, events);
+    if (JSON.stringify(this.gameState) === JSON.stringify(newState)) {
+      return;
     }
-
-    const events = this.eventSourcingTemplate.handle({
-      [CMD_TYPE]: GO_TO_LOCATION,
-      currentLocation
-    }).success
-
-    this.gameState = this.stateProjector(this.gameState, events);
+    this.gameState = newState;
     this.gameTokenService.renderTokens(this.gameState, this.canvas.nativeElement.getContext('2d')!)
     this.redrawCanvas();
   }
@@ -99,16 +91,11 @@ class GnomeGameComponent implements OnInit, AfterViewInit {
 
 export default GnomeGameComponent
 const locationProjector: Projector<GnomeGameState> = (state: GnomeGameState, events: any[]) => {
-  console.log('events', JSON.stringify(state))
   const currentLocation = events
-    .filter(it => it[EVENT_TYPE] === WENT_TO_LOCATION)
-    .map(it => it.currentLocation)
-      .reduce((f, s) => {
-        console.log('reducing', f, s)
-        return s
-      }, Locations.GNOMES_HUT)
+    .filter(it => it instanceof WentToLocationEvent)
+    .map(it => it.location)
+    .reduce((f, s) => s, Locations.GNOMES_HUT);
 
-  console.log('state recalculated', currentLocation)
   return {
     ...state,
     currentLocation

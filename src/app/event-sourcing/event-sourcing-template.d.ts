@@ -6,13 +6,13 @@ export declare class CommandGateway {
   handlers: any[];
   projectors: any[];
 
-  constructor(handlers: Map<String, CommandHandler>);
+  constructor(handlers: Map<Function, CommandHandler<any>>);
 
   handle(cmd: any): Result<any[]>;
   composeProjectors<T>(projectors: Projector<T>[]): (state: T, events: any[]) => T;
 }
 
-export type CommandHandler = (events: any[], cmd: any) => any[];
+export type CommandHandler<T> = (events: any[], cmd: T) => any[];
 export type Projector<T> = (state: T, events: any[]) => T;
 export function composeProjectors<T>(projectors: Projector<T>[]):T;
 

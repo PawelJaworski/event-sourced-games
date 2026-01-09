@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
-import {GnomeGameState} from '../gnome-game.state';
-import {Locations} from '../gnome-game.state';
+import {gameStartState, GnomeGameState, Locations} from '../gnome-game.state';
 
 export interface GameToken {
   x: number;
@@ -13,7 +12,7 @@ export interface GameToken {
   providedIn: 'root'
 })
 export class GameTokenService {
-  private readonly tokens = new Map<string, GameToken>();
+  private readonly locationTokens = new Map<Locations, GameToken>();
   private readonly originalTokenSize = 40;
   private readonly enlargedTokenSize = 80;
 
@@ -80,13 +79,13 @@ export class GameTokenService {
 
   initializeTokens(ctx: CanvasRenderingContext2D): void {
     const gnomeToken = this.createGnomeHouseToken(ctx, this.originalTokenSize);
-    this.tokens.set('gnome-token', gnomeToken);
+    this.locationTokens.set(Locations.GNOMES_HUT, gnomeToken);
   }
 
-  getClickedTokenId(event: MouseEvent, canvas: HTMLCanvasElement): string | null {
+  getClickedLocation(event: MouseEvent, canvas: HTMLCanvasElement): Locations {
     const { x, y } = this.getCanvasCoordinates(event, canvas);
 
-    for (const [id, token] of this.tokens) {
+    for (const [id, token] of this.locationTokens) {
       const tokenCenterX = token.x + token.size / 2;
       const tokenCenterY = token.y + token.size / 2;
 
@@ -98,7 +97,7 @@ export class GameTokenService {
         return id;
       }
     }
-    return null;
+    return Locations.NONE;
   }
 
   private getCanvasCoordinates(event: MouseEvent, canvas: HTMLCanvasElement): { x: number; y: number } {
@@ -111,39 +110,20 @@ export class GameTokenService {
       y: (event.clientY - rect.top) * scaleY
     };
   }
-
-  toggleTokenSize(tokenId: string): void {
-    const token = this.tokens.get(tokenId);
-    if (!token) return;
-
-    const currentCenterX = token.x + token.size / 2;
-    const currentCenterY = token.y + token.size / 2;
-
-    if (token.size === this.originalTokenSize) {
-      token.size = this.enlargedTokenSize;
-    } else {
-      token.size = this.originalTokenSize;
-    }
-
-    token.x = currentCenterX - token.size / 2;
-    token.y = currentCenterY - token.size / 2;
-  }
-
   drawAllTokens(ctx: CanvasRenderingContext2D): void {
-    for (const token of this.tokens.values()) {
+    for (const token of this.locationTokens.values()) {
       this.drawRoundToken(ctx, token);
     }
   }
 
   renderTokens(gameState: GnomeGameState, ctx: CanvasRenderingContext2D): void {
-    const gnomeToken = this.tokens.get('gnome-token');
+    const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     if (!gnomeToken) return;
 
     // Update token size based on location
     const targetSize = gameState.currentLocation === Locations.GNOMES_HUT
       ? this.enlargedTokenSize
       : this.originalTokenSize;
-    console.log('rendering', JSON.stringify(gameState))
     if (gnomeToken.size !== targetSize) {
       const currentCenterX = gnomeToken.x + gnomeToken.size / 2;
       const currentCenterY = gnomeToken.y + gnomeToken.size / 2;

@@ -1,5 +1,3 @@
-import {Projector} from "./event-sourcing-template";
-
 export const AGGREGATE_ID = "aggregateId";
 export const CMD_TYPE = "commandType";
 export const EVENT_TYPE = "eventType";
@@ -14,7 +12,7 @@ export class CommandGateway {
   handle(cmd) {
     try {
       const events = this.eventStore.findAllEvents();
-      const newEvents = this.handlers.get(cmd[CMD_TYPE])(events, cmd);
+      const newEvents = this.handlers.get(cmd.constructor)(events, cmd);
       this.eventStore.append(newEvents);
       return Result.success(newEvents);
     } catch (e) {
