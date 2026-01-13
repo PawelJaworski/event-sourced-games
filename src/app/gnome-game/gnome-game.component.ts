@@ -47,7 +47,6 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
       return;
     }
     this.gameState = newState;
-    this.gameTokenService.renderTokens(this.gameState, this.canvas.nativeElement.getContext('2d')!)
     this.redrawCanvas();
   }
 
