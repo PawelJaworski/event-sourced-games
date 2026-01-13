@@ -88,12 +88,26 @@ export class GameTokenService {
     };
   }
 
+  createGoldMineToken(ctx: CanvasRenderingContext2D, size: number = 40): GameToken {
+    const x = 500;
+    const y = 170;
+    return {
+      x,
+      y,
+      size,
+      imageUrl: '/assets/img/gold-mine.png'
+    };
+  }
+
   initializeTokens(ctx: CanvasRenderingContext2D): void {
     const gnomeToken = this.createGnomeHouseToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.GNOMES_HUT, gnomeToken);
 
     const fisheryToken = this.createFisheryGroundToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.FISHERY_GROUND, fisheryToken);
+
+    const goldMineToken = this.createGoldMineToken(ctx, this.originalTokenSize);
+    this.locationTokens.set(Locations.GOLD_MINE, goldMineToken);
   }
 
   getClickedLocation(event: MouseEvent, canvas: HTMLCanvasElement): Locations {
@@ -133,7 +147,8 @@ export class GameTokenService {
   renderTokens(gameState: GnomeGameState, ctx: CanvasRenderingContext2D): void {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
-    if (!gnomeToken || !fisheryToken) return;
+    const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
+    if (!gnomeToken || !fisheryToken || !goldMineToken) return;
 
     // Update gnome token size based on location
     const gnomeTargetSize = gameState.currentLocation === Locations.GNOMES_HUT
@@ -159,6 +174,19 @@ export class GameTokenService {
       fisheryToken.size = fisheryTargetSize;
       fisheryToken.x = currentCenterX - fisheryToken.size / 2;
       fisheryToken.y = currentCenterY - fisheryToken.size / 2;
+    }
+
+    // Update gold mine token size based on location
+    const goldMineTargetSize = gameState.currentLocation === Locations.GOLD_MINE
+      ? this.enlargedTokenSize
+      : this.originalTokenSize;
+    if (goldMineToken.size !== goldMineTargetSize) {
+      const currentCenterX = goldMineToken.x + goldMineToken.size / 2;
+      const currentCenterY = goldMineToken.y + goldMineToken.size / 2;
+
+      goldMineToken.size = goldMineTargetSize;
+      goldMineToken.x = currentCenterX - goldMineToken.size / 2;
+      goldMineToken.y = currentCenterY - goldMineToken.size / 2;
     }
 
     // Redraw all tokens
