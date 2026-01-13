@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {gameStartState, GnomeGameState, Locations} from '../gnome-game.state';
+import {GnomeGameState, Locations} from '../gnome-game.state';
 
 export interface GameToken {
   x: number;
@@ -77,9 +77,23 @@ export class GameTokenService {
     };
   }
 
+  createFisheryGroundToken(ctx: CanvasRenderingContext2D, size: number = 40): GameToken {
+    const x = 390;
+    const y = 270;
+    return {
+      x,
+      y,
+      size,
+      imageUrl: '/assets/img/fishery-grounds.png'
+    };
+  }
+
   initializeTokens(ctx: CanvasRenderingContext2D): void {
     const gnomeToken = this.createGnomeHouseToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.GNOMES_HUT, gnomeToken);
+
+    const fisheryToken = this.createFisheryGroundToken(ctx, this.originalTokenSize);
+    this.locationTokens.set(Locations.FISHERY_GROUND, fisheryToken);
   }
 
   getClickedLocation(event: MouseEvent, canvas: HTMLCanvasElement): Locations {
@@ -118,19 +132,33 @@ export class GameTokenService {
 
   renderTokens(gameState: GnomeGameState, ctx: CanvasRenderingContext2D): void {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
-    if (!gnomeToken) return;
+    const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
+    if (!gnomeToken || !fisheryToken) return;
 
-    // Update token size based on location
-    const targetSize = gameState.currentLocation === Locations.GNOMES_HUT
+    // Update gnome token size based on location
+    const gnomeTargetSize = gameState.currentLocation === Locations.GNOMES_HUT
       ? this.enlargedTokenSize
       : this.originalTokenSize;
-    if (gnomeToken.size !== targetSize) {
+    if (gnomeToken.size !== gnomeTargetSize) {
       const currentCenterX = gnomeToken.x + gnomeToken.size / 2;
       const currentCenterY = gnomeToken.y + gnomeToken.size / 2;
 
-      gnomeToken.size = targetSize;
+      gnomeToken.size = gnomeTargetSize;
       gnomeToken.x = currentCenterX - gnomeToken.size / 2;
       gnomeToken.y = currentCenterY - gnomeToken.size / 2;
+    }
+
+    // Update fishery token size based on location
+    const fisheryTargetSize = gameState.currentLocation === Locations.FISHERY_GROUND
+      ? this.enlargedTokenSize
+      : this.originalTokenSize;
+    if (fisheryToken.size !== fisheryTargetSize) {
+      const currentCenterX = fisheryToken.x + fisheryToken.size / 2;
+      const currentCenterY = fisheryToken.y + fisheryToken.size / 2;
+
+      fisheryToken.size = fisheryTargetSize;
+      fisheryToken.x = currentCenterX - fisheryToken.size / 2;
+      fisheryToken.y = currentCenterY - fisheryToken.size / 2;
     }
 
     // Redraw all tokens
