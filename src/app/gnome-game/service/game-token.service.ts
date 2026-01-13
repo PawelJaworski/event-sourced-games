@@ -154,46 +154,42 @@ export class GameTokenService {
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
     if (!gnomeToken || !fisheryToken || !goldMineToken) return;
 
-    // Update gnome token size based on location
-    const gnomeTargetSize = gameState.currentLocation === Locations.GNOMES_HUT
-      ? this.enlargedTokenSize
-      : this.originalTokenSize;
-    if (gnomeToken.size !== gnomeTargetSize) {
-      const currentCenterX = gnomeToken.x + gnomeToken.size / 2;
-      const currentCenterY = gnomeToken.y + gnomeToken.size / 2;
+    this.shrinkToken(gnomeToken);
+    this.shrinkToken(fisheryToken);
+    this.shrinkToken(goldMineToken);
 
-      gnomeToken.size = gnomeTargetSize;
-      gnomeToken.x = currentCenterX - gnomeToken.size / 2;
-      gnomeToken.y = currentCenterY - gnomeToken.size / 2;
-    }
-
-    // Update fishery token size based on location
-    const fisheryTargetSize = gameState.currentLocation === Locations.FISHERY_GROUND
-      ? this.enlargedTokenSize
-      : this.originalTokenSize;
-    if (fisheryToken.size !== fisheryTargetSize) {
-      const currentCenterX = fisheryToken.x + fisheryToken.size / 2;
-      const currentCenterY = fisheryToken.y + fisheryToken.size / 2;
-
-      fisheryToken.size = fisheryTargetSize;
-      fisheryToken.x = currentCenterX - fisheryToken.size / 2;
-      fisheryToken.y = currentCenterY - fisheryToken.size / 2;
-    }
-
-    // Update gold mine token size based on location
-    const goldMineTargetSize = gameState.currentLocation === Locations.GOLD_MINE
-      ? this.enlargedTokenSize
-      : this.originalTokenSize;
-    if (goldMineToken.size !== goldMineTargetSize) {
-      const currentCenterX = goldMineToken.x + goldMineToken.size / 2;
-      const currentCenterY = goldMineToken.y + goldMineToken.size / 2;
-
-      goldMineToken.size = goldMineTargetSize;
-      goldMineToken.x = currentCenterX - goldMineToken.size / 2;
-      goldMineToken.y = currentCenterY - goldMineToken.size / 2;
+    switch (gameState.currentLocation) {
+      case Locations.GNOMES_HUT:
+        this.enlargeToken(gnomeToken);
+        break;
+      case Locations.FISHERY_GROUND:
+        this.enlargeToken(fisheryToken);
+        break;
+      case Locations.GOLD_MINE:
+        this.enlargeToken(goldMineToken);
+        break;
     }
 
     // Redraw all tokens
     this.drawAllTokens(ctx);
+  }
+
+  private enlargeToken(token: GameToken): void {
+      const currentCenterX = token.x + this.enlargedTokenSize / 2;
+      const currentCenterY = token.y + this.enlargedTokenSize / 2;
+
+      token.size = this.enlargedTokenSize;
+      token.x = currentCenterX - token.size / 2;
+      token.y = currentCenterY - token.size / 2;
+  }
+
+
+  private shrinkToken(token: GameToken): void {
+    const currentCenterX = token.x + this.originalTokenSize / 2;
+    const currentCenterY = token.y + this.originalTokenSize / 2;
+
+    token.size = this.originalTokenSize;
+    token.x = currentCenterX - token.size / 2;
+    token.y = currentCenterY - token.size / 2;
   }
 }
