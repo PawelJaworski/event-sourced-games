@@ -138,9 +138,13 @@ export class GameTokenService {
       y: (event.clientY - rect.top) * scaleY
     };
   }
-  drawAllTokens(ctx: CanvasRenderingContext2D): void {
-    for (const token of this.locationTokens.values()) {
-      this.drawRoundToken(ctx, token);
+  private drawAllTokens(ctx: CanvasRenderingContext2D, tokenToRefresh?: GameToken): void {
+    if (tokenToRefresh) {
+      this.drawRoundToken(ctx, tokenToRefresh);
+    } else {
+      for (const token of this.locationTokens.values()) {
+        this.drawRoundToken(ctx, token);
+      }
     }
   }
 
