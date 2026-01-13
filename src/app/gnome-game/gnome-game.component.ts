@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {CommandGateway} from '../event-sourcing/event-sourcing-template.js';
+import {CommandGateway, CommandHandler} from '../event-sourcing/event-sourcing-template.js';
 import {GameTokenService} from './service/game-token.service';
-import {Projector} from "../event-sourcing/event-sourcing-template";
+import {composeProjectors, Projector} from "../event-sourcing/event-sourcing-template";
 import {gameStartState, GnomeGameState, Locations} from "./gnome-game.state";
 import {GoToLocationCmd} from "./commands/go-to-location-cmd";
 import {WentToLocationEvent} from "./events/went-to-location";
@@ -12,20 +12,18 @@ import {WentToLocationEvent} from "./events/went-to-location";
   styleUrls: ['./gnome-game.component.css'],
   standalone: false
 })
-class GnomeGameComponent implements OnInit, AfterViewInit {
+export class GnomeGameComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
-  private readonly eventSourcingTemplate = new CommandGateway(
-    new Map([
-      [
-        GoToLocationCmd, (events: any[], cmd: GoToLocationCmd) => [new WentToLocationEvent(cmd.location)]
-      ]
-    ]))
+
+  private readonly eventSourcingTemplate;
   private readonly stateProjector;
-  private gameState = gameStartState;
+  private gameState;
 
   constructor(private readonly gameTokenService: GameTokenService) {
-    this.stateProjector = this.eventSourcingTemplate.composeProjectors([locationProjector])
+    this.eventSourcingTemplate = new CommandGateway(this.initCommandHandlers());
+    this.stateProjector = composeProjectors([locationProjector]);
+    this.gameState = gameStartState;
   }
 
   ngOnInit(): void {
@@ -51,6 +49,14 @@ class GnomeGameComponent implements OnInit, AfterViewInit {
     this.gameState = newState;
     this.gameTokenService.renderTokens(this.gameState, this.canvas.nativeElement.getContext('2d')!)
     this.redrawCanvas();
+  }
+
+  private initCommandHandlers(): Map<Function, CommandHandler<any>> {
+    return new Map([
+      [
+        GoToLocationCmd, (events: any[], cmd: GoToLocationCmd) => [new WentToLocationEvent(cmd.location)]
+      ]
+    ])
   }
 
   private redrawCanvas(): void {
@@ -89,7 +95,6 @@ class GnomeGameComponent implements OnInit, AfterViewInit {
 
 }
 
-export default GnomeGameComponent
 const locationProjector: Projector<GnomeGameState> = (state: GnomeGameState, events: any[]) => {
   const currentLocation = events
     .filter(it => it instanceof WentToLocationEvent)

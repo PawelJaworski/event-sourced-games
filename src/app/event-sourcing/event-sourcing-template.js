@@ -20,10 +20,6 @@ export class CommandGateway {
       return Result.failure(`${JSON.stringify(cmd)} error: ${e}`)
     }
   }
-
-  composeProjectors(projectors) {
-    return (state, events) => projectors.reduce((state, projector) => projector(state, events), state)
-  }
 }
 
 export class Result {
@@ -47,6 +43,10 @@ export class Result {
   get isFailure() {
     return this.error;
   }
+}
+
+export function composeProjectors(projectors) {
+  return (state, events) => projectors.reduce((state, projector) => projector(state, events), state)
 }
 
 class EventStore {
