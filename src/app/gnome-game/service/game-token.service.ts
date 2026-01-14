@@ -99,6 +99,17 @@ export class GameTokenService {
     };
   }
 
+  createFruitsOfTheForestToken(ctx: CanvasRenderingContext2D, size: number = 40): GameToken {
+    const x = ctx!.canvas.width / 2 - size / 2;
+    const y = ctx!.canvas.height - size - 20;
+    return {
+      x,
+      y,
+      size,
+      imageUrl: '/assets/img/fruits-of-the-forest.png'
+    };
+  }
+
   initializeTokens(ctx: CanvasRenderingContext2D): void {
     const gnomeToken = this.createGnomeHouseToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.GNOMES_HUT, gnomeToken);
@@ -108,6 +119,9 @@ export class GameTokenService {
 
     const goldMineToken = this.createGoldMineToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.GOLD_MINE, goldMineToken);
+
+    const fruitsOfTheForestToken = this.createFruitsOfTheForestToken(ctx, this.originalTokenSize);
+    this.locationTokens.set(Locations.FRUITS_OF_THE_FOREST, fruitsOfTheForestToken);
   }
 
   getClickedLocation(event: MouseEvent, canvas: HTMLCanvasElement): Locations {
@@ -152,11 +166,13 @@ export class GameTokenService {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
-    if (!gnomeToken || !fisheryToken || !goldMineToken) return;
+    const fruitsOfTheForestToken = this.locationTokens.get(Locations.FRUITS_OF_THE_FOREST);
+    if (!gnomeToken || !fisheryToken || !goldMineToken || !fruitsOfTheForestToken) return;
 
     this.shrinkToken(gnomeToken);
     this.shrinkToken(fisheryToken);
     this.shrinkToken(goldMineToken);
+    this.shrinkToken(fruitsOfTheForestToken);
 
     switch (gameState.currentLocation) {
       case Locations.GNOMES_HUT:
@@ -168,6 +184,9 @@ export class GameTokenService {
       case Locations.GOLD_MINE:
         this.enlargeToken(goldMineToken);
         break;
+      case Locations.FRUITS_OF_THE_FOREST:
+        this.enlargeToken(fruitsOfTheForestToken);
+        break;
     }
 
     // Redraw all tokens
@@ -175,8 +194,8 @@ export class GameTokenService {
   }
 
   private enlargeToken(token: GameToken): void {
-      const currentCenterX = token.x + this.enlargedTokenSize / 2;
-      const currentCenterY = token.y + this.enlargedTokenSize / 2;
+      const currentCenterX = token.x + token.size / 2;
+      const currentCenterY = token.y + token.size / 2;
 
       token.size = this.enlargedTokenSize;
       token.x = currentCenterX - token.size / 2;
@@ -185,8 +204,8 @@ export class GameTokenService {
 
 
   private shrinkToken(token: GameToken): void {
-    const currentCenterX = token.x + this.originalTokenSize / 2;
-    const currentCenterY = token.y + this.originalTokenSize / 2;
+    const currentCenterX = token.x + token.size / 2;
+    const currentCenterY = token.y + token.size / 2;
 
     token.size = this.originalTokenSize;
     token.x = currentCenterX - token.size / 2;
