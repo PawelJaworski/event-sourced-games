@@ -4,9 +4,9 @@ export declare const EVENT_TYPE: string;
 
 export declare class CommandGateway {
   handlers: any[];
-  projectors: any[];
+  eventStore: EventStore;
 
-  constructor(handlers: Map<Function, CommandHandler<any>>);
+  constructor(handlers: Map<Function, CommandHandler<any>>, eventStore: EventStore);
 
   handle(cmd: any): Result<any[]>;
 }
@@ -28,7 +28,7 @@ export declare class Result<T> {
   get isFailure(): any;
 }
 
-declare class EventStore {
+export declare class EventStore {
   events: any[];
 
   append(aggregateId: any, events: any[]): void;

@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {CommandGateway} from '../event-sourcing/event-sourcing-template.js';
+import {CommandGateway, EventStore} from '../event-sourcing/event-sourcing-template.js';
 import {GameTokenService} from './service/game-token.service';
 import {composeProjectors, Projector} from "../event-sourcing/event-sourcing-template";
 import {gameStartState, GnomeGameState, Locations} from "./gnome-game.state";
@@ -23,7 +23,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
   constructor(private readonly gameTokenService: GameTokenService) {
     this.eventSourcingTemplate = new CommandGateway(new Map([
       [ GoToLocationCmd, goToLocationHandler ]
-    ]));
+    ]), new EventStore());
     this.stateProjector = composeProjectors([locationProjector]);
     this.gameState = gameStartState;
   }

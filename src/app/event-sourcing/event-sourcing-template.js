@@ -3,10 +3,9 @@ export const CMD_TYPE = "commandType";
 export const EVENT_TYPE = "eventType";
 
 export class CommandGateway {
-  eventStore = new EventStore();
-
-  constructor(handlers) {
+  constructor(handlers, eventStore) {
     this.handlers = handlers;
+    this.eventStore = eventStore;
   }
 
   handle(cmd) {
@@ -49,7 +48,7 @@ export function composeProjectors(projectors) {
   return (state, events) => projectors.reduce((state, projector) => projector(state, events), state)
 }
 
-class EventStore {
+export class EventStore {
   events = [];
 
   append(events) {
