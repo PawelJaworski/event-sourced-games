@@ -1,0 +1,48 @@
+.memory-game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.game-canvas {
+  border: 3px solid #795548;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #FAFAFA;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.game-canvas:hover {
+  transform: scale(1.02);
+}
+
+.game-controls {
+  display: flex;
+  justify-content: center;
+}
+
+.reset-button {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.reset-button:hover {
+  background: linear-gradient(135deg, #45a049, #1B5E20);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.reset-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

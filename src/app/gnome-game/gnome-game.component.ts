@@ -5,6 +5,7 @@ import {composeProjectors, Projector} from "../event-sourcing/event-sourcing-tem
 import {gameStartState, GnomeGameState, Locations} from "./gnome-game.state";
 import {GoToLocationCmd, goToLocationHandler} from "./commands/go-to-location-cmd";
 import {WentToLocationEvent} from "./events/went-to-location";
+import {DialogService} from '../dialog/dialog.service';
 
 @Component({
   selector: 'app-gnome-game',
@@ -20,7 +21,10 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
   private readonly stateProjector;
   private gameState;
 
-  constructor(private readonly gameTokenService: GameTokenService) {
+  constructor(
+    private readonly gameTokenService: GameTokenService,
+    private readonly dialogService: DialogService
+  ) {
     this.eventSourcingTemplate = new CommandGateway(new Map([
       [ GoToLocationCmd, goToLocationHandler ]
     ]), new EventStore());
@@ -49,6 +53,11 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
       return;
     }
     this.gameState = newState;
+
+    if (newState.currentLocation === Locations.FRUITS_OF_THE_FOREST) {
+      this.dialogService.openMemoryGameDialog();
+    }
+
     this.redrawCanvas();
   }
 

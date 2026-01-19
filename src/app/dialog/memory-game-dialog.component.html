@@ -1,0 +1,11 @@
+<div *ngIf="isDialogOpen" class="dialog-overlay" (click)="onOverlayClick($event)">
+  <div class="dialog-container">
+    <div class="dialog-header">
+      <h2>Fruits of the Forest - Memory Game</h2>
+      <button class="close-button" (click)="onCloseDialog()">&times;</button>
+    </div>
+    <div class="dialog-content">
+      <app-memory-game></app-memory-game>
+    </div>
+  </div>
+</div>

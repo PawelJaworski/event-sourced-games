@@ -1,0 +1,12 @@
+<div class="memory-game-container">
+  <canvas 
+    #gameCanvas
+    width="380"
+    height="380"
+    class="game-canvas"
+    (click)="onCanvasClick($event)">
+  </canvas>
+  <div class="game-controls">
+    <button class="reset-button" (click)="resetGame()">New Game</button>
+  </div>
+</div>
