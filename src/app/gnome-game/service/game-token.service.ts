@@ -100,8 +100,8 @@ export class GameTokenService {
   }
 
   createFruitsOfTheForestToken(ctx: CanvasRenderingContext2D, size: number = 40): GameToken {
-    const x = ctx!.canvas.width / 2 - size / 2;
-    const y = ctx!.canvas.height - size - 20;
+    const x = 300;
+    const y = 320;
     return {
       x,
       y,
