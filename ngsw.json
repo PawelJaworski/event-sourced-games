@@ -1,0 +1,95 @@
+{
+  "configVersion": 1,
+  "timestamp": 1770144207942,
+  "index": "/event-sourced-games/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/event-sourced-games/favicon.ico",
+        "/event-sourced-games/index.html",
+        "/event-sourced-games/main.10cb8d812d051cf5.js",
+        "/event-sourced-games/manifest.webmanifest",
+        "/event-sourced-games/polyfills.2555f631e2a8632b.js",
+        "/event-sourced-games/runtime.86a5ba23a06da633.js",
+        "/event-sourced-games/styles.ef46db3751d8e999.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/event-sourced-games/assets/icons/icon-128x128.png",
+        "/event-sourced-games/assets/icons/icon-144x144.png",
+        "/event-sourced-games/assets/icons/icon-152x152.png",
+        "/event-sourced-games/assets/icons/icon-192x192.png",
+        "/event-sourced-games/assets/icons/icon-384x384.png",
+        "/event-sourced-games/assets/icons/icon-512x512.png",
+        "/event-sourced-games/assets/icons/icon-72x72.png",
+        "/event-sourced-games/assets/icons/icon-96x96.png",
+        "/event-sourced-games/assets/img/berries-picking/berry.png",
+        "/event-sourced-games/assets/img/berries-picking/raspberry.png",
+        "/event-sourced-games/assets/img/fishery-grounds.png",
+        "/event-sourced-games/assets/img/fruits-of-the-forest.png",
+        "/event-sourced-games/assets/img/gnome-house.png",
+        "/event-sourced-games/assets/img/gold-mine.png",
+        "/event-sourced-games/assets/img/map.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/event-sourced-games/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
+    "/event-sourced-games/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
+    "/event-sourced-games/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
+    "/event-sourced-games/assets/icons/icon-192x192.png": "1abd80d431a237a853ce38147d8c63752f10933b",
+    "/event-sourced-games/assets/icons/icon-384x384.png": "329749cd6393768d3131ed6304c136b1ca05f2fd",
+    "/event-sourced-games/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
+    "/event-sourced-games/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
+    "/event-sourced-games/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
+    "/event-sourced-games/assets/img/berries-picking/berry.png": "76ba7adcfbccb051082a5205d85c2aa28386e2c6",
+    "/event-sourced-games/assets/img/berries-picking/raspberry.png": "f05176f7b57903a0435f738c6211b38afee2dfd6",
+    "/event-sourced-games/assets/img/fishery-grounds.png": "96745e16a47f68257146a39b964639d1e2e4afda",
+    "/event-sourced-games/assets/img/fruits-of-the-forest.png": "74c482b50b82f9a13ca40e7cc9c298bd12b19a9e",
+    "/event-sourced-games/assets/img/gnome-house.png": "42d1c68dc61a8dd84e0325f40d8e56ece1602ca6",
+    "/event-sourced-games/assets/img/gold-mine.png": "5754026e1c7af3585550ecd61d12cfe311d71988",
+    "/event-sourced-games/assets/img/map.png": "a456acc541dd9eb4f19b1344d045ba5a262aeeed",
+    "/event-sourced-games/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
+    "/event-sourced-games/index.html": "d536c15239ee05ee70fbb940695925cd141f6719",
+    "/event-sourced-games/main.10cb8d812d051cf5.js": "dfcbc730650e276dad7c423be340b2f1512ca210",
+    "/event-sourced-games/manifest.webmanifest": "1b1ad7ec3d87a1be516a8653c9fe30cd7bec1019",
+    "/event-sourced-games/polyfills.2555f631e2a8632b.js": "b4e1e0a842c47c6dfd2a264df6165de96fa70f0b",
+    "/event-sourced-games/runtime.86a5ba23a06da633.js": "119417fe105ffd5977a4f1ae4eb62b88187e366f",
+    "/event-sourced-games/styles.ef46db3751d8e999.css": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
