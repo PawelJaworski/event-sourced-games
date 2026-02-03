@@ -96,6 +96,13 @@
               "**/*.spec.ts"
             ]
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "base-href": "/event-sourced-games/",
+            "dir": "dist/front-angular"
+          }
         }
       }
     }
