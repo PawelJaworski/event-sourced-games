@@ -74,7 +74,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
 
       this.gameTokenService.renderTokens(this.gameState, ctx);
     };
-    mapImg.src = '/assets/img/map.png';
+    mapImg.src = './assets/img/map.png';
   }
 
   private loadMapImage(): void {
@@ -92,7 +92,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
       this.gameTokenService.initializeTokens(ctx);
       this.gameTokenService.renderTokens(this.gameState, ctx);
     };
-    mapImg.src = '/assets/img/map.png';
+    mapImg.src = './assets/img/map.png';
   }
 
 }

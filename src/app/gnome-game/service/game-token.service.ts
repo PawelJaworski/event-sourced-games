@@ -73,7 +73,7 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: '/assets/img/gnome-house.png'
+      imageUrl: './assets/img/gnome-house.png'
     };
   }
 
@@ -84,7 +84,7 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: '/assets/img/fishery-grounds.png'
+      imageUrl: './assets/img/fishery-grounds.png'
     };
   }
 
@@ -95,7 +95,7 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: '/assets/img/gold-mine.png'
+      imageUrl: './assets/img/gold-mine.png'
     };
   }
 
@@ -106,7 +106,7 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: '/assets/img/fruits-of-the-forest.png'
+      imageUrl: './assets/img/fruits-of-the-forest.png'
     };
   }
 
