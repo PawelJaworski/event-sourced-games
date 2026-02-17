@@ -1,10 +1,13 @@
 <div class="memory-game-container">
+  <div class="game-stats">
+    <span class="stat">Moves: {{ moves }}</span>
+    <span class="stat">Pairs: {{ matchedPairs }}/8</span>
+  </div>
   <canvas 
     #gameCanvas
-    width="380"
-    height="380"
     class="game-canvas"
-    (click)="onCanvasClick($event)">
+    (click)="onCanvasClick($event)"
+    (touchstart)="onTouchStart($event)">
   </canvas>
   <div class="game-controls">
     <button class="reset-button" (click)="resetGame()">New Game</button>

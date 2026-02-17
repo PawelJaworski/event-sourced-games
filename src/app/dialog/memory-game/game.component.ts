@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, ViewChild, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 
 interface Card {
   id: number;
@@ -23,26 +23,59 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
 
   private cards: Card[] = [];
   private flippedCards: Card[] = [];
-  private matchedPairs = 0;
-  private moves = 0;
+  matchedPairs = 0;
+  moves = 0;
   private gameStarted = false;
   private canFlip = true;
 
   private readonly fruitTypes = ['🍎', '🍊', '🍋', '🍇', '🍓', '🍑', '🍒', '🥝'];
-  private readonly cardWidth = 80;
-  private readonly cardHeight = 80;
-  private readonly cardSpacing = 10;
+  private cardWidth = 80;
+  private cardHeight = 80;
+  private cardSpacing = 10;
   private readonly gridCols = 4;
   private readonly gridRows = 4;
 
-  constructor() {}
+  @HostListener('window:resize')
+  onResize(): void {
+    this.calculateCanvasSize();
+    this.initializeGame();
+    this.drawGame();
+  }
 
   ngOnInit(): void {
     this.initializeGame();
   }
 
   ngAfterViewInit(): void {
+    this.calculateCanvasSize();
+    this.initializeGame();
     this.drawGame();
+  }
+
+  private calculateCanvasSize(): void {
+    if (!this.canvas) return;
+    
+    const container = this.canvas.nativeElement.parentElement;
+    if (!container) return;
+    
+    const containerWidth = container.clientWidth - 40;
+    const maxCanvasSize = Math.min(containerWidth, window.innerHeight * 0.5, 380);
+    
+    const minCardSize = 60;
+    const maxCardSize = 80;
+    const spacingRatio = 0.125;
+    
+    const totalSpacing = this.cardSpacing * 5;
+    const availableForCards = maxCanvasSize - totalSpacing;
+    const cardSize = Math.max(minCardSize, Math.min(maxCardSize, availableForCards / 4));
+    
+    this.cardWidth = cardSize;
+    this.cardHeight = cardSize;
+    this.cardSpacing = cardSize * spacingRatio;
+    
+    const canvasSize = (this.cardWidth * 4) + (this.cardSpacing * 5);
+    this.canvas.nativeElement.width = canvasSize;
+    this.canvas.nativeElement.height = canvasSize + 60;
   }
 
   private initializeGame(): void {
@@ -91,10 +124,30 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
     if (!this.canvas || !this.canFlip) return;
 
     const rect = this.canvas.nativeElement.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const scaleX = this.canvas.nativeElement.width / rect.width;
+    const scaleY = this.canvas.nativeElement.height / rect.height;
+    const x = (event.clientX - rect.left) * scaleX;
+    const y = (event.clientY - rect.top) * scaleY;
 
-    const clickedCard = this.cards.find(card => 
+    this.handleCardClick(x, y);
+  }
+
+  onTouchStart(event: TouchEvent): void {
+    if (!this.canvas || !this.canFlip) return;
+    event.preventDefault();
+
+    const touch = event.touches[0];
+    const rect = this.canvas.nativeElement.getBoundingClientRect();
+    const scaleX = this.canvas.nativeElement.width / rect.width;
+    const scaleY = this.canvas.nativeElement.height / rect.height;
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
+
+    this.handleCardClick(x, y);
+  }
+
+  private handleCardClick(x: number, y: number): void {
+    const clickedCard = this.cards.find(card =>
       x >= card.x && x <= card.x + card.width &&
       y >= card.y && y <= card.y + card.height &&
       !card.isFlipped && !card.isMatched
@@ -145,24 +198,30 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
 
   private showGameComplete(): void {
     if (!this.canvas) return;
-    
+
     const ctx = this.canvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
+    const canvasWidth = this.canvas.nativeElement.width;
+    const canvasHeight = this.canvas.nativeElement.height;
+    const titleSize = Math.max(18, Math.floor(canvasWidth * 0.08));
+    const subtitleSize = Math.max(14, Math.floor(canvasWidth * 0.05));
+    const hintSize = Math.max(12, Math.floor(canvasWidth * 0.04));
+
     ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    ctx.fillRect(0, 0, this.canvas!.nativeElement.width, this.canvas!.nativeElement.height);
-    
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
     ctx.fillStyle = '#4CAF50';
-    ctx.font = 'bold 32px Arial';
+    ctx.font = `bold ${titleSize}px Arial`;
     ctx.textAlign = 'center';
-    ctx.fillText('🎉 Congratulations! 🎉', this.canvas!.nativeElement.width / 2, 100);
-    
+    ctx.fillText('Congratulations!', canvasWidth / 2, canvasHeight * 0.35);
+
     ctx.fillStyle = 'white';
-    ctx.font = '20px Arial';
-    ctx.fillText(`Completed in ${this.moves} moves`, this.canvas!.nativeElement.width / 2, 140);
-    
-    ctx.font = '16px Arial';
-    ctx.fillText('Click anywhere to play again', this.canvas!.nativeElement.width / 2, 180);
+    ctx.font = `${subtitleSize}px Arial`;
+    ctx.fillText(`Completed in ${this.moves} moves`, canvasWidth / 2, canvasHeight * 0.5);
+
+    ctx.font = `${hintSize}px Arial`;
+    ctx.fillText('Tap anywhere to play again', canvasWidth / 2, canvasHeight * 0.65);
   }
 
   private drawGame(): void {
@@ -194,8 +253,11 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
     ctx.lineWidth = 2;
     ctx.strokeRect(card.x, card.y, card.width, card.height);
 
+    const emojiSize = Math.floor(card.width * 0.5);
+    const questionSize = Math.floor(card.width * 0.25);
+
     if (card.isFlipped || card.isMatched) {
-      ctx.font = '40px Arial';
+      ctx.font = `${emojiSize}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(
@@ -205,7 +267,7 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
       );
     } else {
       ctx.fillStyle = '#5D4037';
-      ctx.font = '20px Arial';
+      ctx.font = `${questionSize}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(
@@ -219,11 +281,16 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
   }
 
   private drawScore(ctx: CanvasRenderingContext2D): void {
+    const canvasHeight = this.canvas!.nativeElement.height;
+    const gridHeight = (this.cardHeight * 4) + (this.cardSpacing * 5);
+    const scoreY = gridHeight + 30;
+    const fontSize = Math.max(12, Math.floor(this.cardWidth * 0.2));
+
     ctx.fillStyle = '#333';
-    ctx.font = '16px Arial';
+    ctx.font = `${fontSize}px Arial`;
     ctx.textAlign = 'left';
-    ctx.fillText(`Moves: ${this.moves}`, 10, 20);
-    ctx.fillText(`Pairs: ${this.matchedPairs}/${this.fruitTypes.length}`, 10, 40);
+    ctx.fillText(`Moves: ${this.moves}`, 10, scoreY);
+    ctx.fillText(`Pairs: ${this.matchedPairs}/${this.fruitTypes.length}`, 10, scoreY + fontSize + 5);
   }
 
   resetGame(): void {
