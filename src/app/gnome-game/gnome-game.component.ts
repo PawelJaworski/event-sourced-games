@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommandGateway, EventStore} from '../event-sourcing/event-sourcing-template.js';
 import {GameTokenService} from './service/game-token.service';
 import {composeProjectors, Projector} from "../event-sourcing/event-sourcing-template";
@@ -13,13 +13,18 @@ import {DialogService} from '../dialog/dialog.service';
   styleUrls: ['./gnome-game.component.css'],
   standalone: false
 })
-export class GnomeGameComponent implements OnInit, AfterViewInit {
+export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
   private readonly eventSourcingTemplate;
   private readonly stateProjector;
   private gameState;
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.redrawCanvas();
+  }
 
   constructor(
     private readonly gameTokenService: GameTokenService,
@@ -35,6 +40,20 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
   }
 
+  ngOnDestroy(): void {
+  }
+
+  toggleFullscreen(): void {
+    const elem = document.documentElement;
+    if (!document.fullscreenElement) {
+      elem.requestFullscreen().catch(err => {
+        console.log(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
   ngAfterViewInit(): void {
     this.loadMapImage();
   }
@@ -44,8 +63,31 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
 
     const currentLocation = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
 
+    this.handleLocationChange(currentLocation);
+  }
+
+  onTouchStart(event: TouchEvent): void {
+    if (!this.canvas) return;
+    event.preventDefault();
+
+    const touch = event.touches[0];
+    const rect = this.canvas.nativeElement.getBoundingClientRect();
+    const scaleX = this.canvas.nativeElement.width / rect.width;
+    const scaleY = this.canvas.nativeElement.height / rect.height;
+    
+    const mouseEvent = new MouseEvent('click', {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+
+    const currentLocation = this.gameTokenService.getClickedLocation(mouseEvent, this.canvas.nativeElement);
+    
+    this.handleLocationChange(currentLocation);
+  }
+
+  private handleLocationChange(location: Locations): void {
     const events = this.eventSourcingTemplate
-      .handle(new GoToLocationCmd(currentLocation))
+      .handle(new GoToLocationCmd(location))
       .success
 
     const newState = this.stateProjector(this.gameState, events);
