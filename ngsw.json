@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1771346395916,
+  "timestamp": 1771951032726,
   "index": "/event-sourced-games/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/event-sourced-games/favicon.ico",
         "/event-sourced-games/index.html",
-        "/event-sourced-games/main.8c43a9b2b421a181.js",
+        "/event-sourced-games/main.c762054c4a1a2558.js",
         "/event-sourced-games/manifest.webmanifest",
         "/event-sourced-games/polyfills.2555f631e2a8632b.js",
         "/event-sourced-games/runtime.86a5ba23a06da633.js",
@@ -66,8 +66,8 @@
     "/event-sourced-games/assets/img/gold-mine.png": "5754026e1c7af3585550ecd61d12cfe311d71988",
     "/event-sourced-games/assets/img/map.png": "a456acc541dd9eb4f19b1344d045ba5a262aeeed",
     "/event-sourced-games/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/event-sourced-games/index.html": "b6e0a999638dd14c8098a10184f34e01d2e4eb79",
-    "/event-sourced-games/main.8c43a9b2b421a181.js": "e32871cea6c021aaded80a713a687387f0cff6e2",
+    "/event-sourced-games/index.html": "546553f91ed2a09b9cbd38f271232bb39e2b8d40",
+    "/event-sourced-games/main.c762054c4a1a2558.js": "94d75213ad43d3b614954e4771fc847645976eb7",
     "/event-sourced-games/manifest.webmanifest": "1b1ad7ec3d87a1be516a8653c9fe30cd7bec1019",
     "/event-sourced-games/polyfills.2555f631e2a8632b.js": "b4e1e0a842c47c6dfd2a264df6165de96fa70f0b",
     "/event-sourced-games/runtime.86a5ba23a06da633.js": "119417fe105ffd5977a4f1ae4eb62b88187e366f",
