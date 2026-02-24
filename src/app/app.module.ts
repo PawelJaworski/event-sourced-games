@@ -7,15 +7,10 @@ import { StoreModule } from '@ngrx/store';
 import {metaReducers, reducers} from "./state/app.reducer";
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { GnomeGameModule } from './gnome-game/gnome-game.module';
-import { MemoryGameDialogComponent } from './dialog/memory-game-dialog.component';
-import { MemoryGameComponent } from './dialog/memory-game/game.component';
-import { DialogService } from './dialog/dialog.service';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    MemoryGameDialogComponent,
-    MemoryGameComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -30,9 +25,6 @@ import { DialogService } from './dialog/dialog.service';
       registrationStrategy: 'registerWhenStable:30000'
     }),
     GnomeGameModule
-  ],
-  providers: [
-    DialogService
   ],
   exports: [
   ],

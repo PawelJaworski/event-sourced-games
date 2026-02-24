@@ -5,7 +5,7 @@ import {composeProjectors, Projector} from "../event-sourcing/event-sourcing-tem
 import {gameStartState, GnomeGameState, Locations} from "./gnome-game.state";
 import {GoToLocationCmd, goToLocationHandler} from "./commands/go-to-location-cmd";
 import {WentToLocationEvent} from "./events/went-to-location";
-import {DialogService} from '../dialog/dialog.service';
+import {DialogService} from './dialog.service';
 
 @Component({
   selector: 'app-gnome-game',
