@@ -1,2 +1,2 @@
 # event-sourced-games
-## gnome game
+## [gnome game](https://paweljaworski.github.io/event-sourced-games/gnome-game)
