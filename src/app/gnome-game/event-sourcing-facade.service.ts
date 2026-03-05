@@ -1,10 +1,9 @@
 import {Injectable} from "@angular/core";
+import {BehaviorSubject, Observable} from "rxjs";
 import {
   CommandGateway,
   composeProjectors,
-  EventStore,
   Projector,
-  Result
 } from "../event-sourcing/event-sourcing-template";
 import {GoToLocationCmd, goToLocationHandler} from "./commands/go-to-location-cmd";
 import {EventStoreService} from "./event-store.service";
@@ -18,7 +17,9 @@ export class EventSourcingFacadeService {
 
   private readonly commandGateway;
   private readonly stateProjector;
-  private gameState = gameStartState;
+  private readonly gameStateSubject = new BehaviorSubject<GnomeGameState>(gameStartState);
+
+  readonly gameState$: Observable<GnomeGameState> = this.gameStateSubject.asObservable();
 
   constructor(eventStoreService: EventStoreService) {
     this.commandGateway = new CommandGateway(new Map([
@@ -34,11 +35,15 @@ export class EventSourcingFacadeService {
       return;
     }
     const events = result.success
-    this.gameState = this.stateProjector(this.gameState, events);
+    const newState = this.stateProjector(this.gameStateSubject.value, events);
+    if (JSON.stringify(newState) === JSON.stringify(this.gameStateSubject.value)) {
+      return;
+    }
+    this.gameStateSubject.next(newState);
   }
 
   get getGameState() {
-    return this.gameState;
+    return this.gameStateSubject.value;
   }
 }
 const locationProjector: Projector<GnomeGameState> = (state: GnomeGameState, events: any[]) => {

@@ -1,12 +1,11 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {CommandGateway, EventStore} from '../event-sourcing/event-sourcing-template.js';
 import {GameTokenService} from './service/game-token.service';
-import {composeProjectors, Projector} from "../event-sourcing/event-sourcing-template";
-import {gameStartState, GnomeGameState, Locations} from "./gnome-game.state";
-import {GoToLocationCmd, goToLocationHandler} from "./commands/go-to-location-cmd";
-import {WentToLocationEvent} from "./events/went-to-location";
+import {Locations} from "./gnome-game.state";
+import {GoToLocationCmd} from "./commands/go-to-location-cmd";
 import {DialogService} from './dialog.service';
 import {EventSourcingFacadeService} from "./event-sourcing-facade.service";
+import {Subscription} from "rxjs";
+import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-gnome-game',
@@ -23,6 +22,8 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
     this.redrawCanvas();
   }
 
+  private readonly subscriptions = new Subscription();
+
   constructor(
     private readonly commandGateway: EventSourcingFacadeService,
     private readonly gameTokenService: GameTokenService,
@@ -30,9 +31,23 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.subscriptions.add(
+      this.commandGateway.gameState$.pipe(
+        filter(state => state.currentLocation === Locations.FRUITS_OF_THE_FOREST)
+      ).subscribe(() => {
+        this.dialogService.openMemoryGameDialog();
+      })
+    );
+
+    this.subscriptions.add(
+      this.commandGateway.gameState$.subscribe(() => {
+        this.redrawCanvas();
+      })
+    );
   }
 
   ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   toggleFullscreen(): void {
@@ -76,20 +91,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private handleLocationChange(location: Locations): void {
-    const oldState = this.commandGateway.getGameState;
-    this.commandGateway
-      .handle(new GoToLocationCmd(location))
-
-    const newState = this.commandGateway.getGameState;
-    if (JSON.stringify(oldState) === JSON.stringify(newState)) {
-      return;
-    }
-
-    if (newState.currentLocation === Locations.FRUITS_OF_THE_FOREST) {
-      this.dialogService.openMemoryGameDialog();
-    }
-
-    this.redrawCanvas();
+    this.commandGateway.handle(new GoToLocationCmd(location));
   }
 
   private redrawCanvas(): void {
