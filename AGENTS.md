@@ -182,6 +182,7 @@ src/
 │   ├── gnome-game/           # Main game component
 │   │   ├── service/          # Game-specific services
 │   │   ├── memory-game/      # Memory mini-game
+│   │   ├── fishery-game/     # Fishery mini-game (hexagonal grid, trap the fish)
 │   │   ├── gnome-game.state.ts # Game state definitions
 │   │   └── *.component.*     # Component files
 │   ├── event-sourcing/       # Event sourcing infrastructure
@@ -190,8 +191,14 @@ src/
 │   └── app.*.ts              # Main app files
 ├── assets/                   # Static assets
 │   └── img/                  # Game images
-└── environments/             # Environment configurations
+└── environments/              # Environment configurations
 ```
+
+### Dialog Patterns
+Each mini-game has a dialog component that uses DialogService:
+- `*DialogComponent` - Wraps the game in a modal dialog
+- Uses `dialogType$` BehaviorSubject to track which game is open
+- DialogService methods: `openMemoryGameDialog()`, `openFisheryGameDialog()`, `closeDialog()`
 
 ### Performance Considerations
 - Load images once and reuse references
