@@ -181,6 +181,7 @@ src/
 ├── app/
 │   ├── gnome-game/           # Main game component
 │   │   ├── service/          # Game-specific services
+│   │   ├── memory-game/      # Memory mini-game
 │   │   ├── gnome-game.state.ts # Game state definitions
 │   │   └── *.component.*     # Component files
 │   ├── event-sourcing/       # Event sourcing infrastructure

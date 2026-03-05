@@ -25,7 +25,6 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
   private flippedCards: Card[] = [];
   matchedPairs = 0;
   moves = 0;
-  private gameStarted = false;
   private canFlip = true;
 
   private readonly fruitTypes = ['🍎', '🍊', '🍋', '🍇', '🍓', '🍑', '🍒', '🥝'];
@@ -54,25 +53,25 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
 
   private calculateCanvasSize(): void {
     if (!this.canvas) return;
-    
+
     const container = this.canvas.nativeElement.parentElement;
     if (!container) return;
-    
+
     const containerWidth = container.clientWidth - 40;
     const maxCanvasSize = Math.min(containerWidth, window.innerHeight * 0.5, 380);
-    
+
     const minCardSize = 60;
     const maxCardSize = 80;
     const spacingRatio = 0.125;
-    
+
     const totalSpacing = this.cardSpacing * 5;
     const availableForCards = maxCanvasSize - totalSpacing;
     const cardSize = Math.max(minCardSize, Math.min(maxCardSize, availableForCards / 4));
-    
+
     this.cardWidth = cardSize;
     this.cardHeight = cardSize;
     this.cardSpacing = cardSize * spacingRatio;
-    
+
     const canvasSize = (this.cardWidth * 4) + (this.cardSpacing * 5);
     this.canvas.nativeElement.width = canvasSize;
     this.canvas.nativeElement.height = canvasSize + 60;
@@ -83,7 +82,6 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
     this.flippedCards = [];
     this.matchedPairs = 0;
     this.moves = 0;
-    this.gameStarted = true;
     this.canFlip = true;
 
     const fruitPairs: string[] = [];
@@ -166,7 +164,7 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
     if (this.flippedCards.length === 2) {
       this.canFlip = false;
       this.moves++;
-      
+
       setTimeout(() => {
         this.checkForMatch();
       }, 1000);
@@ -180,7 +178,7 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
       card1.isMatched = true;
       card2.isMatched = true;
       this.matchedPairs++;
-      
+
       if (this.matchedPairs === this.fruitTypes.length) {
         setTimeout(() => {
           this.showGameComplete();
@@ -248,7 +246,7 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
 
     ctx.fillStyle = card.isFlipped ? '#8BC34A' : '#795548';
     ctx.fillRect(card.x, card.y, card.width, card.height);
-    
+
     ctx.strokeStyle = '#5D4037';
     ctx.lineWidth = 2;
     ctx.strokeRect(card.x, card.y, card.width, card.height);

@@ -25,7 +25,7 @@ export declare class Result<T> {
   static failure<T>(error: any): Result<T>;
 
   get value(): any;
-  get isFailure(): any;
+  get isFailure(): boolean;
 }
 
 export declare class EventStore {
