@@ -40,6 +40,14 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.subscriptions.add(
+      this.commandGateway.gameState$.pipe(
+        filter(state => state.currentLocation === Locations.FISHERY_GROUND)
+      ).subscribe(() => {
+        this.dialogService.openFisheryGameDialog();
+      })
+    );
+
+    this.subscriptions.add(
       this.commandGateway.gameState$.subscribe(() => {
         this.redrawCanvas();
       })

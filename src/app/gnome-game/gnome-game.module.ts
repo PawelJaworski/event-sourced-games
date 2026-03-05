@@ -4,20 +4,25 @@ import {CommonModule} from '@angular/common';
 import {GnomeGameComponent} from './gnome-game.component';
 import {MemoryGameDialogComponent} from './memory-game/memory-game-dialog.component';
 import {MemoryGameComponent} from './memory-game/game.component';
+import {FisheryGameDialogComponent} from './fishery-game/fishery-game-dialog.component';
+import {FisheryGameComponent} from './fishery-game/fishery-game.component';
 import {DialogService} from './dialog.service';
 
 @NgModule({
   declarations: [
     GnomeGameComponent,
     MemoryGameDialogComponent,
-    MemoryGameComponent
+    MemoryGameComponent,
+    FisheryGameDialogComponent,
+    FisheryGameComponent
   ],
   imports: [
     CommonModule
   ],
   exports: [
     GnomeGameComponent,
-    MemoryGameDialogComponent
+    MemoryGameDialogComponent,
+    FisheryGameDialogComponent
   ],
   providers: [
     DialogService

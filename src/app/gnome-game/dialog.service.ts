@@ -16,6 +16,11 @@ export class DialogService {
     this.isDialogOpenSubject.next(true);
   }
 
+  openFisheryGameDialog(): void {
+    this.dialogTypeSubject.next('fishery-game');
+    this.isDialogOpenSubject.next(true);
+  }
+
   closeDialog(): void {
     this.isDialogOpenSubject.next(false);
     this.dialogTypeSubject.next('');
@@ -23,5 +28,9 @@ export class DialogService {
 
   isMemoryGameDialogOpen(): boolean {
     return this.isDialogOpenSubject.value && this.dialogTypeSubject.value === 'memory-game';
+  }
+
+  isFisheryGameDialogOpen(): boolean {
+    return this.isDialogOpenSubject.value && this.dialogTypeSubject.value === 'fishery-game';
   }
 }
