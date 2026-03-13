@@ -82,11 +82,11 @@ export class FisheryGameComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private qrToHex(q: number, r: number): { x: number; y: number } {
-    const x = this.hexSize * (3/2 * q);
-    const y = this.hexSize * (Math.sqrt(3)/2 * q + Math.sqrt(3) * r);
-    return { x: this.centerX + x, y: this.centerY + y };
-  }
+   private qrToHex(q: number, r: number): { x: number; y: number } {
+     const x = this.hexSize * 3/2 * q;
+     const y = this.hexSize * Math.sqrt(3) * (r + q/2);
+     return { x: this.centerX + x, y: this.centerY + y };
+   }
 
   private hexToPixel(q: number, r: number): { x: number; y: number } {
     return this.qrToHex(q, r);
@@ -196,39 +196,39 @@ export class FisheryGameComponent implements OnInit, AfterViewInit {
     this.drawStatus(ctx);
   }
 
-  private drawHex(ctx: CanvasRenderingContext2D, tile: HexTile): void {
-    const { x, y } = this.qrToHex(tile.q, tile.r);
-    const size = this.hexSize - 3;
+   private drawHex(ctx: CanvasRenderingContext2D, tile: HexTile): void {
+     const { x, y } = this.qrToHex(tile.q, tile.r);
+     const size = this.hexSize - 3;
 
-    ctx.beginPath();
-    for (let i = 0; i < 6; i++) {
-      const angle = 2 * Math.PI / 6 * i - Math.PI / 6;
-      const hx = x + size * Math.cos(angle);
-      const hy = y + size * Math.sin(angle);
-      if (i === 0) {
-        ctx.moveTo(hx, hy);
-      } else {
-        ctx.lineTo(hx, hy);
-      }
-    }
-    ctx.closePath();
+     ctx.beginPath();
+     for (let i = 0; i < 6; i++) {
+       const angle = 2 * Math.PI / 6 * i;
+       const hx = x + size * Math.cos(angle);
+       const hy = y + size * Math.sin(angle);
+       if (i === 0) {
+         ctx.moveTo(hx, hy);
+       } else {
+         ctx.lineTo(hx, hy);
+       }
+     }
+     ctx.closePath();
 
-    if (tile.hasNet) {
-      ctx.fillStyle = '#795548';
-      ctx.fill();
-      ctx.strokeStyle = '#5D4037';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+     if (tile.hasNet) {
+       ctx.fillStyle = '#795548';
+       ctx.fill();
+       ctx.strokeStyle = '#5D4037';
+       ctx.lineWidth = 2;
+       ctx.stroke();
 
-      this.drawNetPattern(ctx, x, y, size);
-    } else {
-      ctx.fillStyle = '#81D4FA';
-      ctx.fill();
-      ctx.strokeStyle = '#0288D1';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    }
-  }
+       this.drawNetPattern(ctx, x, y, size);
+     } else {
+       ctx.fillStyle = '#81D4FA';
+       ctx.fill();
+       ctx.strokeStyle = '#0288D1';
+       ctx.lineWidth = 2;
+       ctx.stroke();
+     }
+   }
 
   private drawNetPattern(ctx: CanvasRenderingContext2D, x: number, y: number, size: number): void {
     ctx.strokeStyle = '#4E342E';

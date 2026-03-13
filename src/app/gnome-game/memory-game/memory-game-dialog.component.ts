@@ -13,8 +13,8 @@ export class MemoryGameDialogComponent implements OnInit {
   constructor(private readonly dialogService: DialogService) {}
 
   ngOnInit(): void {
-    this.dialogService.isDialogOpen$.subscribe(isOpen => {
-      this.isDialogOpen = isOpen;
+    this.dialogService.dialogType$.subscribe(dialogType => {
+      this.isDialogOpen = dialogType === 'memory-game';
     });
   }
 
