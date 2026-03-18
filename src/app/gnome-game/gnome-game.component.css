@@ -60,6 +60,14 @@
   overflow: hidden;
 }
 
+.canvas-container.horizontal {
+  justify-content: flex-start;
+}
+
+.canvas-container.vertical {
+  align-items: flex-start;
+}
+
 canvas {
   background-color: #333333;
   max-width: 100%;

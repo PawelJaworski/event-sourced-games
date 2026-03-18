@@ -6,6 +6,6 @@
     </svg>
   </button>
 </div>
-<div class="canvas-container">
+<div class="canvas-container" [class.horizontal]="isHorizontal" [class.vertical]="!isHorizontal">
   <canvas #canvas (click)="onCanvasClick($event)" (touchstart)="onTouchStart($event)"></canvas>
 </div>

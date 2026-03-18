@@ -17,9 +17,16 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
+  isHorizontal = true;
+
   @HostListener('window:resize')
   onResize(): void {
+    this.updateOrientation();
     this.redrawCanvas();
+  }
+
+  private updateOrientation(): void {
+    this.isHorizontal = window.innerWidth > window.innerHeight;
   }
 
   private readonly subscriptions = new Subscription();
@@ -70,6 +77,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    this.updateOrientation();
     this.loadMapImage();
   }
 
