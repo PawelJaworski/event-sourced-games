@@ -37,8 +37,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private readonly store: Store<AppState>,
     private readonly commandGateway: EventSourcingFacadeService,
-    private readonly gameTokenService: GameTokenService,
-    private readonly dialogService: DialogService
+    private readonly gameTokenService: GameTokenService
   ) {}
 
   ngOnInit(): void {
