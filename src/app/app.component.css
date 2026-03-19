@@ -1,0 +1,8 @@
+.version-footer {
+  position: fixed;
+  bottom: 4px;
+  right: 8px;
+  font-size: 0.7rem;
+  color: #666;
+  pointer-events: none;
+}

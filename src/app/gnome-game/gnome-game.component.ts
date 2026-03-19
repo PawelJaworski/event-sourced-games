@@ -79,6 +79,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.updateOrientation();
     this.loadMapImage();
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 0);
   }
 
   onCanvasClick(event: MouseEvent): void {
@@ -94,7 +95,6 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
     event.preventDefault();
 
     const touch = event.touches[0];
-    const rect = this.canvas.nativeElement.getBoundingClientRect();
 
     const mouseEvent = new MouseEvent('click', {
       clientX: touch.clientX,

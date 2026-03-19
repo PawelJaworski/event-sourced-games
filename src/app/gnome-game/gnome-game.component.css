@@ -62,10 +62,13 @@
 
 .canvas-container.horizontal {
   justify-content: flex-start;
+  align-items: stretch;
 }
 
 .canvas-container.vertical {
   align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
 }
 
 canvas {
@@ -78,4 +81,11 @@ canvas {
   object-fit: contain;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+app-interactions {
+  flex: 1;
+  min-width: 200px;
+  min-height: 100px;
 }

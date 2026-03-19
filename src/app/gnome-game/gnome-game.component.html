@@ -8,4 +8,5 @@
 </div>
 <div class="canvas-container" [class.horizontal]="isHorizontal" [class.vertical]="!isHorizontal">
   <canvas #canvas (click)="onCanvasClick($event)" (touchstart)="onTouchStart($event)"></canvas>
+  <app-interactions></app-interactions>
 </div>
