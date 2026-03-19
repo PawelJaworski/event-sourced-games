@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1773935613223,
+  "timestamp": 1773938706155,
   "index": "/event-sourced-games/index.html",
   "assetGroups": [
     {
@@ -13,9 +13,9 @@
       "urls": [
         "/event-sourced-games/favicon.ico",
         "/event-sourced-games/index.html",
-        "/event-sourced-games/main.6c51c312af7a82fb.js",
+        "/event-sourced-games/main.712473e147a320c4.js",
         "/event-sourced-games/manifest.webmanifest",
-        "/event-sourced-games/polyfills.2555f631e2a8632b.js",
+        "/event-sourced-games/polyfills.5a261cacaa3dbbab.js",
         "/event-sourced-games/runtime.86a5ba23a06da633.js",
         "/event-sourced-games/styles.899d7fd8bfe51645.css"
       ],
@@ -66,12 +66,12 @@
     "/event-sourced-games/assets/img/gnome-house.png": "42d1c68dc61a8dd84e0325f40d8e56ece1602ca6",
     "/event-sourced-games/assets/img/gold-mine.png": "5754026e1c7af3585550ecd61d12cfe311d71988",
     "/event-sourced-games/assets/img/map.png": "a456acc541dd9eb4f19b1344d045ba5a262aeeed",
-    "/event-sourced-games/assets/version.json": "3d86d861aeeb3364a034b0f9a7ee2e630475abf5",
+    "/event-sourced-games/assets/version.json": "b83bdf903e65c41334fbf8496f3400ddf4b028aa",
     "/event-sourced-games/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/event-sourced-games/index.html": "80fbb341383a408d0f8dc77dfa59f6d077e9b6e5",
-    "/event-sourced-games/main.6c51c312af7a82fb.js": "43599dfa4b8932146ce1f9d3916d7d6b4b1dc2cc",
+    "/event-sourced-games/index.html": "e4caa6f5640c07b877553d6949c53f413dffb8b3",
+    "/event-sourced-games/main.712473e147a320c4.js": "287690566a89b6cf5529b26fe2cbecf1e503345c",
     "/event-sourced-games/manifest.webmanifest": "1b1ad7ec3d87a1be516a8653c9fe30cd7bec1019",
-    "/event-sourced-games/polyfills.2555f631e2a8632b.js": "b4e1e0a842c47c6dfd2a264df6165de96fa70f0b",
+    "/event-sourced-games/polyfills.5a261cacaa3dbbab.js": "046e2819b347065e74105fdb61d7512e20485da6",
     "/event-sourced-games/runtime.86a5ba23a06da633.js": "119417fe105ffd5977a4f1ae4eb62b88187e366f",
     "/event-sourced-games/styles.899d7fd8bfe51645.css": "8f504f270f4e24d05d25a9fb8f2f023b5aee1d6d"
   },
