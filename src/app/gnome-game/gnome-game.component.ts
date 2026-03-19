@@ -8,7 +8,6 @@ import {selectGameState} from "./gnome-game.reducer";
 import {AppState} from '../state/app.state';
 import {GnomeGameState} from './gnome-game.state';
 import {Subscription} from "rxjs";
-import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-gnome-game',
@@ -43,22 +42,6 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscriptions.add(
-      this.store.select(selectGameState).pipe(
-        filter(state => state.currentLocation === Locations.FRUITS_OF_THE_FOREST)
-      ).subscribe(() => {
-        this.dialogService.openMemoryGameDialog();
-      })
-    );
-
-    this.subscriptions.add(
-      this.store.select(selectGameState).pipe(
-        filter(state => state.currentLocation === Locations.FISHERY_GROUND)
-      ).subscribe(() => {
-        this.dialogService.openFisheryGameDialog();
-      })
-    );
-
     this.subscriptions.add(
       this.store.select(selectGameState).subscribe(state => {
         this.currentGameState = state;
