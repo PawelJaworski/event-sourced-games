@@ -3,35 +3,28 @@ import {GnomeGameComponent} from "./gnome-game.component";
 import {GameTokenService} from './service/game-token.service';
 import {DialogService} from './dialog.service';
 import {EventSourcingFacadeService} from './event-sourcing-facade.service';
-import {BehaviorSubject} from 'rxjs';
+import {Store} from '@ngrx/store';
 import {Locations, GnomeGameState} from './gnome-game.state';
+import {StoreModule} from '@ngrx/store';
+import {reducers} from '../state/app.reducer';
+import {addEvents} from './gnome-game.reducer';
 
 describe('GnomeGameComponent', () => {
   let component: GnomeGameComponent;
   let fixture: ComponentFixture<GnomeGameComponent>;
   let dialogService: DialogService;
-  let gameStateSubject: BehaviorSubject<GnomeGameState>;
-
-  const mockGameState: GnomeGameState = {
-    currentLocation: Locations.GNOMES_HUT
-  };
+  let store: Store;
 
   beforeEach(async () => {
-    gameStateSubject = new BehaviorSubject<GnomeGameState>(mockGameState);
-
     await TestBed.configureTestingModule({
       declarations: [GnomeGameComponent],
+      imports: [
+        StoreModule.forRoot(reducers)
+      ],
       providers: [
         DialogService,
         GameTokenService,
-        {
-          provide: EventSourcingFacadeService,
-          useValue: {
-            gameState$: gameStateSubject.asObservable(),
-            getGameState: mockGameState,
-            handle: jasmine.createSpy('handle')
-          }
-        }
+        EventSourcingFacadeService
       ]
     })
     .compileComponents();
@@ -41,6 +34,7 @@ describe('GnomeGameComponent', () => {
     fixture = TestBed.createComponent(GnomeGameComponent);
     component = fixture.componentInstance;
     dialogService = TestBed.inject(DialogService);
+    store = TestBed.inject(Store);
     fixture.detectChanges();
   });
 
@@ -50,9 +44,9 @@ describe('GnomeGameComponent', () => {
 
   describe('Token click opens correct game dialog', () => {
     it('should open memory game dialog when Fruits of the Forest token is clicked', fakeAsync(() => {
-      gameStateSubject.next({
-        currentLocation: Locations.FRUITS_OF_THE_FOREST
-      });
+      store.dispatch(addEvents({
+        events: [{eventType: 'WENT TO LOCATION', location: Locations.FRUITS_OF_THE_FOREST}]
+      }));
       tick();
 
       expect(dialogService.isMemoryGameDialogOpen()).toBe(true);
@@ -60,9 +54,9 @@ describe('GnomeGameComponent', () => {
     }));
 
     it('should open fishery game dialog when Fishery Ground token is clicked', fakeAsync(() => {
-      gameStateSubject.next({
-        currentLocation: Locations.FISHERY_GROUND
-      });
+      store.dispatch(addEvents({
+        events: [{eventType: 'WENT TO LOCATION', location: Locations.FISHERY_GROUND}]
+      }));
       tick();
 
       expect(dialogService.isFisheryGameDialogOpen()).toBe(true);
@@ -70,9 +64,9 @@ describe('GnomeGameComponent', () => {
     }));
 
     it('should not open memory game dialog when fishery game token is clicked', fakeAsync(() => {
-      gameStateSubject.next({
-        currentLocation: Locations.FISHERY_GROUND
-      });
+      store.dispatch(addEvents({
+        events: [{eventType: 'WENT TO LOCATION', location: Locations.FISHERY_GROUND}]
+      }));
       tick();
 
       expect(dialogService.isMemoryGameDialogOpen()).toBe(false);
@@ -80,9 +74,9 @@ describe('GnomeGameComponent', () => {
     }));
 
     it('should not open fishery game dialog when memory game token is clicked', fakeAsync(() => {
-      gameStateSubject.next({
-        currentLocation: Locations.FRUITS_OF_THE_FOREST
-      });
+      store.dispatch(addEvents({
+        events: [{eventType: 'WENT TO LOCATION', location: Locations.FRUITS_OF_THE_FOREST}]
+      }));
       tick();
 
       expect(dialogService.isFisheryGameDialogOpen()).toBe(false);

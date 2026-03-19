@@ -1,9 +1,12 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Store} from '@ngrx/store';
 import {GameTokenService} from './service/game-token.service';
 import {Locations} from "./gnome-game.state";
-import {GoToLocationCmd} from "./commands/go-to-location-cmd";
 import {DialogService} from './dialog.service';
 import {EventSourcingFacadeService} from "./event-sourcing-facade.service";
+import {selectGameState} from "./gnome-game.reducer";
+import {AppState} from '../state/app.state';
+import {GnomeGameState} from './gnome-game.state';
 import {Subscription} from "rxjs";
 import {filter} from "rxjs/operators";
 
@@ -30,8 +33,10 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private readonly subscriptions = new Subscription();
+  private currentGameState: GnomeGameState = {currentLocation: Locations.GNOMES_HUT};
 
   constructor(
+    private readonly store: Store<AppState>,
     private readonly commandGateway: EventSourcingFacadeService,
     private readonly gameTokenService: GameTokenService,
     private readonly dialogService: DialogService
@@ -39,7 +44,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.commandGateway.gameState$.pipe(
+      this.store.select(selectGameState).pipe(
         filter(state => state.currentLocation === Locations.FRUITS_OF_THE_FOREST)
       ).subscribe(() => {
         this.dialogService.openMemoryGameDialog();
@@ -47,7 +52,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.subscriptions.add(
-      this.commandGateway.gameState$.pipe(
+      this.store.select(selectGameState).pipe(
         filter(state => state.currentLocation === Locations.FISHERY_GROUND)
       ).subscribe(() => {
         this.dialogService.openFisheryGameDialog();
@@ -55,7 +60,8 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.subscriptions.add(
-      this.commandGateway.gameState$.subscribe(() => {
+      this.store.select(selectGameState).subscribe(state => {
+        this.currentGameState = state;
         this.redrawCanvas();
       })
     );
@@ -107,11 +113,10 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private handleLocationChange(location: Locations): void {
-    this.commandGateway.handle(new GoToLocationCmd(location));
+    this.commandGateway.handle(location);
   }
 
   private redrawCanvas(): void {
-    const gameState = this.commandGateway.getGameState;
     if (!this.canvas) return;
 
     const ctx = this.canvas.nativeElement.getContext('2d');
@@ -122,7 +127,7 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
       ctx.clearRect(0, 0, this.canvas!.nativeElement.width, this.canvas!.nativeElement.height);
       ctx.drawImage(mapImg, 0, 0);
 
-      this.gameTokenService.renderTokens(gameState, ctx);
+      this.gameTokenService.renderTokens(this.currentGameState, ctx);
     };
     mapImg.src = './assets/img/map.png';
   }
@@ -140,11 +145,9 @@ export class GnomeGameComponent implements OnInit, AfterViewInit, OnDestroy {
       ctx.drawImage(mapImg, 0, 0);
 
       this.gameTokenService.initializeTokens(ctx);
-      this.gameTokenService.renderTokens(this.commandGateway.getGameState, ctx);
+      this.gameTokenService.renderTokens(this.currentGameState, ctx);
     };
     mapImg.src = './assets/img/map.png';
   }
 
 }
-
-

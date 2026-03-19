@@ -1,22 +1,27 @@
-import {TestBed} from '@angular/core/testing';
+import {TestBed, fakeAsync, tick} from '@angular/core/testing';
+import {Store, StoreModule} from '@ngrx/store';
 import {EventSourcingFacadeService} from './event-sourcing-facade.service';
 import {EventStoreService} from './event-store.service';
-import {GoToLocationCmd} from './commands/go-to-location-cmd';
 import {Locations} from './gnome-game.state';
+import {selectGameState} from './gnome-game.reducer';
+import {reducers} from '../state/app.reducer';
 import {take} from 'rxjs/operators';
 
 describe('EventSourcingFacadeService', () => {
   let service: EventSourcingFacadeService;
-  let eventStoreService: EventStoreService;
+  let store: Store;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [
+        StoreModule.forRoot(reducers)
+      ],
       providers: [
         EventStoreService,
         EventSourcingFacadeService
       ]
     });
-    eventStoreService = TestBed.inject(EventStoreService);
+    store = TestBed.inject(Store);
     service = TestBed.inject(EventSourcingFacadeService);
   });
 
@@ -24,35 +29,35 @@ describe('EventSourcingFacadeService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should emit when state changes', (done) => {
+  it('should emit when state changes', fakeAsync(() => {
     const emissions: any[] = [];
-    const sub = service.gameState$.pipe(take(2)).subscribe(state => {
+    const sub = store.select(selectGameState).subscribe(state => {
       emissions.push(state);
     });
+    tick();
 
-    service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
+    service.handle(Locations.FRUITS_OF_THE_FOREST);
+    tick();
 
-    setTimeout(() => {
-      sub.unsubscribe();
-      expect(emissions.length).toBe(2);
-      expect(emissions[0].currentLocation).toBe(Locations.GNOMES_HUT);
-      expect(emissions[1].currentLocation).toBe(Locations.FRUITS_OF_THE_FOREST);
-      done();
-    }, 0);
-  });
+    sub.unsubscribe();
+    expect(emissions.length).toBe(2);
+    expect(emissions[0].currentLocation).toBe(Locations.GNOMES_HUT);
+    expect(emissions[1].currentLocation).toBe(Locations.FRUITS_OF_THE_FOREST);
+  }));
 
-  it('should NOT emit when state does not change', (done) => {
+  it('should emit when state changes (same location)', fakeAsync(() => {
     const emissions: any[] = [];
-    service.gameState$.pipe(take(1)).subscribe(state => {
+    store.select(selectGameState).pipe(
+      take(1)
+    ).subscribe(state => {
       emissions.push(state);
     });
+    tick();
 
-    service.handle(new GoToLocationCmd(Locations.GNOMES_HUT));
+    service.handle(Locations.GNOMES_HUT);
+    tick();
 
-    setTimeout(() => {
-      expect(emissions.length).toBe(1);
-      expect(emissions[0].currentLocation).toBe(Locations.GNOMES_HUT);
-      done();
-    }, 0);
-  });
+    expect(emissions.length).toBe(1);
+    expect(emissions[0].currentLocation).toBe(Locations.GNOMES_HUT);
+  }));
 });
