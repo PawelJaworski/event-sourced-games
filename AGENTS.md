@@ -14,6 +14,9 @@ This document provides comprehensive guidelines for agentic coding assistants wo
 - **Run specific test file**: Use `ng test --include="**/path/to/file.spec.ts"` - Run specific test file
 - **Run tests by pattern**: `ng test --grep="test name pattern"` - Run tests matching name pattern
 - **Default test settings**: Tests run in headless mode (no watch)
+- **Run E2E tests**: `npm run test:e2e` - Runs E2E tests using Playwright with visual snapshots
+- **Update E2E snapshots**: `npm run test:e2e:update` - Updates baseline screenshots for visual regression testing
+- **Note**: E2E tests require the dev server to be running (`npm start` in a separate terminal)
 
 ### Development Commands
 - **Start development server**: `npm start` - Starts Angular dev server with hot reload
@@ -218,7 +221,7 @@ Each mini-game has a dialog component that uses DialogService:
 
 - **Angular Version**: 21.0.6
 - **Node.js Version**: v22.12.0
-- **Testing Framework**: Karma with Jasmine
+- **Testing Framework**: Karma with Jasmine (unit tests), Playwright (E2E tests)
 - **State Management**: NgRx Store
 - **Build Tool**: Angular CLI
 
