@@ -182,15 +182,6 @@ export class GameTokenService {
       y: (event.clientY - rect.top) * scaleY
     };
   }
-  private drawAllTokens(ctx: CanvasRenderingContext2D, tokenToRefresh?: GameToken): void {
-    if (tokenToRefresh) {
-      this.drawRoundToken(ctx, tokenToRefresh);
-    } else {
-      for (const token of this.locationTokens.values()) {
-        this.drawRoundToken(ctx, token);
-      }
-    }
-  }
 
   renderTokens(gameState: GnomeGameState, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE): void {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
