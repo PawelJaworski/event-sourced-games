@@ -6,6 +6,7 @@ export interface GameToken {
   y: number;
   size: number;
   imageUrl: string;
+  caption?: string;
 }
 
 @Injectable({
@@ -18,29 +19,29 @@ export class GameTokenService {
 
   constructor() {}
 
-  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken): void {
-    // Draw shadow first (behind the token)
+  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken, showCaption: boolean = false): void {
     this.drawShadow(ctx, token);
 
     const img = new Image();
     img.onload = () => {
-      // Create circular clipping path
       ctx.save();
       ctx.beginPath();
       ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
       ctx.closePath();
       ctx.clip();
 
-      // Draw image within the circular clip
       ctx.drawImage(img, token.x, token.y, token.size, token.size);
 
-      // Draw circular border
       ctx.restore();
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
       ctx.stroke();
+
+      if (showCaption) {
+        this.drawCaption(ctx, token);
+      }
     };
     img.src = token.imageUrl;
   }
@@ -84,7 +85,8 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/fishery-grounds.png'
+      imageUrl: './assets/img/fishery-grounds.png',
+      caption: 'Go fishing'
     };
   }
 
@@ -106,7 +108,8 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/fruits-of-the-forest.png'
+      imageUrl: './assets/img/fruits-of-the-forest.png',
+      caption: 'Begin gathering wild fruits from the forest.'
     };
   }
 
@@ -189,8 +192,22 @@ export class GameTokenService {
         break;
     }
 
-    // Redraw all tokens
-    this.drawAllTokens(ctx);
+    // Redraw all tokens, excluding tokens with captions if they're selected
+    const excludeFruits = gameState.currentLocation === Locations.FRUITS_OF_THE_FOREST;
+    const excludeFishery = gameState.currentLocation === Locations.FISHERY_GROUND;
+    for (const token of this.locationTokens.values()) {
+      if ((excludeFruits && token === fruitsOfTheForestToken) ||
+          (excludeFishery && token === fisheryToken)) continue;
+      this.drawRoundToken(ctx, token, false);
+    }
+
+    if (gameState.currentLocation === Locations.FRUITS_OF_THE_FOREST) {
+      this.drawRoundToken(ctx, fruitsOfTheForestToken, true);
+    }
+
+    if (gameState.currentLocation === Locations.FISHERY_GROUND) {
+      this.drawRoundToken(ctx, fisheryToken, true);
+    }
   }
 
   private enlargeToken(token: GameToken): void {
@@ -210,5 +227,44 @@ export class GameTokenService {
     token.size = this.originalTokenSize;
     token.x = currentCenterX - token.size / 2;
     token.y = currentCenterY - token.size / 2;
+  }
+
+  drawCaption(ctx: CanvasRenderingContext2D, token: GameToken): void {
+    if (!token.caption) return;
+
+    const centerX = token.x + token.size / 2;
+    const textY = token.y - 10;
+
+    ctx.save();
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+
+    const textWidth = ctx.measureText(token.caption).width;
+    const padding = 8;
+    const boxX = centerX - textWidth / 2 - padding;
+    const boxY = textY - 18;
+    const boxWidth = textWidth + padding * 2;
+    const boxHeight = 24;
+    const radius = 6;
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    ctx.beginPath();
+    ctx.moveTo(boxX + radius, boxY);
+    ctx.lineTo(boxX + boxWidth - radius, boxY);
+    ctx.quadraticCurveTo(boxX + boxWidth, boxY, boxX + boxWidth, boxY + radius);
+    ctx.lineTo(boxX + boxWidth, boxY + boxHeight - radius);
+    ctx.quadraticCurveTo(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth - radius, boxY + boxHeight);
+    ctx.lineTo(boxX + radius, boxY + boxHeight);
+    ctx.quadraticCurveTo(boxX, boxY + boxHeight, boxX, boxY + boxHeight - radius);
+    ctx.lineTo(boxX, boxY + radius);
+    ctx.quadraticCurveTo(boxX, boxY, boxX + radius, boxY);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(token.caption, centerX, textY);
+
+    ctx.restore();
   }
 }
