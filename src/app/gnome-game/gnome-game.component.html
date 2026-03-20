@@ -7,6 +7,6 @@
   </button>
 </div>
 <div class="canvas-container" [class.horizontal]="isHorizontal" [class.vertical]="!isHorizontal">
-  <canvas #canvas (click)="onCanvasClick($event)" (touchstart)="onTouchStart($event)"></canvas>
+  <app-map (locationClicked)="handleLocationChange($event)"></app-map>
   <app-interactions></app-interactions>
 </div>
