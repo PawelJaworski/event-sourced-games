@@ -19,6 +19,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private readonly subscriptions = new Subscription();
   private gameState: GnomeGameState = {currentLocation: Locations.GNOMES_HUT};
+  private previewLocation: Locations = Locations.NONE;
 
   constructor(
     private readonly store: Store<AppState>,
@@ -47,9 +48,21 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!this.canvas) return;
 
     const location = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
-    if (location) {
-      this.commandGateway.handle(location);
+
+    if (this.previewLocation !== Locations.NONE) {
+      if (this.gameTokenService.isClickOnCaption(event, this.canvas.nativeElement, this.previewLocation)) {
+        this.commandGateway.handle(this.previewLocation);
+        this.previewLocation = Locations.NONE;
+      } else if (location && location !== this.previewLocation) {
+        this.previewLocation = location;
+      } else if (!location) {
+        this.previewLocation = Locations.NONE;
+      }
+    } else if (location && this.gameTokenService.hasCaption(location)) {
+      this.previewLocation = location;
     }
+
+    this.redrawCanvas();
   }
 
   onTouchStart(event: TouchEvent): void {
@@ -63,9 +76,21 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     });
 
     const location = this.gameTokenService.getClickedLocation(mouseEvent, this.canvas.nativeElement);
-    if (location) {
-      this.commandGateway.handle(location);
+
+    if (this.previewLocation !== Locations.NONE) {
+      if (this.gameTokenService.isClickOnCaption(mouseEvent, this.canvas.nativeElement, this.previewLocation)) {
+        this.commandGateway.handle(this.previewLocation);
+        this.previewLocation = Locations.NONE;
+      } else if (location && location !== this.previewLocation) {
+        this.previewLocation = location;
+      } else if (!location) {
+        this.previewLocation = Locations.NONE;
+      }
+    } else if (location && this.gameTokenService.hasCaption(location)) {
+      this.previewLocation = location;
     }
+
+    this.redrawCanvas();
   }
 
   private redrawCanvas(): void {
@@ -79,7 +104,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
       ctx.clearRect(0, 0, this.canvas!.nativeElement.width, this.canvas!.nativeElement.height);
       ctx.drawImage(mapImg, 0, 0);
 
-      this.gameTokenService.renderTokens(this.gameState, ctx);
+      this.gameTokenService.renderTokens(this.gameState, ctx, this.previewLocation);
     };
     mapImg.src = './assets/img/map.png';
   }
@@ -97,7 +122,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
       ctx.drawImage(mapImg, 0, 0);
 
       this.gameTokenService.initializeTokens(ctx);
-      this.gameTokenService.renderTokens(this.gameState, ctx);
+      this.gameTokenService.renderTokens(this.gameState, ctx, this.previewLocation);
     };
     mapImg.src = './assets/img/map.png';
   }

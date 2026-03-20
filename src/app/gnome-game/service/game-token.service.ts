@@ -145,6 +145,33 @@ export class GameTokenService {
     return Locations.NONE;
   }
 
+  hasCaption(location: Locations): boolean {
+    const token = this.locationTokens.get(location);
+    return !!token?.caption;
+  }
+
+  isClickOnCaption(event: MouseEvent, canvas: HTMLCanvasElement, location: Locations): boolean {
+    const token = this.locationTokens.get(location);
+    if (!token?.caption) return false;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return false;
+
+    const { x, y } = this.getCanvasCoordinates(event, canvas);
+    const centerX = token.x + token.size / 2;
+    const textY = token.y - 10;
+
+    ctx.font = 'bold 14px Arial';
+    const textWidth = ctx.measureText(token.caption).width;
+    const padding = 8;
+    const boxX = centerX - textWidth / 2 - padding;
+    const boxY = textY - 18;
+    const boxWidth = textWidth + padding * 2;
+    const boxHeight = 24;
+
+    return x >= boxX && x <= boxX + boxWidth && y >= boxY && y <= boxY + boxHeight;
+  }
+
   private getCanvasCoordinates(event: MouseEvent, canvas: HTMLCanvasElement): { x: number; y: number } {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
@@ -165,7 +192,7 @@ export class GameTokenService {
     }
   }
 
-  renderTokens(gameState: GnomeGameState, ctx: CanvasRenderingContext2D): void {
+  renderTokens(gameState: GnomeGameState, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE): void {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
@@ -177,7 +204,8 @@ export class GameTokenService {
     this.shrinkToken(goldMineToken);
     this.shrinkToken(fruitsOfTheForestToken);
 
-    switch (gameState.currentLocation) {
+    const activeLocation = previewLocation !== Locations.NONE ? previewLocation : gameState.currentLocation;
+    switch (activeLocation) {
       case Locations.GNOMES_HUT:
         this.enlargeToken(gnomeToken);
         break;
@@ -192,20 +220,20 @@ export class GameTokenService {
         break;
     }
 
-    // Redraw all tokens, excluding tokens with captions if they're selected
-    const excludeFruits = gameState.currentLocation === Locations.FRUITS_OF_THE_FOREST;
-    const excludeFishery = gameState.currentLocation === Locations.FISHERY_GROUND;
+    // Redraw all tokens, excluding tokens with captions if they're previewed
+    const excludeFruits = previewLocation === Locations.FRUITS_OF_THE_FOREST;
+    const excludeFishery = previewLocation === Locations.FISHERY_GROUND;
     for (const token of this.locationTokens.values()) {
       if ((excludeFruits && token === fruitsOfTheForestToken) ||
           (excludeFishery && token === fisheryToken)) continue;
       this.drawRoundToken(ctx, token, false);
     }
 
-    if (gameState.currentLocation === Locations.FRUITS_OF_THE_FOREST) {
+    if (previewLocation === Locations.FRUITS_OF_THE_FOREST) {
       this.drawRoundToken(ctx, fruitsOfTheForestToken, true);
     }
 
-    if (gameState.currentLocation === Locations.FISHERY_GROUND) {
+    if (previewLocation === Locations.FISHERY_GROUND) {
       this.drawRoundToken(ctx, fisheryToken, true);
     }
   }
