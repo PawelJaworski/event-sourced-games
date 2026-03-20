@@ -183,7 +183,7 @@ export class GameTokenService {
     };
   }
 
-  renderTokens(gameState: GnomeGameState, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE): void {
+  renderTokens(currentLocation: Locations, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE): void {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
@@ -195,7 +195,7 @@ export class GameTokenService {
     this.shrinkToken(goldMineToken);
     this.shrinkToken(fruitsOfTheForestToken);
 
-    const activeLocation = previewLocation !== Locations.NONE ? previewLocation : gameState.currentLocation;
+    const activeLocation = previewLocation !== Locations.NONE ? previewLocation : currentLocation;
     switch (activeLocation) {
       case Locations.GNOMES_HUT:
         this.enlargeToken(gnomeToken);
