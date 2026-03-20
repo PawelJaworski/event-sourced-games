@@ -45,40 +45,26 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   onCanvasClick(event: MouseEvent): void {
+    this.handleCanvasInteraction(event);
+  }
+
+  onTouchStart(event: TouchEvent): void {
+    event.preventDefault();
+    const touch = event.touches[0];
+    const mouseEvent = new MouseEvent('click', {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    this.handleCanvasInteraction(mouseEvent);
+  }
+
+  private handleCanvasInteraction(event: MouseEvent): void {
     if (!this.canvas) return;
 
     const location = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
 
     if (this.previewLocation !== Locations.NONE) {
       if (this.gameTokenService.isClickOnCaption(event, this.canvas.nativeElement, this.previewLocation)) {
-        this.commandGateway.handle(this.previewLocation);
-        this.previewLocation = Locations.NONE;
-      } else if (location && location !== this.previewLocation) {
-        this.previewLocation = location;
-      } else if (!location) {
-        this.previewLocation = Locations.NONE;
-      }
-    } else if (location && this.gameTokenService.hasCaption(location)) {
-      this.previewLocation = location;
-    }
-
-    this.redrawCanvas();
-  }
-
-  onTouchStart(event: TouchEvent): void {
-    if (!this.canvas) return;
-    event.preventDefault();
-
-    const touch = event.touches[0];
-    const mouseEvent = new MouseEvent('click', {
-      clientX: touch.clientX,
-      clientY: touch.clientY
-    });
-
-    const location = this.gameTokenService.getClickedLocation(mouseEvent, this.canvas.nativeElement);
-
-    if (this.previewLocation !== Locations.NONE) {
-      if (this.gameTokenService.isClickOnCaption(mouseEvent, this.canvas.nativeElement, this.previewLocation)) {
         this.commandGateway.handle(this.previewLocation);
         this.previewLocation = Locations.NONE;
       } else if (location && location !== this.previewLocation) {

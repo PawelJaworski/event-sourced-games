@@ -23,10 +23,6 @@ export class GnomeGameComponent implements OnInit, OnDestroy {
 
   private readonly subscriptions = new Subscription();
 
-  constructor(
-    private readonly store: Store<AppState>
-  ) {}
-
   ngOnInit(): void {
     this.updateOrientation();
   }
