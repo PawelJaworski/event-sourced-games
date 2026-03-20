@@ -1,9 +1,10 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {GnomeGameState, Locations} from '../gnome-game.state';
 import {GameTokenService} from '../service/game-token.service';
 import {selectGameState} from '../gnome-game.reducer';
 import {AppState} from '../../state/app.state';
+import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -16,15 +17,13 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
-  @Output()
-  locationClicked = new EventEmitter<Locations>();
-
   private readonly subscriptions = new Subscription();
   private gameState: GnomeGameState = {currentLocation: Locations.GNOMES_HUT};
 
   constructor(
     private readonly store: Store<AppState>,
-    private readonly gameTokenService: GameTokenService
+    private readonly gameTokenService: GameTokenService,
+    private readonly commandGateway: EventSourcingFacadeService
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +48,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const location = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
     if (location) {
-      this.locationClicked.emit(location);
+      this.commandGateway.handle(location);
     }
   }
 
@@ -65,7 +64,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const location = this.gameTokenService.getClickedLocation(mouseEvent, this.canvas.nativeElement);
     if (location) {
-      this.locationClicked.emit(location);
+      this.commandGateway.handle(location);
     }
   }
 

@@ -1,7 +1,5 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {Locations} from "./gnome-game.state";
-import {EventSourcingFacadeService} from "./event-sourcing-facade.service";
 import {AppState} from '../state/app.state';
 import {Subscription} from "rxjs";
 
@@ -26,8 +24,7 @@ export class GnomeGameComponent implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
 
   constructor(
-    private readonly store: Store<AppState>,
-    private readonly commandGateway: EventSourcingFacadeService
+    private readonly store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
@@ -47,9 +44,5 @@ export class GnomeGameComponent implements OnInit, OnDestroy {
     } else {
       document.exitFullscreen();
     }
-  }
-
-  handleLocationChange(location: Locations): void {
-    this.commandGateway.handle(location);
   }
 }
