@@ -24,6 +24,7 @@ export class EventSourcingFacadeService {
 
   handle(location: any) {
     const cmd = new GoToLocationCmd(location);
+    console.log("handling", cmd);
     const result = this.commandGateway.handle(cmd);
     if (result.isFailure) {
       console.error("Error: ", result.error);

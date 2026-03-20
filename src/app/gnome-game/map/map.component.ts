@@ -5,6 +5,7 @@ import {GameTokenService} from '../service/game-token.service';
 import {selectGameState} from '../gnome-game.reducer';
 import {AppState} from '../../state/app.state';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
+import {DialogService} from '../dialog.service';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -24,7 +25,8 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   constructor(
     private readonly store: Store<AppState>,
     private readonly gameTokenService: GameTokenService,
-    private readonly commandGateway: EventSourcingFacadeService
+    private readonly commandGateway: EventSourcingFacadeService,
+    private readonly dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -65,15 +67,17 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (this.previewLocation !== Locations.NONE) {
       if (this.gameTokenService.isClickOnCaption(event, this.canvas.nativeElement, this.previewLocation)) {
-        this.commandGateway.handle(this.previewLocation);
+        this.dialogService.openDialogByLocation(this.previewLocation);
         this.previewLocation = Locations.NONE;
       } else if (location && location !== this.previewLocation) {
         this.previewLocation = location;
+        this.commandGateway.handle(location);
       } else if (!location) {
         this.previewLocation = Locations.NONE;
       }
     } else if (location) {
       this.previewLocation = location;
+      this.commandGateway.handle(location);
     }
 
     this.redrawCanvas();

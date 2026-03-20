@@ -1,10 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {Store} from '@ngrx/store';
-import {filter} from 'rxjs/operators';
 import {Locations} from './gnome-game.state';
-import {selectGameState} from './gnome-game.reducer';
-import {AppState} from '../state/app.state';
 
 @Injectable({
   providedIn: 'root'
@@ -21,13 +17,7 @@ export class DialogService {
     [Locations.FISHERY_GROUND, () => this.openFisheryGameDialog()],
   ]);
 
-  constructor(private readonly store: Store<AppState>) {
-    this.store.select(selectGameState).pipe(
-      filter(state => this.locationDialogMap.has(state.currentLocation))
-    ).subscribe(state => {
-      this.locationDialogMap.get(state.currentLocation)!();
-    });
-  }
+  constructor() {}
 
   openMemoryGameDialog(): void {
     if (this.dialogTypeSubject.value === 'memory-game') return;
@@ -52,5 +42,12 @@ export class DialogService {
 
   isFisheryGameDialogOpen(): boolean {
     return this.isDialogOpenSubject.value && this.dialogTypeSubject.value === 'fishery-game';
+  }
+
+  openDialogByLocation(location: Locations): void {
+    const dialogOpener = this.locationDialogMap.get(location);
+    if (dialogOpener) {
+      dialogOpener();
+    }
   }
 }
