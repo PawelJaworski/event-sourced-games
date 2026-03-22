@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {GnomeGameState, Locations} from '../gnome-game.state';
+import {gameStartState, GnomeGameState, Locations} from '../gnome-game.state';
 import {GameTokenService} from '../service/game-token.service';
 import {selectGameState} from '../gnome-game.reducer';
 import {AppState} from '../../state/app.state';
@@ -21,7 +21,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   fisheryGameTimestamp: string | null = null;
 
   private readonly subscriptions = new Subscription();
-  private gameState: GnomeGameState = {currentLocation: Locations.GNOMES_HUT};
+  private gameState: GnomeGameState = gameStartState;
   private previewLocation: Locations = Locations.NONE;
 
   constructor(
@@ -50,6 +50,10 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
 
   onCanvasClick(event: MouseEvent): void {
     this.handleCanvasInteraction(event);
+  }
+
+  onFisheryGameWon(): void {
+    this.commandGateway.catchFish();
   }
 
   onTouchStart(event: TouchEvent): void {

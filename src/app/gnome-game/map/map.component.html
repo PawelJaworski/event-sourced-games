@@ -3,4 +3,4 @@
   (touchstart)="onTouchStart($event)"
 ></canvas>
 <app-memory-game-dialog [openedTimestamp]="memoryGameTimestamp"></app-memory-game-dialog>
-<app-fishery-game-dialog [openedTimestamp]="fisheryGameTimestamp"></app-fishery-game-dialog>
+<app-fishery-game-dialog [openedTimestamp]="fisheryGameTimestamp" (gameWon)="onFisheryGameWon()"></app-fishery-game-dialog>

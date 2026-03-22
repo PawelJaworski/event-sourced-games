@@ -1,1 +1,8 @@
 <p>Interactions</p>
+<div class="inventory">
+  <h4>Inventory</h4>
+  <ul>
+    <li *ngFor="let item of gameState?.inventory">{{ item }}</li>
+  </ul>
+  <p *ngIf="!gameState?.inventory?.length">Empty</p>
+</div>

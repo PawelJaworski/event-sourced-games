@@ -1,6 +1,6 @@
 import {createAction, createReducer, on, props} from '@ngrx/store';
 import {createSelector, createFeatureSelector} from '@ngrx/store';
-import {gameStartState, GnomeGameState, Locations} from './gnome-game.state';
+import {gameStartState, InventoryItem, Locations} from './gnome-game.state';
 import {EventType} from './events/events';
 
 export interface GnomeGameEventsState {
@@ -39,9 +39,14 @@ export const selectGameState = createSelector(
       .map((e: any) => e.location)
       .reduce((_: any, s: Locations) => s, Locations.GNOMES_HUT);
 
+    const inventory = events
+      .filter((e: any) => e?.eventType === EventType.FISH_CATCHED)
+      .map(() => InventoryItem.FISH);
+
     return {
       ...gameStartState,
-      currentLocation
+      currentLocation,
+      inventory
     };
   }
 );

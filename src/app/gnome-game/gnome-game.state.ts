@@ -6,12 +6,19 @@ export enum Locations {
   FRUITS_OF_THE_FOREST = 'FRUITS_OF_THE_FOREST'
 }
 
+export enum InventoryItem {
+  FISH = 'FISH',
+  FRUITS_OF_THE_FOREST = 'FRUITS_OF_THE_FOREST'
+}
+
 export interface GnomeGameState {
   currentLocation: Locations;
+  inventory: InventoryItem[];
 }
 
 export const gameStartState: GnomeGameState = {
-  currentLocation: Locations.GNOMES_HUT
+  currentLocation: Locations.GNOMES_HUT,
+  inventory: []
 }
 
 

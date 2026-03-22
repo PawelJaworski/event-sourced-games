@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 
 @Component({
   selector: 'app-fishery-game-dialog',
@@ -9,6 +9,9 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 export class FisheryGameDialogComponent implements OnChanges {
   @Input()
   openedTimestamp: string | null = null;
+
+  @Output()
+  gameWon = new EventEmitter<void>();
 
   isOpen = false;
 

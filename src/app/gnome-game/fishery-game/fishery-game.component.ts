@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
 
 interface HexTile {
   q: number;
@@ -15,6 +15,8 @@ interface HexTile {
   standalone: false
 })
 export class FisheryGameComponent implements OnInit, AfterViewInit {
+  @Output()
+  gameWon = new EventEmitter<void>();
   @ViewChild('gameCanvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
@@ -133,6 +135,7 @@ export class FisheryGameComponent implements OnInit, AfterViewInit {
 
       if (this.isFishTrapped()) {
         this.isGameWon = true;
+        this.gameWon.emit();
       }
 
       this.drawGame();
@@ -165,8 +168,7 @@ export class FisheryGameComponent implements OnInit, AfterViewInit {
     });
 
     if (validMoves.length > 0) {
-      const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-      this.fishPosition = randomMove;
+      this.fishPosition = validMoves[Math.floor(Math.random() * validMoves.length)];
     }
   }
 
