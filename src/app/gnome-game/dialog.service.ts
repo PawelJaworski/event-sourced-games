@@ -9,7 +9,6 @@ export class DialogService {
   private readonly isDialogOpenSubject = new BehaviorSubject<boolean>(false);
   private readonly dialogTypeSubject = new BehaviorSubject<string>('');
 
-  readonly isDialogOpen$ = this.isDialogOpenSubject.asObservable();
   readonly dialogType$ = this.dialogTypeSubject.asObservable();
 
   private readonly locationDialogMap = new Map<Locations, () => void>([

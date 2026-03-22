@@ -33,6 +33,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     this.subscriptions.add(
       this.store.select(selectGameState).subscribe(state => {
         this.gameState = state;
+        this.previewLocation = state.currentLocation;
         this.redrawCanvas();
       })
     );
@@ -64,22 +65,15 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!this.canvas) return;
 
     const location = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
-
-    if (this.previewLocation !== Locations.NONE) {
       if (this.gameTokenService.isClickOnCaption(event, this.canvas.nativeElement, this.previewLocation)) {
         this.dialogService.openDialogByLocation(this.previewLocation);
         this.previewLocation = Locations.NONE;
-      } else if (location && location !== this.previewLocation) {
+      }
+
+      if (location && location !== this.previewLocation) {
         this.previewLocation = location;
         this.commandGateway.handle(location);
-      } else if (!location) {
-        this.previewLocation = Locations.NONE;
       }
-    } else if (location) {
-      this.previewLocation = location;
-      this.commandGateway.handle(location);
-    }
-
     this.redrawCanvas();
   }
 
