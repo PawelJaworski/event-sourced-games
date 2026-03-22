@@ -1,6 +1,4 @@
-import {Component, OnDestroy} from '@angular/core';
-import {DialogService} from '../dialog.service';
-import {Subscription} from 'rxjs';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 
 @Component({
   selector: 'app-fishery-game-dialog',
@@ -8,22 +6,20 @@ import {Subscription} from 'rxjs';
   styleUrls: ['./fishery-game-dialog.component.css'],
   standalone: false
 })
-export class FisheryGameDialogComponent implements OnDestroy {
-  isDialogOpen = false;
-  private readonly subscription: Subscription;
+export class FisheryGameDialogComponent implements OnChanges {
+  @Input()
+  openedTimestamp: string | null = null;
 
-  constructor(private readonly dialogService: DialogService) {
-    this.subscription = this.dialogService.dialogType$.subscribe(dialogType => {
-      this.isDialogOpen = dialogType === 'fishery-game';
-    });
-  }
+  isOpen = false;
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['openedTimestamp'] && this.openedTimestamp) {
+      this.isOpen = true;
+    }
   }
 
   onCloseDialog(): void {
-    this.isDialogOpen = false;
+    this.isOpen = false;
   }
 
   onOverlayClick(event: MouseEvent): void {

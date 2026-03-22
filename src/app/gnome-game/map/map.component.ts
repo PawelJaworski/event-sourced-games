@@ -5,7 +5,6 @@ import {GameTokenService} from '../service/game-token.service';
 import {selectGameState} from '../gnome-game.reducer';
 import {AppState} from '../../state/app.state';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
-import {DialogService} from '../dialog.service';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -18,6 +17,9 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
+  memoryGameTimestamp: string | null = null;
+  fisheryGameTimestamp: string | null = null;
+
   private readonly subscriptions = new Subscription();
   private gameState: GnomeGameState = {currentLocation: Locations.GNOMES_HUT};
   private previewLocation: Locations = Locations.NONE;
@@ -25,8 +27,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   constructor(
     private readonly store: Store<AppState>,
     private readonly gameTokenService: GameTokenService,
-    private readonly commandGateway: EventSourcingFacadeService,
-    private readonly dialogService: DialogService
+    private readonly commandGateway: EventSourcingFacadeService
   ) {}
 
   ngOnInit(): void {
@@ -66,11 +67,17 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const location = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
     const isCaptionClick = this.gameTokenService.isClickOnCaption(event, this.canvas.nativeElement, this.previewLocation);
+
     if (isCaptionClick) {
-      this.dialogService.openDialogByLocation(this.previewLocation);
+      if (this.previewLocation === Locations.FRUITS_OF_THE_FOREST) {
+        this.memoryGameTimestamp = Date.now().toString();
+      } else if (this.previewLocation === Locations.FISHERY_GROUND) {
+        this.fisheryGameTimestamp = Date.now().toString();
+      }
+      return;
     }
 
-    if (location && location !== this.previewLocation && !isCaptionClick) {
+    if (location && location !== this.previewLocation) {
       this.previewLocation = location;
       this.commandGateway.handle(location);
     }

@@ -205,13 +205,6 @@ src/
 └── environments/              # Environment configurations
 ```
 
-### Dialog Patterns
-Each mini-game has a dialog component that uses DialogService:
-- `*DialogComponent` - Wraps the game in a modal dialog
-- Uses `dialogType$` BehaviorSubject to track which game is open
-- DialogService provides: `openDialogByLocation()`, `isMemoryGameDialogOpen()`, `isFisheryGameDialogOpen()`
-- Dialogs close themselves by setting `isDialogOpen = false` directly
-
 ### Performance Considerations
 - Load images once and reuse references
 - Use Canvas for efficient game rendering
@@ -220,11 +213,12 @@ Each mini-game has a dialog component that uses DialogService:
 
 ### Development Workflow
 
-1. **Before starting work**: Run `npm test` to ensure all tests pass
-2. **During development**: Use `npm start` for live development
-3. **Before committing**: Run `npm run build` to verify production build works
-4. **Testing**: Write unit tests for new functionality
-5. **Code review**: Ensure all TypeScript strict checks pass
+1. **Read tests first**: Before making any changes, read relevant test files (both unit `.spec.ts` and E2E `e2e/game.spec.ts`) to understand the expected behavior and game flow
+2. **Before starting work**: Run `npm test` to ensure all tests pass
+3. **During development**: Use `npm start` for live development
+4. **Before committing**: Run `npm run build` to verify production build works
+5. **Testing**: Write unit tests for new functionality
+6. **Code review**: Ensure all TypeScript strict checks pass
 
 ## Tooling Configuration
 

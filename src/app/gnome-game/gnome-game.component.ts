@@ -1,7 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {AppState} from '../state/app.state';
-import {Subscription} from "rxjs";
+import {Component, HostListener, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-gnome-game',
@@ -9,7 +6,7 @@ import {Subscription} from "rxjs";
   styleUrls: ['./gnome-game.component.css'],
   standalone: false
 })
-export class GnomeGameComponent implements OnInit, OnDestroy {
+export class GnomeGameComponent implements OnInit {
   isHorizontal = true;
 
   @HostListener('window:resize')
@@ -21,14 +18,8 @@ export class GnomeGameComponent implements OnInit, OnDestroy {
     this.isHorizontal = window.innerWidth > window.innerHeight;
   }
 
-  private readonly subscriptions = new Subscription();
-
   ngOnInit(): void {
     this.updateOrientation();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
   }
 
   toggleFullscreen(): void {
