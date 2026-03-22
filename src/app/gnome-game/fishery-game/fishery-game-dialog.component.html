@@ -1,12 +1,14 @@
-<div *ngIf="isDialogOpen" class="dialog-overlay" (click)="onOverlayClick($event)">
-  <div class="dialog-container">
-    <div class="dialog-header">
-      <h2>Fishery Grounds - Trap the Fish</h2>
-      <button class="close-button" (click)="onCloseDialog()">&times;</button>
-    </div>
-    <div class="dialog-content">
-      <p class="game-instructions">Click on hexagons to place nets. Trap the fish before it escapes!</p>
-      <app-fishery-game></app-fishery-game>
+@if (isDialogOpen) {
+  <div class="dialog-overlay" (click)="onOverlayClick($event)">
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <h2>Fishery Grounds - Trap the Fish</h2>
+        <button class="close-button" (click)="onCloseDialog()">&times;</button>
+      </div>
+      <div class="dialog-content">
+        <p class="game-instructions">Click on hexagons to place nets. Trap the fish before it escapes!</p>
+        <app-fishery-game></app-fishery-game>
+      </div>
     </div>
   </div>
-</div>
+}
