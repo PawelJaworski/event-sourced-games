@@ -80,12 +80,12 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
     // Initialization logic
   }
 
-  // Public methods
+  // Public methods (first - API surface)
   onCanvasClick(event: MouseEvent): void {
     // Implementation
   }
 
-  // Private methods
+  // Private methods (last - implementation details)
   private redrawCanvas(): void {
     // Implementation
   }
@@ -100,17 +100,25 @@ export class GnomeGameComponent implements OnInit, AfterViewInit {
 export class GameTokenService {
   constructor() {}
 
-  // Public methods
+  // Public methods (first - API surface)
   getClickedTokenId(x: number, y: number): string {
     // Implementation
   }
 
-  // Private methods
+  // Private methods (last - implementation details)
   private initializeTokens(ctx: CanvasRenderingContext2D): void {
     // Implementation
   }
 }
 ```
+
+### Class Member Ordering
+Within a class, order members as follows:
+1. Properties (all properties, both public and private)
+2. Public methods (API surface)
+3. Private methods (implementation details)
+
+Use `readonly` for properties that are not reassigned. Mark methods `private` if not used outside the class.
 
 ### Event Sourcing Patterns
 ```typescript
@@ -201,7 +209,8 @@ src/
 Each mini-game has a dialog component that uses DialogService:
 - `*DialogComponent` - Wraps the game in a modal dialog
 - Uses `dialogType$` BehaviorSubject to track which game is open
-- DialogService methods: `openMemoryGameDialog()`, `openFisheryGameDialog()`, `closeDialog()`
+- DialogService provides: `openDialogByLocation()`, `isMemoryGameDialogOpen()`, `isFisheryGameDialogOpen()`
+- Dialogs close themselves by setting `isDialogOpen = false` directly
 
 ### Performance Considerations
 - Load images once and reuse references
