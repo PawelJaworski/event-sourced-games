@@ -65,15 +65,15 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!this.canvas) return;
 
     const location = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
-      if (this.gameTokenService.isClickOnCaption(event, this.canvas.nativeElement, this.previewLocation)) {
-        this.dialogService.openDialogByLocation(this.previewLocation);
-        this.previewLocation = Locations.NONE;
-      }
+    const isCaptionClick = this.gameTokenService.isClickOnCaption(event, this.canvas.nativeElement, this.previewLocation);
+    if (isCaptionClick) {
+      this.dialogService.openDialogByLocation(this.previewLocation);
+    }
 
-      if (location && location !== this.previewLocation) {
-        this.previewLocation = location;
-        this.commandGateway.handle(location);
-      }
+    if (location && location !== this.previewLocation && !isCaptionClick) {
+      this.previewLocation = location;
+      this.commandGateway.handle(location);
+    }
     this.redrawCanvas();
   }
 

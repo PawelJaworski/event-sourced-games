@@ -211,21 +211,12 @@ export class GameTokenService {
         break;
     }
 
-    // Redraw all tokens, excluding tokens with captions if they're previewed
-    const excludeFruits = previewLocation === Locations.FRUITS_OF_THE_FOREST;
-    const excludeFishery = previewLocation === Locations.FISHERY_GROUND;
     for (const token of this.locationTokens.values()) {
-      if ((excludeFruits && token === fruitsOfTheForestToken) ||
-          (excludeFishery && token === fisheryToken)) continue;
-      this.drawRoundToken(ctx, token, false);
-    }
-
-    if (previewLocation === Locations.FRUITS_OF_THE_FOREST) {
-      this.drawRoundToken(ctx, fruitsOfTheForestToken, true);
-    }
-
-    if (previewLocation === Locations.FISHERY_GROUND) {
-      this.drawRoundToken(ctx, fisheryToken, true);
+      const location = [...this.locationTokens.entries()].find(([, t]) => t === token)?.[0];
+      const isPreviewed = location && previewLocation === location;
+      const isInside = location && currentLocation === location;
+      const showCaption = (isPreviewed || isInside) && !!token.caption;
+      this.drawRoundToken(ctx, token, showCaption);
     }
   }
 

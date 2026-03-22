@@ -117,6 +117,16 @@ describe('MapComponent', () => {
     });
   });
 
+  describe('Caption visibility when inside location', () => {
+    it('should show caption for Fruits of the Forest when inside that location', () => {
+      expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(true);
+    });
+
+    it('should show caption for Fishery Ground when inside that location', () => {
+      expect(gameTokenService.hasCaption(Locations.FISHERY_GROUND)).toBe(true);
+    });
+  });
+
   describe('Caption click behavior', () => {
     it('should open memory game dialog when Fruits of the Forest caption is clicked', () => {
       spyOn(dialogService, 'openDialogByLocation');
@@ -166,7 +176,7 @@ describe('MapComponent', () => {
       expect(eventSourcingFacade.handle).toHaveBeenCalledTimes(1);
     });
 
-    it('should clear preview location after caption click', () => {
+    it('should keep preview location after caption click', () => {
       const clickEvent = new MouseEvent('click', { clientX: 320, clientY: 340 });
       
       component.onCanvasClick(clickEvent);
@@ -175,7 +185,7 @@ describe('MapComponent', () => {
       const captionClickEvent = new MouseEvent('click', { clientX: 320, clientY: 300 });
       component.onCanvasClick(captionClickEvent);
       
-      expect((component as any).previewLocation).toBe(Locations.NONE);
+      expect((component as any).previewLocation).toBe(Locations.FRUITS_OF_THE_FOREST);
     });
   });
 });
