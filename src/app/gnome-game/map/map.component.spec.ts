@@ -97,10 +97,6 @@ describe('MapComponent', () => {
   });
 
   describe('Caption visibility', () => {
-    it('should show caption for Fishery Ground token', () => {
-      expect(gameTokenService.hasCaption(Locations.FISHERY_GROUND)).toBe(true);
-    });
-
     it('should show caption for Fruits of the Forest token', () => {
       expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(true);
     });
@@ -112,15 +108,15 @@ describe('MapComponent', () => {
     it('should not show caption for Gnomes Hut token', () => {
       expect(gameTokenService.hasCaption(Locations.GNOMES_HUT)).toBe(false);
     });
+
+    it('should not show caption for Fishery Ground token', () => {
+      expect(gameTokenService.hasCaption(Locations.FISHERY_GROUND)).toBe(false);
+    });
   });
 
   describe('Caption visibility when inside location', () => {
     it('should show caption for Fruits of the Forest when inside that location', () => {
       expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(true);
-    });
-
-    it('should show caption for Fishery Ground when inside that location', () => {
-      expect(gameTokenService.hasCaption(Locations.FISHERY_GROUND)).toBe(true);
     });
   });
 

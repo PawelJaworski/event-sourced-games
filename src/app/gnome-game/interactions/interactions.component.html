@@ -7,5 +7,5 @@
   <p *ngIf="!gameState?.inventory?.length">Empty</p>
 </div>
 <div class="actions" *ngIf="gameState?.currentLocation === Locations.FISHERY_GROUND">
-  <button class="start-fishing-btn">Start fishing</button>
+  <button class="start-fishing-btn" (click)="onStartFishing()">Start fishing</button>
 </div>

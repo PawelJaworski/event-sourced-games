@@ -14,11 +14,13 @@ export enum InventoryItem {
 export interface GnomeGameState {
   currentLocation: Locations;
   inventory: InventoryItem[];
+  isFishingInProgress: boolean;
 }
 
 export const gameStartState: GnomeGameState = {
   currentLocation: Locations.GNOMES_HUT,
-  inventory: []
+  inventory: [],
+  isFishingInProgress: false
 }
 
 

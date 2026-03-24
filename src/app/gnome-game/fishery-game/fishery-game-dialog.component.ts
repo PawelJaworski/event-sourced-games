@@ -1,4 +1,10 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Store} from '@ngrx/store';
+import {Subscription} from 'rxjs';
+import {AppState} from '../../state/app.state';
+import {selectGameState} from '../gnome-game.reducer';
+import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
+import {CatchFishCmd} from '../commands/catch-fish-cmd';
 
 @Component({
   selector: 'app-fishery-game-dialog',
@@ -6,19 +12,28 @@ import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '
   styleUrls: ['./fishery-game-dialog.component.css'],
   standalone: false
 })
-export class FisheryGameDialogComponent implements OnChanges {
-  @Input()
-  openedTimestamp: string | null = null;
-
-  @Output()
-  gameWon = new EventEmitter<void>();
+export class FisheryGameDialogComponent implements OnInit, OnDestroy {
+  private readonly subscriptions = new Subscription();
 
   isOpen = false;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['openedTimestamp'] && this.openedTimestamp) {
-      this.isOpen = true;
-    }
+  constructor(
+    private readonly store: Store<AppState>,
+    private readonly commandGateway: EventSourcingFacadeService
+  ) {}
+
+  ngOnInit(): void {
+    this.subscriptions.add(
+      this.store.select(selectGameState).subscribe(state => {
+        if (state.isFishingInProgress) {
+          this.isOpen = true;
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   onCloseDialog(): void {
@@ -29,5 +44,10 @@ export class FisheryGameDialogComponent implements OnChanges {
     if (event.target === event.currentTarget) {
       this.onCloseDialog();
     }
+  }
+
+  onGameWon(): void {
+    this.commandGateway.handle(new CatchFishCmd());
+    this.onCloseDialog();
   }
 }

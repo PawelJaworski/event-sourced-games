@@ -85,8 +85,7 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/fishery-grounds.png',
-      caption: 'Go fishing'
+      imageUrl: './assets/img/fishery-grounds.png'
     };
   }
 

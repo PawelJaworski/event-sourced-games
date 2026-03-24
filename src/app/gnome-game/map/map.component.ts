@@ -7,7 +7,6 @@ import {AppState} from '../../state/app.state';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
 import {Subscription} from 'rxjs';
 import {GoToLocationCmd} from '../commands/go-to-location-cmd';
-import {CatchFishCmd} from '../commands/catch-fish-cmd';
 
 @Component({
   selector: 'app-map',
@@ -20,7 +19,6 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   canvas?: ElementRef<HTMLCanvasElement>;
 
   memoryGameTimestamp: string | null = null;
-  fisheryGameTimestamp: string | null = null;
 
   private readonly subscriptions = new Subscription();
   private gameState: GnomeGameState = gameStartState;
@@ -54,10 +52,6 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     this.handleCanvasInteraction(event);
   }
 
-  onFisheryGameWon(): void {
-    this.commandGateway.handle(new CatchFishCmd());
-  }
-
   onTouchStart(event: TouchEvent): void {
     event.preventDefault();
     const touch = event.touches[0];
@@ -77,8 +71,6 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     if (isCaptionClick) {
       if (this.previewLocation === Locations.FRUITS_OF_THE_FOREST) {
         this.memoryGameTimestamp = Date.now().toString();
-      } else if (this.previewLocation === Locations.FISHERY_GROUND) {
-        this.fisheryGameTimestamp = Date.now().toString();
       }
       return;
     }
