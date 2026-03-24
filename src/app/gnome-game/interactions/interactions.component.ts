@@ -3,7 +3,7 @@ import {Store} from '@ngrx/store';
 import {Subscription} from 'rxjs';
 import {AppState} from '../../state/app.state';
 import {selectGameState} from '../gnome-game.reducer';
-import {GnomeGameState} from '../gnome-game.state';
+import {GnomeGameState, Locations} from '../gnome-game.state';
 
 @Component({
   selector: 'app-interactions',
@@ -14,6 +14,7 @@ import {GnomeGameState} from '../gnome-game.state';
 export class InteractionsComponent implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
   gameState: GnomeGameState | null = null;
+  readonly Locations = Locations;
 
   constructor(private readonly store: Store<AppState>) {}
 
