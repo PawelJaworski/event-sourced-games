@@ -4,6 +4,8 @@ import {CommandGateway} from "../event-sourcing/event-sourcing-template";
 import {GoToLocationCmd, goToLocationHandler} from "./commands/go-to-location-cmd";
 import {CatchFishCmd, catchFishHandler} from "./commands/catch-fish-cmd";
 import {StartFishingCmd, startFishingHandler} from "./commands/start-fishing-cmd";
+import {StartPickingForestFruitsCmd, startPickingForestFruitsHandler} from "./commands/start-picking-forest-fruits-cmd";
+import {TakeFruitsOfTheForestCmd, takeFruitsOfTheForestHandler} from "./commands/take-fruits-of-the-forest-cmd";
 import {EventStoreService} from "./event-store.service";
 import {addEvents} from "./gnome-game.reducer";
 import {AppState} from "../state/app.state";
@@ -22,11 +24,13 @@ export class EventSourcingFacadeService {
     this.commandGateway = new CommandGateway(new Map<any, any>([
       [GoToLocationCmd, goToLocationHandler],
       [CatchFishCmd, catchFishHandler],
-      [StartFishingCmd, startFishingHandler]
+      [StartFishingCmd, startFishingHandler],
+      [StartPickingForestFruitsCmd, startPickingForestFruitsHandler],
+      [TakeFruitsOfTheForestCmd, takeFruitsOfTheForestHandler]
     ]), eventStoreService.eventStore);
   }
 
-  handle(cmd: GoToLocationCmd | CatchFishCmd | StartFishingCmd) {
+  handle(cmd: GoToLocationCmd | CatchFishCmd | StartFishingCmd | StartPickingForestFruitsCmd | TakeFruitsOfTheForestCmd) {
     console.log("handling", cmd);
     const result = this.commandGateway.handle(cmd);
     if (result.isFailure) {
