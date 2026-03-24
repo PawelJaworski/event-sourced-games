@@ -24,10 +24,17 @@ export const currentLocationProjector = (state: Locations, events: any[]): Locat
     .map((e: any) => e.location)
     .reduce((_: any, s: Locations) => s, state);
 
-export const inventoryProjector = (state: InventoryItem[], events: any[]): InventoryItem[] =>
-  events
+export const inventoryProjector = (state: InventoryItem[], events: any[]): InventoryItem[] => {
+  const fish = events
     .filter((e: any) => e?.eventType === EventType.FISH_CATCHED)
     .map(() => InventoryItem.FISH);
+
+  const fruits = events
+    .filter((e: any) => e?.eventType === EventType.FRUITS_OF_THE_FOREST_TAKEN)
+    .map(() => InventoryItem.FRUITS_OF_THE_FOREST);
+
+  return [...fish, ...fruits];
+};
 
 export const currentGameProjector = (state: GnomeGameState, events: any[]): GnomeGameState => ({
   ...state,
