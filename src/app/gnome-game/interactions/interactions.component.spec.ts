@@ -47,7 +47,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.start-fishing-btn'));
+    const button = fixture.debugElement.query(By.css('.action-btn'));
     expect(button).toBeNull();
   });
 
@@ -56,7 +56,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.start-fishing-btn'));
+    const button = fixture.debugElement.query(By.css('.action-btn'));
     expect(button).not.toBeNull();
     expect(button.nativeElement.textContent).toContain('Start fishing');
   });
@@ -67,7 +67,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.start-fishing-btn'));
+    const button = fixture.debugElement.query(By.css('.action-btn'));
     button.nativeElement.click();
 
     expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new StartFishingCmd());
@@ -78,7 +78,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.start-picking-fruits-btn'));
+    const button = fixture.debugElement.query(By.css('.action-btn'));
     expect(button).toBeNull();
   });
 
@@ -87,7 +87,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.start-picking-fruits-btn'));
+    const button = fixture.debugElement.query(By.css('.action-btn'));
     expect(button).not.toBeNull();
     expect(button.nativeElement.textContent).toContain('Begin gathering wild fruits');
   });
@@ -98,7 +98,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.start-picking-fruits-btn'));
+    const button = fixture.debugElement.query(By.css('.action-btn'));
     button.nativeElement.click();
 
     expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new StartPickingForestFruitsCmd());

@@ -9,15 +9,21 @@
   margin-top: 16px;
 }
 
-.start-fishing-btn {
-  padding: 8px 16px;
-  background-color: #4a90d9;
-  color: white;
-  border: none;
-  border-radius: 4px;
+.action-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
-.start-fishing-btn:hover {
-  background-color: #357abd;
+.action-btn:hover {
+  background-color: #f0f0f0;
+  border-color: #999;
 }

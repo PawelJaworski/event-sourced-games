@@ -306,10 +306,4 @@ export class FisheryGameComponent implements OnInit, AfterViewInit {
       ctx.fillText(`Nets placed: ${this.netsPlaced}`, 10, canvasHeight - 15);
     }
   }
-
-  resetGame(): void {
-    this.initializeGame();
-    this.calculateCanvasSize();
-    this.drawGame();
-  }
 }
