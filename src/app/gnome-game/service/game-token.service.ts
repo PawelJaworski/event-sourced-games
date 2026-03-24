@@ -86,12 +86,23 @@ export class GameTokenService {
 
   createGoldMineToken(ctx: CanvasRenderingContext2D, size: number = 40): GameToken {
     const x = 500;
-    const y = 170;
+    const y = 150;
     return {
       x,
       y,
       size,
       imageUrl: './assets/img/gold-mine.png'
+    };
+  }
+
+  createBeaverDamToken(ctx: CanvasRenderingContext2D, size: number = 40): GameToken {
+    const x = 500;
+    const y = 220;
+    return {
+      x,
+      y,
+      size,
+      imageUrl: './assets/img/beaver-dam.png'
     };
   }
 
@@ -126,6 +137,9 @@ export class GameTokenService {
 
     const goldMineToken = this.createGoldMineToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.GOLD_MINE, goldMineToken);
+
+    const beaverDamToken = this.createBeaverDamToken(ctx, this.originalTokenSize);
+    this.locationTokens.set(Locations.BEAVER_DAM, beaverDamToken);
 
     const fruitsOfTheForestToken = this.createFruitsOfTheForestToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.FRUITS_OF_THE_FOREST, fruitsOfTheForestToken);
@@ -167,13 +181,15 @@ export class GameTokenService {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
+    const beaverDamToken = this.locationTokens.get(Locations.BEAVER_DAM);
     const fruitsOfTheForestToken = this.locationTokens.get(Locations.FRUITS_OF_THE_FOREST);
     const marketplaceToken = this.locationTokens.get(Locations.MARKETPLACE);
-    if (!gnomeToken || !fisheryToken || !goldMineToken || !fruitsOfTheForestToken || !marketplaceToken) return;
+    if (!gnomeToken || !fisheryToken || !goldMineToken || !beaverDamToken || !fruitsOfTheForestToken || !marketplaceToken) return;
 
     this.shrinkToken(gnomeToken);
     this.shrinkToken(fisheryToken);
     this.shrinkToken(goldMineToken);
+    this.shrinkToken(beaverDamToken);
     this.shrinkToken(fruitsOfTheForestToken);
     this.shrinkToken(marketplaceToken);
 
@@ -187,6 +203,9 @@ export class GameTokenService {
         break;
       case Locations.GOLD_MINE:
         this.enlargeToken(goldMineToken);
+        break;
+      case Locations.BEAVER_DAM:
+        this.enlargeToken(beaverDamToken);
         break;
       case Locations.FRUITS_OF_THE_FOREST:
         this.enlargeToken(fruitsOfTheForestToken);

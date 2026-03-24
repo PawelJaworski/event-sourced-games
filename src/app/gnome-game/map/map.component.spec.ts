@@ -80,6 +80,7 @@ describe('MapComponent', () => {
   describe('Token click preview behavior', () => {
     const testCases = [
       { location: Locations.GOLD_MINE, clientX: 540, clientY: 190, name: 'Gold Mine' },
+      { location: Locations.BEAVER_DAM, clientX: 540, clientY: 240, name: 'Beaver Dam' },
       { location: Locations.FISHERY_GROUND, clientX: 410, clientY: 290, name: 'Fishery Ground' },
       { location: Locations.FRUITS_OF_THE_FOREST, clientX: 320, clientY: 340, name: 'Fruits of the Forest' },
       { location: Locations.GNOMES_HUT, clientX: 570, clientY: 530, name: 'Gnomes Hut' },
