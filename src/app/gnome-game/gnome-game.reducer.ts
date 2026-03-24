@@ -40,7 +40,8 @@ export const currentGameProjector = (state: GnomeGameState, events: any[]): Gnom
   ...state,
   currentLocation: currentLocationProjector(state.currentLocation, events),
   inventory: inventoryProjector(state.inventory, events),
-  isFishingInProgress: events[events.length - 1]?.eventType == EventType.FISHING_STARTED
+  isFishingInProgress: events[events.length - 1]?.eventType == EventType.FISHING_STARTED,
+  isPickingForestFruitsInProgress: events[events.length - 1]?.eventType == EventType.PICKING_FOREST_FRUITS_STARTED
 });
 
 export const gnomeGameEventsReducer = createReducer(

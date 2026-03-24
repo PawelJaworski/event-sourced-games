@@ -18,8 +18,6 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
-  memoryGameTimestamp: string | null = null;
-
   private readonly subscriptions = new Subscription();
   private gameState: GnomeGameState = gameStartState;
   private previewLocation: Locations = Locations.NONE;
@@ -66,14 +64,6 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!this.canvas) return;
 
     const location = this.gameTokenService.getClickedLocation(event, this.canvas.nativeElement);
-    const isCaptionClick = this.gameTokenService.isClickOnCaption(event, this.canvas.nativeElement, this.previewLocation);
-
-    if (isCaptionClick) {
-      if (this.previewLocation === Locations.FRUITS_OF_THE_FOREST) {
-        this.memoryGameTimestamp = Date.now().toString();
-      }
-      return;
-    }
 
     if (location && location !== this.previewLocation) {
       this.previewLocation = location;

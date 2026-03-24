@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
 
 interface Card {
   id: number;
@@ -20,6 +20,9 @@ interface Card {
 export class MemoryGameComponent implements OnInit, AfterViewInit {
   @ViewChild('gameCanvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
+
+  @Output()
+  gameWon = new EventEmitter<void>();
 
   private cards: Card[] = [];
   private flippedCards: Card[] = [];
@@ -182,6 +185,7 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
       if (this.matchedPairs === this.fruitTypes.length) {
         setTimeout(() => {
           this.showGameComplete();
+          this.gameWon.emit();
         }, 500);
       }
     } else {

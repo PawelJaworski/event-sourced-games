@@ -107,8 +107,7 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/fruits-of-the-forest.png',
-      caption: 'Begin gathering wild fruits from the forest.'
+      imageUrl: './assets/img/fruits-of-the-forest.png'
     };
   }
 

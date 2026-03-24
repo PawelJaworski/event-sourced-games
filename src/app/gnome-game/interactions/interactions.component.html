@@ -9,3 +9,6 @@
 <div class="actions" *ngIf="gameState?.currentLocation === Locations.FISHERY_GROUND">
   <button class="start-fishing-btn" (click)="onStartFishing()">Start fishing</button>
 </div>
+<div class="actions" *ngIf="gameState?.currentLocation === Locations.FRUITS_OF_THE_FOREST">
+  <button class="start-picking-fruits-btn" (click)="onStartPickingForestFruits()">Begin gathering wild fruits</button>
+</div>

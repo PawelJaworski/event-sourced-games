@@ -97,8 +97,8 @@ describe('MapComponent', () => {
   });
 
   describe('Caption visibility', () => {
-    it('should show caption for Fruits of the Forest token', () => {
-      expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(true);
+    it('should not show caption for Fruits of the Forest token', () => {
+      expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(false);
     });
 
     it('should not show caption for Gold Mine token', () => {
@@ -115,8 +115,8 @@ describe('MapComponent', () => {
   });
 
   describe('Caption visibility when inside location', () => {
-    it('should show caption for Fruits of the Forest when inside that location', () => {
-      expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(true);
+    it('should not show caption for Fruits of the Forest when inside that location', () => {
+      expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(false);
     });
   });
 

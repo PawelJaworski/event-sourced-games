@@ -15,12 +15,14 @@ export interface GnomeGameState {
   currentLocation: Locations;
   inventory: InventoryItem[];
   isFishingInProgress: boolean;
+  isPickingForestFruitsInProgress: boolean;
 }
 
 export const gameStartState: GnomeGameState = {
   currentLocation: Locations.GNOMES_HUT,
   inventory: [],
-  isFishingInProgress: false
+  isFishingInProgress: false,
+  isPickingForestFruitsInProgress: false
 }
 
 

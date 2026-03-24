@@ -9,6 +9,8 @@ import {take} from 'rxjs/operators';
 import {GoToLocationCmd} from './commands/go-to-location-cmd';
 import {CatchFishCmd} from './commands/catch-fish-cmd';
 import {StartFishingCmd} from './commands/start-fishing-cmd';
+import {StartPickingForestFruitsCmd} from './commands/start-picking-forest-fruits-cmd';
+import {TakeFruitsOfTheForestCmd} from './commands/take-fruits-of-the-forest-cmd';
 
 describe('EventSourcingFacadeService', () => {
   let service: EventSourcingFacadeService;
@@ -151,6 +153,96 @@ describe('EventSourcingFacadeService', () => {
     tick();
 
     expect(state.isFishingInProgress).toBe(false);
+    expect(state.currentLocation).toBe(Locations.GNOMES_HUT);
+  }));
+
+  it('when picking forest fruits is started isPickingForestFruitsInProgress should be true', fakeAsync(() => {
+    let state: any;
+
+    service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
+    tick();
+
+    service.handle(new StartPickingForestFruitsCmd());
+    tick();
+
+    store.select(selectGameState).pipe(
+      take(1)
+    ).subscribe(s => {
+      state = s;
+    });
+    tick();
+
+    expect(state.isPickingForestFruitsInProgress).toBe(true);
+  }));
+
+  it('when fruits are taken after picking started isPickingForestFruitsInProgress should be false', fakeAsync(() => {
+    let state: any;
+
+    service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
+    tick();
+
+    service.handle(new StartPickingForestFruitsCmd());
+    tick();
+
+    service.handle(new TakeFruitsOfTheForestCmd());
+    tick();
+
+    store.select(selectGameState).pipe(
+      take(1)
+    ).subscribe(s => {
+      state = s;
+    });
+    tick();
+
+    expect(state.isPickingForestFruitsInProgress).toBe(false);
+    expect(state.inventory).toContain(InventoryItem.FRUITS_OF_THE_FOREST);
+  }));
+
+  it('when fruits of the forest are taken they\'re available in inventory', fakeAsync(() => {
+    let state: any;
+    store.select(selectGameState).pipe(
+      take(1)
+    ).subscribe(s => {
+      state = s;
+    });
+    tick();
+
+    expect(state.inventory).toEqual([]);
+
+    service.handle(new TakeFruitsOfTheForestCmd());
+    tick();
+
+    store.select(selectGameState).pipe(
+      take(1)
+    ).subscribe(s => {
+      state = s;
+    });
+    tick();
+
+    expect(state.inventory).toContain(InventoryItem.FRUITS_OF_THE_FOREST);
+    expect(state.inventory.length).toBe(1);
+  }));
+
+  it('when go to other location isPickingForestFruitsInProgress should be false', fakeAsync(() => {
+    let state: any;
+
+    service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
+    tick();
+
+    service.handle(new StartPickingForestFruitsCmd());
+    tick();
+
+    service.handle(new GoToLocationCmd(Locations.GNOMES_HUT));
+    tick();
+
+    store.select(selectGameState).pipe(
+      take(1)
+    ).subscribe(s => {
+      state = s;
+    });
+    tick();
+
+    expect(state.isPickingForestFruitsInProgress).toBe(false);
     expect(state.currentLocation).toBe(Locations.GNOMES_HUT);
   }));
 });

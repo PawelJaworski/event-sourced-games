@@ -6,6 +6,7 @@ import {selectGameState} from '../gnome-game.reducer';
 import {GnomeGameState, Locations} from '../gnome-game.state';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
 import {StartFishingCmd} from '../commands/start-fishing-cmd';
+import {StartPickingForestFruitsCmd} from '../commands/start-picking-forest-fruits-cmd';
 
 @Component({
   selector: 'app-interactions',
@@ -38,5 +39,9 @@ export class InteractionsComponent implements OnInit, OnDestroy {
 
   onStartFishing(): void {
     this.commandGateway.handle(new StartFishingCmd());
+  }
+
+  onStartPickingForestFruits(): void {
+    this.commandGateway.handle(new StartPickingForestFruitsCmd());
   }
 }
