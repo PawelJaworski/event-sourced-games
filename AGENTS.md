@@ -147,6 +147,30 @@ const locationProjector: Projector<GnomeGameState> = (state: GnomeGameState, eve
 }
 ```
 
+### Adding New Commands & Events
+
+**File locations:**
+- Command type enum: `src/app/gnome-game/commands/commands.ts`
+- Event type enum: `src/app/gnome-game/events/events.ts`
+- Command classes: `src/app/gnome-game/commands/<name>-cmd.ts`
+- Event classes: `src/app/gnome-game/events/<name>.ts`
+- Registration: `src/app/gnome-game/event-sourcing-facade.service.ts`
+
+**Pattern to add a new command (e.g. `start-fishing`):**
+
+1. Add to `CommandType` enum in `commands.ts` and export a const
+2. Add to `EventType` enum in `events.ts` and export a const
+3. Create event class in `events/<name>.ts` extending `[EVENT_TYPE]` pattern
+4. Create command class in `commands/<name>-cmd.ts` with `[CMD_TYPE]` and handler
+5. Import and register handler in `event-sourcing-facade.service.ts`:
+   - Add to `CommandGateway` map
+   - Add to `handle()` method's command union type
+
+**Existing commands:**
+- `GO_TO_LOCATION` → emits `WENT_TO_LOCATION` event
+- `CATCH_FISH` → emits `FISH_CATCHED` event
+- `START_FISHING` → emits `FISHING_STARTED` event
+
 ### Error Handling
 - Use optional chaining (`?.`) for safe property access
 - Check for null/undefined canvas context elements before usage
