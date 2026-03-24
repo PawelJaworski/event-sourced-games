@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1774214989504,
+  "timestamp": 1774368749539,
   "index": "/event-sourced-games/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/event-sourced-games/favicon.ico",
         "/event-sourced-games/index.html",
-        "/event-sourced-games/main.a62f960fc2aa9e50.js",
+        "/event-sourced-games/main.a441081836f5d731.js",
         "/event-sourced-games/manifest.webmanifest",
         "/event-sourced-games/polyfills.5a261cacaa3dbbab.js",
         "/event-sourced-games/runtime.86a5ba23a06da633.js",
@@ -68,8 +68,8 @@
     "/event-sourced-games/assets/img/map.png": "a456acc541dd9eb4f19b1344d045ba5a262aeeed",
     "/event-sourced-games/assets/version.json": "2d5d0c2f61de2c5d50ac8e457e02bbac0e6c1487",
     "/event-sourced-games/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/event-sourced-games/index.html": "501b0e25455dd353c233e4aa8ecfcd6ff516a982",
-    "/event-sourced-games/main.a62f960fc2aa9e50.js": "823e70e22dffd6d36f4919d467f43c7d459c08e4",
+    "/event-sourced-games/index.html": "4a7e1dc61ebf8fd430f104cd8766b7d1f224b74c",
+    "/event-sourced-games/main.a441081836f5d731.js": "3b19866014f8d6e9cf0358e3c218a184214064f6",
     "/event-sourced-games/manifest.webmanifest": "1b1ad7ec3d87a1be516a8653c9fe30cd7bec1019",
     "/event-sourced-games/polyfills.5a261cacaa3dbbab.js": "046e2819b347065e74105fdb61d7512e20485da6",
     "/event-sourced-games/runtime.86a5ba23a06da633.js": "119417fe105ffd5977a4f1ae4eb62b88187e366f",
