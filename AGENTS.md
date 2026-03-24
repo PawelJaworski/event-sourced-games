@@ -14,9 +14,6 @@ This document provides comprehensive guidelines for agentic coding assistants wo
 - **Run specific test file**: Use `ng test --include="**/path/to/file.spec.ts"` - Run specific test file
 - **Run tests by pattern**: `ng test --grep="test name pattern"` - Run tests matching name pattern
 - **Default test settings**: Tests run in headless mode (no watch)
-- **Run E2E tests**: `npm run test:e2e` - Runs E2E tests using Playwright with visual snapshots
-- **Update E2E snapshots**: `npm run test:e2e:update` - Updates baseline screenshots for visual regression testing
-- **Note**: E2E tests require the dev server to be running (`npm start` in a separate terminal)
 
 ### Development Commands
 - **Start development server**: `npm start` - Starts Angular dev server with hot reload
@@ -237,7 +234,7 @@ src/
 
 ### Development Workflow
 
-1. **Read tests first**: Before making any changes, read relevant test files (both unit `.spec.ts` and E2E `e2e/game.spec.ts`) to understand the expected behavior and game flow
+1. **Read tests first**: Before making any changes, read relevant test files (`.spec.ts`) to understand the expected behavior and game flow
 2. **Before starting work**: Run `npm test` to ensure all tests pass
 3. **During development**: Use `npm start` for live development
 4. **Before committing**: Run `npm run build` to verify production build works
@@ -248,7 +245,7 @@ src/
 
 - **Angular Version**: 21.0.6
 - **Node.js Version**: v22.12.0
-- **Testing Framework**: Karma with Jasmine (unit tests), Playwright (E2E tests)
+- **Testing Framework**: Karma with Jasmine
 - **State Management**: NgRx Store
 - **Build Tool**: Angular CLI
 

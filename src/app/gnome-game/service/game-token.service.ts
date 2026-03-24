@@ -6,7 +6,6 @@ export interface GameToken {
   y: number;
   size: number;
   imageUrl: string;
-  caption?: string;
 }
 
 @Injectable({
@@ -19,7 +18,7 @@ export class GameTokenService {
 
   constructor() {}
 
-  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken, showCaption: boolean = false): void {
+  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken): void {
     this.drawShadow(ctx, token);
 
     const img = new Image();
@@ -38,10 +37,6 @@ export class GameTokenService {
       ctx.beginPath();
       ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
       ctx.stroke();
-
-      if (showCaption) {
-        this.drawCaption(ctx, token);
-      }
     };
     img.src = token.imageUrl;
   }
@@ -111,6 +106,17 @@ export class GameTokenService {
     };
   }
 
+  createMarketplaceToken(ctx: CanvasRenderingContext2D, size: number = 40): GameToken {
+    const x = 180;
+    const y = 350;
+    return {
+      x,
+      y,
+      size,
+      imageUrl: './assets/img/marketplace.png'
+    };
+  }
+
   initializeTokens(ctx: CanvasRenderingContext2D): void {
     const gnomeToken = this.createGnomeHouseToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.GNOMES_HUT, gnomeToken);
@@ -123,6 +129,9 @@ export class GameTokenService {
 
     const fruitsOfTheForestToken = this.createFruitsOfTheForestToken(ctx, this.originalTokenSize);
     this.locationTokens.set(Locations.FRUITS_OF_THE_FOREST, fruitsOfTheForestToken);
+
+    const marketplaceToken = this.createMarketplaceToken(ctx, this.originalTokenSize);
+    this.locationTokens.set(Locations.MARKETPLACE, marketplaceToken);
   }
 
   getClickedLocation(event: MouseEvent, canvas: HTMLCanvasElement): Locations {
@@ -143,33 +152,6 @@ export class GameTokenService {
     return Locations.NONE;
   }
 
-  hasCaption(location: Locations): boolean {
-    const token = this.locationTokens.get(location);
-    return !!token?.caption;
-  }
-
-  isClickOnCaption(event: MouseEvent, canvas: HTMLCanvasElement, location: Locations): boolean {
-    const token = this.locationTokens.get(location);
-    if (!token?.caption) return false;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return false;
-
-    const { x, y } = this.getCanvasCoordinates(event, canvas);
-    const centerX = token.x + token.size / 2;
-    const textY = token.y - 10;
-
-    ctx.font = 'bold 14px Arial';
-    const textWidth = ctx.measureText(token.caption).width;
-    const padding = 8;
-    const boxX = centerX - textWidth / 2 - padding;
-    const boxY = textY - 18;
-    const boxWidth = textWidth + padding * 2;
-    const boxHeight = 24;
-
-    return x >= boxX && x <= boxX + boxWidth && y >= boxY && y <= boxY + boxHeight;
-  }
-
   private getCanvasCoordinates(event: MouseEvent, canvas: HTMLCanvasElement): { x: number; y: number } {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
@@ -186,12 +168,14 @@ export class GameTokenService {
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
     const fruitsOfTheForestToken = this.locationTokens.get(Locations.FRUITS_OF_THE_FOREST);
-    if (!gnomeToken || !fisheryToken || !goldMineToken || !fruitsOfTheForestToken) return;
+    const marketplaceToken = this.locationTokens.get(Locations.MARKETPLACE);
+    if (!gnomeToken || !fisheryToken || !goldMineToken || !fruitsOfTheForestToken || !marketplaceToken) return;
 
     this.shrinkToken(gnomeToken);
     this.shrinkToken(fisheryToken);
     this.shrinkToken(goldMineToken);
     this.shrinkToken(fruitsOfTheForestToken);
+    this.shrinkToken(marketplaceToken);
 
     const activeLocation = previewLocation !== Locations.NONE ? previewLocation : currentLocation;
     switch (activeLocation) {
@@ -207,14 +191,13 @@ export class GameTokenService {
       case Locations.FRUITS_OF_THE_FOREST:
         this.enlargeToken(fruitsOfTheForestToken);
         break;
+      case Locations.MARKETPLACE:
+        this.enlargeToken(marketplaceToken);
+        break;
     }
 
     for (const token of this.locationTokens.values()) {
-      const location = [...this.locationTokens.entries()].find(([, t]) => t === token)?.[0];
-      const isPreviewed = location && previewLocation === location;
-      const isInside = location && currentLocation === location;
-      const showCaption = (isPreviewed || isInside) && !!token.caption;
-      this.drawRoundToken(ctx, token, showCaption);
+      this.drawRoundToken(ctx, token);
     }
   }
 
@@ -237,42 +220,4 @@ export class GameTokenService {
     token.y = currentCenterY - token.size / 2;
   }
 
-  drawCaption(ctx: CanvasRenderingContext2D, token: GameToken): void {
-    if (!token.caption) return;
-
-    const centerX = token.x + token.size / 2;
-    const textY = token.y - 10;
-
-    ctx.save();
-    ctx.font = 'bold 14px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-
-    const textWidth = ctx.measureText(token.caption).width;
-    const padding = 8;
-    const boxX = centerX - textWidth / 2 - padding;
-    const boxY = textY - 18;
-    const boxWidth = textWidth + padding * 2;
-    const boxHeight = 24;
-    const radius = 6;
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    ctx.beginPath();
-    ctx.moveTo(boxX + radius, boxY);
-    ctx.lineTo(boxX + boxWidth - radius, boxY);
-    ctx.quadraticCurveTo(boxX + boxWidth, boxY, boxX + boxWidth, boxY + radius);
-    ctx.lineTo(boxX + boxWidth, boxY + boxHeight - radius);
-    ctx.quadraticCurveTo(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth - radius, boxY + boxHeight);
-    ctx.lineTo(boxX + radius, boxY + boxHeight);
-    ctx.quadraticCurveTo(boxX, boxY + boxHeight, boxX, boxY + boxHeight - radius);
-    ctx.lineTo(boxX, boxY + radius);
-    ctx.quadraticCurveTo(boxX, boxY, boxX + radius, boxY);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(token.caption, centerX, textY);
-
-    ctx.restore();
-  }
 }

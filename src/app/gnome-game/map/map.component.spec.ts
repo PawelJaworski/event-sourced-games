@@ -82,7 +82,8 @@ describe('MapComponent', () => {
       { location: Locations.GOLD_MINE, clientX: 540, clientY: 190, name: 'Gold Mine' },
       { location: Locations.FISHERY_GROUND, clientX: 410, clientY: 290, name: 'Fishery Ground' },
       { location: Locations.FRUITS_OF_THE_FOREST, clientX: 320, clientY: 340, name: 'Fruits of the Forest' },
-      { location: Locations.GNOMES_HUT, clientX: 570, clientY: 530, name: 'Gnomes Hut' }
+      { location: Locations.GNOMES_HUT, clientX: 570, clientY: 530, name: 'Gnomes Hut' },
+      { location: Locations.MARKETPLACE, clientX: 200, clientY: 370, name: 'Marketplace' }
     ];
 
     testCases.forEach(({ location, clientX, clientY, name }) => {
@@ -93,30 +94,6 @@ describe('MapComponent', () => {
 
         expect((component as any).previewLocation).toBe(location);
       });
-    });
-  });
-
-  describe('Caption visibility', () => {
-    it('should not show caption for Fruits of the Forest token', () => {
-      expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(false);
-    });
-
-    it('should not show caption for Gold Mine token', () => {
-      expect(gameTokenService.hasCaption(Locations.GOLD_MINE)).toBe(false);
-    });
-
-    it('should not show caption for Gnomes Hut token', () => {
-      expect(gameTokenService.hasCaption(Locations.GNOMES_HUT)).toBe(false);
-    });
-
-    it('should not show caption for Fishery Ground token', () => {
-      expect(gameTokenService.hasCaption(Locations.FISHERY_GROUND)).toBe(false);
-    });
-  });
-
-  describe('Caption visibility when inside location', () => {
-    it('should not show caption for Fruits of the Forest when inside that location', () => {
-      expect(gameTokenService.hasCaption(Locations.FRUITS_OF_THE_FOREST)).toBe(false);
     });
   });
 
