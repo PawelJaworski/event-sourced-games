@@ -8,6 +8,7 @@ import {StoreModule} from '@ngrx/store';
 import {reducers} from '../../state/app.reducer';
 import {Locations} from '../gnome-game.state';
 import {ElementRef} from '@angular/core';
+import {GoToLocationCmd} from '../commands/go-to-location-cmd';
 
 describe('MapComponent', () => {
   let component: MapComponent;
@@ -130,7 +131,7 @@ describe('MapComponent', () => {
       
       component.onCanvasClick(clickEvent);
       
-      expect(eventSourcingFacade.handle).toHaveBeenCalledWith(Locations.FRUITS_OF_THE_FOREST);
+      expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
     });
   });
 });

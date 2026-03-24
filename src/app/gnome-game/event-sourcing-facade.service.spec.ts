@@ -6,6 +6,8 @@ import {InventoryItem, Locations} from './gnome-game.state';
 import {selectGameState} from './gnome-game.reducer';
 import {reducers} from '../state/app.reducer';
 import {take} from 'rxjs/operators';
+import {GoToLocationCmd} from './commands/go-to-location-cmd';
+import {CatchFishCmd} from './commands/catch-fish-cmd';
 
 describe('EventSourcingFacadeService', () => {
   let service: EventSourcingFacadeService;
@@ -36,7 +38,7 @@ describe('EventSourcingFacadeService', () => {
     });
     tick();
 
-    service.handle(Locations.FRUITS_OF_THE_FOREST);
+    service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
     tick();
 
     sub.unsubscribe();
@@ -54,7 +56,7 @@ describe('EventSourcingFacadeService', () => {
     });
     tick();
 
-    service.handle(Locations.GNOMES_HUT);
+    service.handle(new GoToLocationCmd(Locations.GNOMES_HUT));
     tick();
 
     expect(emissions.length).toBe(1);
@@ -72,7 +74,7 @@ describe('EventSourcingFacadeService', () => {
 
     expect(state.inventory).toEqual([]);
 
-    service.catchFish();
+    service.handle(new CatchFishCmd());
     tick();
 
     store.select(selectGameState).pipe(

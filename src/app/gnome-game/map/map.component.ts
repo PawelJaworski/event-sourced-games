@@ -6,6 +6,8 @@ import {selectGameState} from '../gnome-game.reducer';
 import {AppState} from '../../state/app.state';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
 import {Subscription} from 'rxjs';
+import {GoToLocationCmd} from '../commands/go-to-location-cmd';
+import {CatchFishCmd} from '../commands/catch-fish-cmd';
 
 @Component({
   selector: 'app-map',
@@ -53,7 +55,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   onFisheryGameWon(): void {
-    this.commandGateway.catchFish();
+    this.commandGateway.handle(new CatchFishCmd());
   }
 
   onTouchStart(event: TouchEvent): void {
@@ -83,7 +85,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (location && location !== this.previewLocation) {
       this.previewLocation = location;
-      this.commandGateway.handle(location);
+      this.commandGateway.handle(new GoToLocationCmd(location));
     }
     this.redrawCanvas();
   }

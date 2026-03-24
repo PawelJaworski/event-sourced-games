@@ -24,22 +24,7 @@ export class EventSourcingFacadeService {
     ]), eventStoreService.eventStore);
   }
 
-  handle(location: any) {
-    const cmd = new GoToLocationCmd(location);
-    console.log("handling", cmd);
-    const result = this.commandGateway.handle(cmd);
-    if (result.isFailure) {
-      console.error("Error: ", result.error);
-      return;
-    }
-    const events = result.success;
-    if (events.length > 0) {
-      this.store.dispatch(addEvents({events}));
-    }
-  }
-
-  catchFish() {
-    const cmd = new CatchFishCmd();
+  handle(cmd: GoToLocationCmd | CatchFishCmd) {
     console.log("handling", cmd);
     const result = this.commandGateway.handle(cmd);
     if (result.isFailure) {
