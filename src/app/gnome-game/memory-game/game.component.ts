@@ -1,4 +1,6 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
+import {TakeFruitsOfTheForestCmd} from '../commands/take-fruits-of-the-forest-cmd';
 
 interface Card {
   id: number;
@@ -21,9 +23,6 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
   @ViewChild('gameCanvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
-  @Output()
-  gameWon = new EventEmitter<void>();
-
   private cards: Card[] = [];
   private flippedCards: Card[] = [];
   matchedPairs = 0;
@@ -36,6 +35,8 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
   private cardSpacing = 10;
   private readonly gridCols = 4;
   private readonly gridRows = 4;
+
+  constructor(private readonly commandGateway: EventSourcingFacadeService) {}
 
   @HostListener('window:resize')
   onResize(): void {
@@ -185,7 +186,7 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
       if (this.matchedPairs === this.fruitTypes.length) {
         setTimeout(() => {
           this.showGameComplete();
-          this.gameWon.emit();
+          this.commandGateway.handle(new TakeFruitsOfTheForestCmd());
         }, 500);
       }
     } else {

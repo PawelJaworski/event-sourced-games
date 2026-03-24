@@ -1,4 +1,6 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
+import {CatchFishCmd} from '../commands/catch-fish-cmd';
 
 interface HexTile {
   q: number;
@@ -15,8 +17,6 @@ interface HexTile {
   standalone: false
 })
 export class FisheryGameComponent implements OnInit, AfterViewInit {
-  @Output()
-  gameWon = new EventEmitter<void>();
   @ViewChild('gameCanvas', { static: true })
   canvas?: ElementRef<HTMLCanvasElement>;
 
@@ -27,6 +27,8 @@ export class FisheryGameComponent implements OnInit, AfterViewInit {
   private centerY = 0;
   private isGameWon = false;
   private netsPlaced = 0;
+
+  constructor(private readonly commandGateway: EventSourcingFacadeService) {}
 
   ngOnInit(): void {
     this.initializeGame();
@@ -135,7 +137,7 @@ export class FisheryGameComponent implements OnInit, AfterViewInit {
 
       if (this.isFishTrapped()) {
         this.isGameWon = true;
-        this.gameWon.emit();
+        this.commandGateway.handle(new CatchFishCmd());
       }
 
       this.drawGame();

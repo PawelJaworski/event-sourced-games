@@ -3,8 +3,6 @@ import {Store} from '@ngrx/store';
 import {Subscription} from 'rxjs';
 import {AppState} from '../../state/app.state';
 import {selectGameState} from '../gnome-game.reducer';
-import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
-import {CatchFishCmd} from '../commands/catch-fish-cmd';
 
 @Component({
   selector: 'app-fishery-game-dialog',
@@ -17,17 +15,12 @@ export class FisheryGameDialogComponent implements OnInit, OnDestroy {
 
   isOpen = false;
 
-  constructor(
-    private readonly store: Store<AppState>,
-    private readonly commandGateway: EventSourcingFacadeService
-  ) {}
+  constructor(private readonly store: Store<AppState>) {}
 
   ngOnInit(): void {
     this.subscriptions.add(
       this.store.select(selectGameState).subscribe(state => {
-        if (state.isFishingInProgress) {
-          this.isOpen = true;
-        }
+        this.isOpen = state.isFishingInProgress;
       })
     );
   }
@@ -44,10 +37,5 @@ export class FisheryGameDialogComponent implements OnInit, OnDestroy {
     if (event.target === event.currentTarget) {
       this.onCloseDialog();
     }
-  }
-
-  onGameWon(): void {
-    this.commandGateway.handle(new CatchFishCmd());
-    this.onCloseDialog();
   }
 }
