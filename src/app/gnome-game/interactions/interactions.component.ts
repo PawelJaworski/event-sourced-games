@@ -44,4 +44,17 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   onStartPickingForestFruits(): void {
     this.commandGateway.handle(new StartPickingForestFruitsCmd());
   }
+
+  getLocationImage(): string {
+    const imageMap: Record<string, string> = {
+      [Locations.NONE]: 'assets/img/gnome.png',
+      [Locations.GNOMES_HUT]: 'assets/img/gnome-house.png',
+      [Locations.FISHERY_GROUND]: 'assets/img/fishery-grounds.png',
+      [Locations.GOLD_MINE]: 'assets/img/gold-mine.png',
+      [Locations.BEAVER_DAM]: 'assets/img/beaver-dam.png',
+      [Locations.FRUITS_OF_THE_FOREST]: 'assets/img/fruits-of-the-forest.png',
+      [Locations.MARKETPLACE]: 'assets/img/marketplace.png'
+    };
+    return this.gameState?.currentLocation ? imageMap[this.gameState.currentLocation] ?? 'assets/img/gnome.png' : 'assets/img/gnome.png';
+  }
 }

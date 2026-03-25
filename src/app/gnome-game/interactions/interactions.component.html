@@ -1,4 +1,7 @@
 <p>Interactions</p>
+<div class="location-image" *ngIf="getLocationImage()">
+  <img [src]="getLocationImage()" [alt]="gameState?.currentLocation" />
+</div>
 <div class="inventory">
   <h4>Inventory</h4>
   <ul>

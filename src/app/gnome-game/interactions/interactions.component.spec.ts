@@ -103,4 +103,51 @@ describe('InteractionsComponent', () => {
 
     expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new StartPickingForestFruitsCmd());
   });
+
+  it('should return gnome.png when location is NONE', () => {
+    component.gameState = { currentLocation: Locations.NONE, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    expect(component.getLocationImage()).toBe('assets/img/gnome.png');
+  });
+
+  it('should return gnome-house.png when location is GNOMES_HUT', () => {
+    component.gameState = { currentLocation: Locations.GNOMES_HUT, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    expect(component.getLocationImage()).toBe('assets/img/gnome-house.png');
+  });
+
+  it('should return fishery-grounds.png when location is FISHERY_GROUND', () => {
+    component.gameState = { currentLocation: Locations.FISHERY_GROUND, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    expect(component.getLocationImage()).toBe('assets/img/fishery-grounds.png');
+  });
+
+  it('should return gold-mine.png when location is GOLD_MINE', () => {
+    component.gameState = { currentLocation: Locations.GOLD_MINE, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    expect(component.getLocationImage()).toBe('assets/img/gold-mine.png');
+  });
+
+  it('should return beaver-dam.png when location is BEAVER_DAM', () => {
+    component.gameState = { currentLocation: Locations.BEAVER_DAM, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    expect(component.getLocationImage()).toBe('assets/img/beaver-dam.png');
+  });
+
+  it('should return fruits-of-the-forest.png when location is FRUITS_OF_THE_FOREST', () => {
+    component.gameState = { currentLocation: Locations.FRUITS_OF_THE_FOREST, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    expect(component.getLocationImage()).toBe('assets/img/fruits-of-the-forest.png');
+  });
+
+  it('should return marketplace.png when location is MARKETPLACE', () => {
+    component.gameState = { currentLocation: Locations.MARKETPLACE, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    expect(component.getLocationImage()).toBe('assets/img/marketplace.png');
+  });
+
+  it('should display location image in the template', () => {
+    component.gameState = { currentLocation: Locations.GNOMES_HUT, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const imageContainer = fixture.debugElement.query(By.css('.location-image'));
+    expect(imageContainer).not.toBeNull();
+    const img = fixture.debugElement.query(By.css('.location-image img'));
+    expect(img).not.toBeNull();
+    expect(img.nativeElement.src).toContain('assets/img/gnome-house.png');
+  });
 });
