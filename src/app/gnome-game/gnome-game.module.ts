@@ -8,6 +8,7 @@ import {MemoryGameComponent} from './memory-game/game.component';
 import {FisheryGameDialogComponent} from './fishery-game/fishery-game-dialog.component';
 import {FisheryGameComponent} from './fishery-game/fishery-game.component';
 import {InteractionsComponent} from './interactions/interactions.component';
+import {InventoryComponent} from './inventory/inventory.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {InteractionsComponent} from './interactions/interactions.component';
     MemoryGameComponent,
     FisheryGameDialogComponent,
     FisheryGameComponent,
-    InteractionsComponent
+    InteractionsComponent,
+    InventoryComponent
   ],
   imports: [
     CommonModule

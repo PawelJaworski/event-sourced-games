@@ -9,7 +9,9 @@ export enum Locations {
 }
 
 export enum InventoryItem {
+  GOLDEN_COIN = 'GOLDEN_COIN',
   FISH = 'FISH',
+  FISHING_NET = 'FISHING_NET',
   FRUITS_OF_THE_FOREST = 'FRUITS_OF_THE_FOREST'
 }
 

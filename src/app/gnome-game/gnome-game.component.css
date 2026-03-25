@@ -71,6 +71,18 @@
   flex-direction: column;
 }
 
+.map-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+app-inventory {
+  flex-shrink: 0;
+}
+
 canvas {
   background-color: #333333;
   max-width: 100%;

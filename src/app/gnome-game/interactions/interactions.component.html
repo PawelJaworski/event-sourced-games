@@ -2,13 +2,7 @@
 <div class="location-image" *ngIf="getLocationImage()">
   <img [src]="getLocationImage()" [alt]="gameState?.currentLocation" />
 </div>
-<div class="inventory">
-  <h4>Inventory</h4>
-  <ul>
-    <li *ngFor="let item of gameState?.inventory">{{ item }}</li>
-  </ul>
-  <p *ngIf="!gameState?.inventory?.length">Empty</p>
-</div>
+
 <div class="actions" *ngIf="gameState?.currentLocation === Locations.FISHERY_GROUND">
   <button class="action-btn" (click)="onStartFishing()">Start fishing</button>
 </div>

@@ -1,0 +1,10 @@
+<div class="inventory-container">
+  <span class="inventory-label">Inventory:</span>
+  <div class="inventory-items">
+    <img *ngFor="let item of inventory; trackBy: trackByItem"
+         [src]="getItemImage(item)"
+         [alt]="item"
+         class="inventory-item" />
+    <span *ngIf="!inventory.length" class="inventory-empty">Empty</span>
+  </div>
+</div>
