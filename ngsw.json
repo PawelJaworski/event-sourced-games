@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1777620514703,
+  "timestamp": 1777620716320,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/favicon.ico",
         "/index.html",
-        "/main.3728770cf2a784b0.js",
+        "/main.f6fc1dff8c538e1f.js",
         "/manifest.webmanifest",
         "/polyfills.5a261cacaa3dbbab.js",
         "/runtime.86a5ba23a06da633.js",
@@ -80,8 +80,8 @@
     "/assets/img/marketplace.png": "99bef7059df91e4bea9581704c4ca477bfdf70ac",
     "/assets/version.json": "c8857f466521ce0a60b2493423e00c0d60d141a2",
     "/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/index.html": "175c53ffa33ca7622d7af1ae4942154eafdbb495",
-    "/main.3728770cf2a784b0.js": "4a2e6c1788c3297e49867b2ba3651e77da5ffa5d",
+    "/index.html": "4f32186d53c0c9abc416c00ad04d4fdca0cce604",
+    "/main.f6fc1dff8c538e1f.js": "ecbc7456a58a6db3a74c8d8b650af8cc8a2101ca",
     "/manifest.webmanifest": "1b1ad7ec3d87a1be516a8653c9fe30cd7bec1019",
     "/polyfills.5a261cacaa3dbbab.js": "046e2819b347065e74105fdb61d7512e20485da6",
     "/runtime.86a5ba23a06da633.js": "119417fe105ffd5977a4f1ae4eb62b88187e366f",
