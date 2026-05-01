@@ -151,8 +151,8 @@ describe('InteractionsComponent', () => {
     expect(img.nativeElement.src).toContain('assets/img/gnome-house.png');
   });
 
-  it('should return false for isMineFlooded when location is not GOLD_MINE', () => {
-    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT };
+  it('should return false for isMineFlooded when isMineFlooded is false', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GOLD_MINE, isMineFlooded: false };
     expect(component.isMineFlooded()).toBe(false);
   });
 
@@ -161,8 +161,13 @@ describe('InteractionsComponent', () => {
     expect(component.isMineFlooded()).toBe(true);
   });
 
-  it('should return false for isMineFlooded when location is GOLD_MINE but isMineFlooded is false', () => {
-    component.gameState = { ...gameStartState, currentLocation: Locations.GOLD_MINE, isMineFlooded: false };
+  it('should return true for isMineFlooded when location is GNOMES_HUT and isMineFlooded is true', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT, isMineFlooded: true };
+    expect(component.isMineFlooded()).toBe(true);
+  });
+
+  it('should return false for isMineFlooded when isMineFlooded is false at GNOMES_HUT', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT, isMineFlooded: false };
     expect(component.isMineFlooded()).toBe(false);
   });
 });

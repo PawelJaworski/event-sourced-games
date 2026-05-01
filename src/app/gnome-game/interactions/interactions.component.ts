@@ -59,6 +59,14 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   }
 
   isMineFlooded(): boolean {
-    return this.gameState?.currentLocation === Locations.GOLD_MINE && this.gameState?.isMineFlooded === true;
+    return this.gameState?.isMineFlooded === true && 
+           (this.gameState?.currentLocation === Locations.GOLD_MINE || this.gameState?.currentLocation === Locations.GNOMES_HUT);
+  }
+
+  getMineFloodedMessage(): string {
+    if (this.gameState?.currentLocation === Locations.GNOMES_HUT) {
+      return 'The water flooded my mine. Please help me!';
+    }
+    return 'A beaver built a dam, and the water from the river flooded the mine. Ask the beaver to rebuild the dam so that the water does not flood the mine.';
   }
 }
