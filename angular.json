@@ -31,8 +31,7 @@
               "src/styles.css"
             ],
             "scripts": [],
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json"
+            "serviceWorker": false
           },
           "configurations": {
             "production": {
@@ -101,7 +100,8 @@
           "builder": "angular-cli-ghpages:deploy",
           "options": {
             "base-href": "/event-sourced-games/",
-            "dir": "dist/front-angular"
+            "dir": "dist/front-angular",
+            "404-file": "index.html"
           }
         }
       }
