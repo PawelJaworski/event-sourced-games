@@ -6,6 +6,7 @@ import {CatchFishCmd, catchFishHandler} from "./commands/catch-fish-cmd";
 import {StartFishingCmd, startFishingHandler} from "./commands/start-fishing-cmd";
 import {StartPickingForestFruitsCmd, startPickingForestFruitsHandler} from "./commands/start-picking-forest-fruits-cmd";
 import {TakeFruitsOfTheForestCmd, takeFruitsOfTheForestHandler} from "./commands/take-fruits-of-the-forest-cmd";
+import {AskBeaverToRebuildDamCmd, askBeaverToRebuildDamHandler} from "./commands/ask-beaver-to-rebuild-dam-cmd";
 import {EventStoreService} from "./event-store.service";
 import {addEvents} from "./gnome-game.reducer";
 import {AppState} from "../state/app.state";
@@ -26,11 +27,12 @@ export class EventSourcingFacadeService {
       [CatchFishCmd, catchFishHandler],
       [StartFishingCmd, startFishingHandler],
       [StartPickingForestFruitsCmd, startPickingForestFruitsHandler],
-      [TakeFruitsOfTheForestCmd, takeFruitsOfTheForestHandler]
+      [TakeFruitsOfTheForestCmd, takeFruitsOfTheForestHandler],
+      [AskBeaverToRebuildDamCmd, askBeaverToRebuildDamHandler]
     ]), eventStoreService.eventStore);
   }
 
-  handle(cmd: GoToLocationCmd | CatchFishCmd | StartFishingCmd | StartPickingForestFruitsCmd | TakeFruitsOfTheForestCmd) {
+  handle(cmd: GoToLocationCmd | CatchFishCmd | StartFishingCmd | StartPickingForestFruitsCmd | TakeFruitsOfTheForestCmd | AskBeaverToRebuildDamCmd) {
     console.log("handling", cmd);
     const result = this.commandGateway.handle(cmd);
     if (result.isFailure) {

@@ -2,13 +2,14 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InteractionsComponent} from './interactions.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../../state/app.reducer';
-import {Locations, gameStartState} from '../gnome-game.state';
+import {Locations, gameStartState, CurrentMission} from '../gnome-game.state';
 import {By} from '@angular/platform-browser';
 import {Store} from '@ngrx/store';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
 import {EventStoreService} from '../event-store.service';
 import {StartFishingCmd} from '../commands/start-fishing-cmd';
 import {StartPickingForestFruitsCmd} from '../commands/start-picking-forest-fruits-cmd';
+import {AskBeaverToRebuildDamCmd} from '../commands/ask-beaver-to-rebuild-dam-cmd';
 
 describe('InteractionsComponent', () => {
   let component: InteractionsComponent;
@@ -169,5 +170,37 @@ describe('InteractionsComponent', () => {
   it('should return false for isMineFlooded when isMineFlooded is false at GNOMES_HUT', () => {
     component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT, isMineFlooded: false };
     expect(component.isMineFlooded()).toBe(false);
+  });
+
+  it('should show AskBeaverToRebuildDam button when location is BEAVER_DAM and mission is TALK_TO_BEAVER', () => {
+    spyOn(eventSourcingFacade, 'handle');
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, currentMission: CurrentMission.TALK_TO_BEAVER };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('.action-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.textContent).toContain('Please rebuild the dam');
+  });
+
+  it('should dispatch AskBeaverToRebuildDamCmd when AskBeaverToRebuildDam button is clicked', () => {
+    spyOn(eventSourcingFacade, 'handle');
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, currentMission: CurrentMission.TALK_TO_BEAVER };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('.action-btn'));
+    button.nativeElement.click();
+
+    expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDamCmd());
+  });
+
+  it('should not show AskBeaverToRebuildDam button when location is not BEAVER_DAM', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT, currentMission: CurrentMission.TALK_TO_BEAVER };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('.action-btn'));
+    expect(button).toBeNull();
   });
 });

@@ -12,3 +12,6 @@
 <div class="actions" *ngIf="gameState?.currentLocation === Locations.FRUITS_OF_THE_FOREST">
   <button class="action-btn" (click)="onStartPickingForestFruits()">Begin gathering wild fruits</button>
 </div>
+<div class="actions" *ngIf="showAskBeaverToRebuildDam()">
+  <button class="action-btn" (click)="onAskBeaverToRebuildDam()">Please rebuild the dam so that the water from the river does not flood my mine.</button>
+</div>
