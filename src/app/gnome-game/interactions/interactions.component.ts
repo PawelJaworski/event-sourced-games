@@ -57,4 +57,8 @@ export class InteractionsComponent implements OnInit, OnDestroy {
     };
     return this.gameState?.currentLocation ? imageMap[this.gameState.currentLocation] ?? 'assets/img/gnome.png' : 'assets/img/gnome.png';
   }
+
+  isMineFlooded(): boolean {
+    return this.gameState?.currentLocation === Locations.GOLD_MINE && this.gameState?.isMineFlooded === true;
+  }
 }

@@ -20,13 +20,15 @@ export interface GnomeGameState {
   inventory: InventoryItem[];
   isFishingInProgress: boolean;
   isPickingForestFruitsInProgress: boolean;
+  isMineFlooded: boolean;
 }
 
 export const gameStartState: GnomeGameState = {
   currentLocation: Locations.GNOMES_HUT,
   inventory: [],
   isFishingInProgress: false,
-  isPickingForestFruitsInProgress: false
+  isPickingForestFruitsInProgress: false,
+  isMineFlooded: true
 }
 
 

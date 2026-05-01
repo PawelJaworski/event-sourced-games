@@ -83,7 +83,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
       ctx.clearRect(0, 0, this.canvas!.nativeElement.width, this.canvas!.nativeElement.height);
       ctx.drawImage(mapImg, 0, 0);
 
-      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation);
+      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded);
     };
     mapImg.src = './assets/img/map.png';
   }
@@ -101,7 +101,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
       ctx.drawImage(mapImg, 0, 0);
 
       this.gameTokenService.initializeTokens(ctx);
-      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation);
+      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded);
     };
     mapImg.src = './assets/img/map.png';
   }

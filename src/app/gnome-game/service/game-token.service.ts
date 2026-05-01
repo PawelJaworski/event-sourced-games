@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
-import {GnomeGameState, Locations} from '../gnome-game.state';
+import {Locations} from '../gnome-game.state';
 
 export interface GameToken {
   x: number;
   y: number;
   size: number;
   imageUrl: string;
+  location: Locations;
 }
 
 @Injectable({
@@ -18,7 +19,7 @@ export class GameTokenService {
 
   constructor() {}
 
-  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken): void {
+  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken, isGrayed: boolean = false): void {
     this.drawShadow(ctx, token);
 
     const img = new Image();
@@ -28,6 +29,10 @@ export class GameTokenService {
       ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
       ctx.closePath();
       ctx.clip();
+
+      if (isGrayed) {
+        ctx.filter = 'grayscale(100%)';
+      }
 
       ctx.drawImage(img, token.x, token.y, token.size, token.size);
 
@@ -69,7 +74,8 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/gnome-house.png'
+      imageUrl: './assets/img/gnome-house.png',
+      location: Locations.GNOMES_HUT
     };
   }
 
@@ -80,7 +86,8 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/fishery-grounds.png'
+      imageUrl: './assets/img/fishery-grounds.png',
+      location: Locations.FISHERY_GROUND
     };
   }
 
@@ -91,7 +98,8 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/gold-mine.png'
+      imageUrl: './assets/img/gold-mine.png',
+      location: Locations.GOLD_MINE
     };
   }
 
@@ -102,7 +110,8 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/beaver-dam.png'
+      imageUrl: './assets/img/beaver-dam.png',
+      location: Locations.BEAVER_DAM
     };
   }
 
@@ -113,7 +122,8 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/fruits-of-the-forest.png'
+      imageUrl: './assets/img/fruits-of-the-forest.png',
+      location: Locations.FRUITS_OF_THE_FOREST
     };
   }
 
@@ -124,7 +134,8 @@ export class GameTokenService {
       x,
       y,
       size,
-      imageUrl: './assets/img/marketplace.png'
+      imageUrl: './assets/img/marketplace.png',
+      location: Locations.MARKETPLACE
     };
   }
 
@@ -177,7 +188,7 @@ export class GameTokenService {
     };
   }
 
-  renderTokens(currentLocation: Locations, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE): void {
+  renderTokens(currentLocation: Locations, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE, isMineFlooded: boolean = false): void {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
@@ -216,7 +227,7 @@ export class GameTokenService {
     }
 
     for (const token of this.locationTokens.values()) {
-      this.drawRoundToken(ctx, token);
+      this.drawRoundToken(ctx, token, token.location === Locations.GOLD_MINE && isMineFlooded);
     }
   }
 

@@ -3,6 +3,10 @@
   <img [src]="getLocationImage()" [alt]="gameState?.currentLocation" />
 </div>
 
+<div class="message" *ngIf="isMineFlooded()">
+  A beaver built a dam, and the water from the river flooded the mine. Ask the beaver to rebuild the dam so that the water does not flood the mine.
+</div>
+
 <div class="actions" *ngIf="gameState?.currentLocation === Locations.FISHERY_GROUND">
   <button class="action-btn" (click)="onStartFishing()">Start fishing</button>
 </div>

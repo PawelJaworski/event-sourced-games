@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InteractionsComponent} from './interactions.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../../state/app.reducer';
-import {Locations} from '../gnome-game.state';
+import {Locations, gameStartState} from '../gnome-game.state';
 import {By} from '@angular/platform-browser';
 import {Store} from '@ngrx/store';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
@@ -43,7 +43,7 @@ describe('InteractionsComponent', () => {
   });
 
   it('should not show Start fishing button when location is not FISHERY_GROUND', () => {
-    component.gameState = { currentLocation: Locations.GNOMES_HUT, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -52,7 +52,7 @@ describe('InteractionsComponent', () => {
   });
 
   it('should show Start fishing button when location is FISHERY_GROUND', () => {
-    component.gameState = { currentLocation: Locations.FISHERY_GROUND, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -63,7 +63,7 @@ describe('InteractionsComponent', () => {
 
   it('should dispatch StartFishingCmd when Start fishing button is clicked', () => {
     spyOn(eventSourcingFacade, 'handle');
-    component.gameState = { currentLocation: Locations.FISHERY_GROUND, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -74,7 +74,7 @@ describe('InteractionsComponent', () => {
   });
 
   it('should not show Begin gathering wild fruits button when location is not FRUITS_OF_THE_FOREST', () => {
-    component.gameState = { currentLocation: Locations.GNOMES_HUT, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -83,7 +83,7 @@ describe('InteractionsComponent', () => {
   });
 
   it('should show Begin gathering wild fruits button when location is FRUITS_OF_THE_FOREST', () => {
-    component.gameState = { currentLocation: Locations.FRUITS_OF_THE_FOREST, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.FRUITS_OF_THE_FOREST };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -94,7 +94,7 @@ describe('InteractionsComponent', () => {
 
   it('should dispatch StartPickingForestFruitsCmd when Begin gathering wild fruits button is clicked', () => {
     spyOn(eventSourcingFacade, 'handle');
-    component.gameState = { currentLocation: Locations.FRUITS_OF_THE_FOREST, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.FRUITS_OF_THE_FOREST };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -105,42 +105,42 @@ describe('InteractionsComponent', () => {
   });
 
   it('should return gnome.png when location is NONE', () => {
-    component.gameState = { currentLocation: Locations.NONE, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.NONE };
     expect(component.getLocationImage()).toBe('assets/img/gnome.png');
   });
 
   it('should return gnome-house.png when location is GNOMES_HUT', () => {
-    component.gameState = { currentLocation: Locations.GNOMES_HUT, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT };
     expect(component.getLocationImage()).toBe('assets/img/gnome-house.png');
   });
 
   it('should return fishery-grounds.png when location is FISHERY_GROUND', () => {
-    component.gameState = { currentLocation: Locations.FISHERY_GROUND, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND };
     expect(component.getLocationImage()).toBe('assets/img/fishery-grounds.png');
   });
 
   it('should return gold-mine.png when location is GOLD_MINE', () => {
-    component.gameState = { currentLocation: Locations.GOLD_MINE, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.GOLD_MINE };
     expect(component.getLocationImage()).toBe('assets/img/gold-mine.png');
   });
 
   it('should return beaver-dam.png when location is BEAVER_DAM', () => {
-    component.gameState = { currentLocation: Locations.BEAVER_DAM, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM };
     expect(component.getLocationImage()).toBe('assets/img/beaver-dam.png');
   });
 
   it('should return fruits-of-the-forest.png when location is FRUITS_OF_THE_FOREST', () => {
-    component.gameState = { currentLocation: Locations.FRUITS_OF_THE_FOREST, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.FRUITS_OF_THE_FOREST };
     expect(component.getLocationImage()).toBe('assets/img/fruits-of-the-forest.png');
   });
 
   it('should return marketplace.png when location is MARKETPLACE', () => {
-    component.gameState = { currentLocation: Locations.MARKETPLACE, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE };
     expect(component.getLocationImage()).toBe('assets/img/marketplace.png');
   });
 
   it('should display location image in the template', () => {
-    component.gameState = { currentLocation: Locations.GNOMES_HUT, inventory: [], isFishingInProgress: false, isPickingForestFruitsInProgress: false };
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -149,5 +149,20 @@ describe('InteractionsComponent', () => {
     const img = fixture.debugElement.query(By.css('.location-image img'));
     expect(img).not.toBeNull();
     expect(img.nativeElement.src).toContain('assets/img/gnome-house.png');
+  });
+
+  it('should return false for isMineFlooded when location is not GOLD_MINE', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT };
+    expect(component.isMineFlooded()).toBe(false);
+  });
+
+  it('should return true for isMineFlooded when location is GOLD_MINE and isMineFlooded is true', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GOLD_MINE, isMineFlooded: true };
+    expect(component.isMineFlooded()).toBe(true);
+  });
+
+  it('should return false for isMineFlooded when location is GOLD_MINE but isMineFlooded is false', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GOLD_MINE, isMineFlooded: false };
+    expect(component.isMineFlooded()).toBe(false);
   });
 });
