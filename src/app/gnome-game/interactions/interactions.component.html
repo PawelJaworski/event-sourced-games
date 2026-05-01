@@ -15,3 +15,6 @@
 <div class="actions" *ngIf="showAskBeaverToRebuildDam()">
   <button class="action-btn" (click)="onAskBeaverToRebuildDam()">Please rebuild the dam so that the water from the river does not flood my mine.</button>
 </div>
+<div class="actions" *ngIf="showExchangeFruitsForCoin()">
+  <button class="action-btn" (click)="onExchangeFruitsForCoin()" [disabled]="!canExchangeFruits()">Exchange fruits of the forest for golden coin</button>
+</div>

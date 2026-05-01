@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InteractionsComponent} from './interactions.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../../state/app.reducer';
-import {Locations, gameStartState, CurrentMission} from '../gnome-game.state';
+import {Locations, gameStartState, CurrentMission, InventoryItem} from '../gnome-game.state';
 import {By} from '@angular/platform-browser';
 import {Store} from '@ngrx/store';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
@@ -10,6 +10,7 @@ import {EventStoreService} from '../event-store.service';
 import {StartFishingCmd} from '../commands/start-fishing-cmd';
 import {StartPickingForestFruitsCmd} from '../commands/start-picking-forest-fruits-cmd';
 import {AskBeaverToRebuildDamCmd} from '../commands/ask-beaver-to-rebuild-dam-cmd';
+import {ExchangeCmd} from '../commands/exchange-cmd';
 
 describe('InteractionsComponent', () => {
   let component: InteractionsComponent;
@@ -192,11 +193,65 @@ describe('InteractionsComponent', () => {
     const button = fixture.debugElement.query(By.css('.action-btn'));
     button.nativeElement.click();
 
-    expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDamCmd());
+expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDamCmd());
   });
 
-  it('should not show AskBeaverToRebuildDam button when location is not BEAVER_DAM', () => {
-    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT, currentMission: CurrentMission.TALK_TO_BEAVER };
+  it('should dispatch ExchangeCmd when ExchangeFruitsForCoin button is clicked', () => {
+    spyOn(eventSourcingFacade, 'handle');
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [InventoryItem.FRUITS_OF_THE_FOREST] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('.action-btn'));
+    button.nativeElement.click();
+
+    expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new ExchangeCmd(InventoryItem.FRUITS_OF_THE_FOREST, InventoryItem.GOLDEN_COIN));
+  });
+
+  it('should show ExchangeFruitsForCoin button when location is MARKETPLACE', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [InventoryItem.FRUITS_OF_THE_FOREST] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('.action-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.textContent).toContain('Exchange fruits of the forest for golden coin');
+  });
+
+  it('should have ExchangeFruitsForCoin button disabled when no fruits in inventory', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('.action-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.disabled).toBe(true);
+  });
+
+  it('should have ExchangeFruitsForCoin button enabled when fruits in inventory', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [InventoryItem.FRUITS_OF_THE_FOREST] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('.action-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.disabled).toBe(false);
+  });
+
+  it('should dispatch ExchangeFruitsForCoinCmd when ExchangeFruitsForCoin button is clicked', () => {
+    spyOn(eventSourcingFacade, 'handle');
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [InventoryItem.FRUITS_OF_THE_FOREST] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('.action-btn'));
+    button.nativeElement.click();
+
+    expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new ExchangeCmd(InventoryItem.FRUITS_OF_THE_FOREST, InventoryItem.GOLDEN_COIN));
+  });
+
+  it('should not show ExchangeFruitsForCoin button when location is not MARKETPLACE', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT, inventory: [InventoryItem.FRUITS_OF_THE_FOREST] };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 

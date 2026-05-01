@@ -3,11 +3,12 @@ import {Store} from '@ngrx/store';
 import {Subscription} from 'rxjs';
 import {AppState} from '../../state/app.state';
 import {selectGameState} from '../gnome-game.reducer';
-import {GnomeGameState, Locations, CurrentMission} from '../gnome-game.state';
+import {GnomeGameState, Locations, CurrentMission, InventoryItem} from '../gnome-game.state';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
 import {StartFishingCmd} from '../commands/start-fishing-cmd';
 import {StartPickingForestFruitsCmd} from '../commands/start-picking-forest-fruits-cmd';
 import {AskBeaverToRebuildDamCmd} from '../commands/ask-beaver-to-rebuild-dam-cmd';
+import {ExchangeCmd} from '../commands/exchange-cmd';
 
 @Component({
   selector: 'app-interactions',
@@ -50,9 +51,21 @@ export class InteractionsComponent implements OnInit, OnDestroy {
     this.commandGateway.handle(new AskBeaverToRebuildDamCmd());
   }
 
+  onExchangeFruitsForCoin(): void {
+    this.commandGateway.handle(new ExchangeCmd(InventoryItem.FRUITS_OF_THE_FOREST, InventoryItem.GOLDEN_COIN));
+  }
+
   showAskBeaverToRebuildDam(): boolean {
     return this.gameState?.currentLocation === Locations.BEAVER_DAM && 
            this.gameState?.currentMission === CurrentMission.TALK_TO_BEAVER;
+  }
+
+  showExchangeFruitsForCoin(): boolean {
+    return this.gameState?.currentLocation === Locations.MARKETPLACE;
+  }
+
+  canExchangeFruits(): boolean {
+    return this.gameState?.inventory?.includes(InventoryItem.FRUITS_OF_THE_FOREST) ?? false;
   }
 
   getLocationImage(): string {

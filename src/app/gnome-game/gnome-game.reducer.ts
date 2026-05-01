@@ -33,7 +33,17 @@ export const inventoryProjector = (state: InventoryItem[], events: any[]): Inven
     .filter((e: any) => e?.eventType === EventType.FRUITS_OF_THE_FOREST_TAKEN)
     .map(() => InventoryItem.FRUITS_OF_THE_FOREST);
 
-  return [...fish, ...fruits];
+  const goldenCoins = events
+    .filter((e: any) => e?.eventType === EventType.GOLDEN_COIN_EARNED)
+    .map(() => InventoryItem.GOLDEN_COIN);
+
+  const removedFruits = events
+    .filter((e: any) => e?.eventType === EventType.GOLDEN_COIN_EARNED && e?.from === InventoryItem.FRUITS_OF_THE_FOREST)
+    .length;
+
+  const filteredFruits = fruits.slice(0, fruits.length - removedFruits);
+
+  return [...fish, ...filteredFruits, ...goldenCoins];
 };
 
 export const currentGameProjector = (state: GnomeGameState, events: any[]): GnomeGameState => ({
