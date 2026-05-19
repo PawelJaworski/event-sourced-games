@@ -6,14 +6,12 @@ export declare class CommandGateway {
   handlers: any[];
   eventStore: EventStore;
 
-  constructor(handlers: Map<Function, CommandHandler<any>>, eventStore: EventStore);
+  constructor(handlers: Map<Function, CommandHandler<any, any>>, eventStore: EventStore);
 
-  handle(cmd: any): Result<any[]>;
+  handle(aggregateState: any, cmd: any): Result<any[]>;
 }
 
-export type CommandHandler<T> = (events: any[], cmd: T) => any[];
-export type Projector<T> = (state: T, events: any[]) => T;
-export function composeProjectors<T>(projectors: Projector<T>[]): (state: T, events: any[]) => T;
+export type CommandHandler<S, T> = (aggregateState: S, cmd: T) => any[];
 
 export declare class Result<T> {
   success: T;

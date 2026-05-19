@@ -8,10 +8,9 @@ export class CommandGateway {
     this.eventStore = eventStore;
   }
 
-  handle(cmd) {
+  handle(state, cmd) {
     try {
-      const events = this.eventStore.findAllEvents();
-      const newEvents = this.handlers.get(cmd.constructor)(events, cmd);
+      const newEvents = this.handlers.get(cmd.constructor)(state, cmd);
       this.eventStore.append(newEvents);
       return Result.success(newEvents);
     } catch (e) {
@@ -42,10 +41,6 @@ export class Result {
   get isFailure() {
     return this.error;
   }
-}
-
-export function composeProjectors(projectors) {
-  return (state, events) => projectors.reduce((state, projector) => projector(state, events), state)
 }
 
 export class EventStore {

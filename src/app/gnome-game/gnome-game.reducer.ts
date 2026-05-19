@@ -3,6 +3,12 @@ import {createSelector, createFeatureSelector} from '@ngrx/store';
 import {gameStartState, GnomeGameState, InventoryItem, Locations} from './gnome-game.state';
 import {EventType} from './events/events';
 
+export interface GameAggregateState {
+
+}
+
+export const initialAggregateState: GameAggregateState = {}
+
 export interface GnomeGameEventsState {
   events: any[];
   gnomeGameState: GnomeGameState;

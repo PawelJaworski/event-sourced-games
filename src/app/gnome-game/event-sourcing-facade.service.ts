@@ -9,7 +9,7 @@ import {TakeFruitsOfTheForestCmd, takeFruitsOfTheForestHandler} from "./commands
 import {AskBeaverToRebuildDamCmd, askBeaverToRebuildDamHandler} from "./commands/ask-beaver-to-rebuild-dam-cmd";
 import {ExchangeCmd, exchangeCmdHandler} from "./commands/exchange-cmd";
 import {EventStoreService} from "./event-store.service";
-import {addEvents} from "./gnome-game.reducer";
+import {addEvents, initialAggregateState} from "./gnome-game.reducer";
 import {AppState} from "../state/app.state";
 import {Locations, InventoryItem} from './gnome-game.state';
 
@@ -19,6 +19,7 @@ import {Locations, InventoryItem} from './gnome-game.state';
 export class EventSourcingFacadeService {
 
   private readonly commandGateway;
+  private gateAggregateState = initialAggregateState;
 
   constructor(
     private readonly store: Store<AppState>,
@@ -58,7 +59,7 @@ export class EventSourcingFacadeService {
 
   handle(cmd: GoToLocationCmd | CatchFishCmd | StartFishingCmd | StartPickingForestFruitsCmd | TakeFruitsOfTheForestCmd | AskBeaverToRebuildDamCmd | ExchangeCmd) {
     console.log("handling", cmd);
-    const result = this.commandGateway.handle(cmd);
+    const result = this.commandGateway.handle(this.gateAggregateState, cmd);
     if (result.isFailure) {
       console.error("Error: ", result.error);
       return;
