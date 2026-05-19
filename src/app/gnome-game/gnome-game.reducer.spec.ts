@@ -42,6 +42,16 @@ describe('Quest System', () => {
       expect(result.activeQuests).toEqual([Quest.REMOVE_THE_WATER, Quest.GET_FISH_FOR_BEAVER]);
     });
 
+    it('should add GET_FISH_FOR_BEAVER quest when fish is catched', () => {
+      const events = [
+        {eventType: EventType.FISH_CATCHED}
+      ];
+
+      const result = currentGameProjector(gameStartState, events);
+
+      expect(result.activeQuests).toContain(Quest.GET_FISH_FOR_BEAVER);
+    });
+
     it('should preserve other state when projecting quests', () => {
       const events = [
         {eventType: EventType.QUEST_ADDED, quest: Quest.GET_FISH_FOR_BEAVER}

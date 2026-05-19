@@ -53,7 +53,11 @@ export const activeQuestsProjector = (state: Quest[], events: any[]): Quest[] =>
     .filter((e: any) => e?.eventType === EventType.QUEST_ADDED)
     .map((e: any) => e.quest);
 
-  return [...state, ...addedQuests];
+  const hasFishCatched = events.some((e: any) => e?.eventType === EventType.FISH_CATCHED);
+  const fishQuest = hasFishCatched ? [Quest.GET_FISH_FOR_BEAVER] : [];
+
+  const allQuests = [...state, ...addedQuests, ...fishQuest];
+  return [...new Set(allQuests)];
 };
 
 export const currentGameProjector = (state: GnomeGameState, events: any[]): GnomeGameState => ({
