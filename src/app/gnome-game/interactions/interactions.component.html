@@ -19,9 +19,9 @@
   <button id="beaver-fish-request-btn" class="action-btn" disabled>{{ getBeaverMessage() }}</button>
 </div>
 <div class="actions" *ngIf="showExchangeFruitsForCoin()">
-  <button id="exchange-fruits-for-coin-btn" class="action-btn" 
-          (click)="onExchangeFruitsForCoin()" 
+  <button id="exchange-fruits-for-coin-btn" class="action-btn"
+          (click)="onExchangeFruitsForCoin()"
           [disabled]="!canExchangeFruits()">
-    {{ canExchangeFruits() ? 'Exchange fruits of the forest for golden coin' : 'Get fruit of the forest to get golden coin.' }}
+    {{ canExchangeFruits() ? 'Exchange fruits of the forest for golden coin' : 'Seller: A fishing net costs 1 gold coin. I will give you golden coin if you bring me fruit of the forest.' }}
   </button>
 </div>
