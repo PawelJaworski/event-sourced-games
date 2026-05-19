@@ -3,7 +3,7 @@ import {Store} from '@ngrx/store';
 import {Subscription} from 'rxjs';
 import {AppState} from '../../state/app.state';
 import {selectGameState} from '../gnome-game.reducer';
-import {GnomeGameState, Locations, CurrentMission, InventoryItem} from '../gnome-game.state';
+import {GnomeGameState, Locations, Quest, InventoryItem} from '../gnome-game.state';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
 import {StartFishingCmd} from '../commands/start-fishing-cmd';
 import {StartPickingForestFruitsCmd} from '../commands/start-picking-forest-fruits-cmd';
@@ -57,7 +57,17 @@ export class InteractionsComponent implements OnInit, OnDestroy {
 
   showAskBeaverToRebuildDam(): boolean {
     return this.gameState?.currentLocation === Locations.BEAVER_DAM && 
-           this.gameState?.currentMission === CurrentMission.TALK_TO_BEAVER;
+           this.gameState?.activeQuests?.includes(Quest.REMOVE_THE_WATER) &&
+           !this.gameState?.activeQuests?.includes(Quest.GET_FISH_FOR_BEAVER);
+  }
+
+  showBeaverFishRequest(): boolean {
+    return this.gameState?.currentLocation === Locations.BEAVER_DAM && 
+           this.gameState?.activeQuests?.includes(Quest.GET_FISH_FOR_BEAVER);
+  }
+
+  getBeaverMessage(): string {
+    return 'Beaver: I\'d like to eat a tasty fish. If you give me a fish, I will rebuild the dam and remove the water from the mine.';
   }
 
   showExchangeFruitsForCoin(): boolean {

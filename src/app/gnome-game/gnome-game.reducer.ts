@@ -1,6 +1,6 @@
 import {createAction, createReducer, on, props} from '@ngrx/store';
 import {createSelector, createFeatureSelector} from '@ngrx/store';
-import {gameStartState, GnomeGameState, InventoryItem, Locations} from './gnome-game.state';
+import {gameStartState, GnomeGameState, InventoryItem, Locations, Quest} from './gnome-game.state';
 import {EventType} from './events/events';
 
 export interface GameAggregateState {}
@@ -48,6 +48,14 @@ export const inventoryProjector = (state: InventoryItem[], events: any[]): Inven
   return [...fish, ...filteredFruits, ...goldenCoins];
 };
 
+export const activeQuestsProjector = (state: Quest[], events: any[]): Quest[] => {
+  const addedQuests = events
+    .filter((e: any) => e?.eventType === EventType.QUEST_ADDED)
+    .map((e: any) => e.quest);
+
+  return [...state, ...addedQuests];
+};
+
 export const currentGameProjector = (state: GnomeGameState, events: any[]): GnomeGameState => ({
   ...state,
   currentLocation: currentLocationProjector(state.currentLocation, events),
@@ -55,7 +63,7 @@ export const currentGameProjector = (state: GnomeGameState, events: any[]): Gnom
   isFishingInProgress: events[events.length - 1]?.eventType == EventType.FISHING_STARTED,
   isPickingForestFruitsInProgress: events[events.length - 1]?.eventType == EventType.PICKING_FOREST_FRUITS_STARTED,
   isMineFlooded: state.isMineFlooded,
-  currentMission: state.currentMission
+  activeQuests: activeQuestsProjector(state.activeQuests, events)
 });
 
 export const gnomeGameEventsReducer = createReducer(

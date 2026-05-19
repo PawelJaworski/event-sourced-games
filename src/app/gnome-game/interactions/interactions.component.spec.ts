@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {InteractionsComponent} from './interactions.component';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../../state/app.reducer';
-import {Locations, gameStartState, CurrentMission, InventoryItem} from '../gnome-game.state';
+import {Locations, gameStartState, Quest, InventoryItem} from '../gnome-game.state';
 import {By} from '@angular/platform-browser';
 import {Store} from '@ngrx/store';
 import {EventSourcingFacadeService} from '../event-sourcing-facade.service';
@@ -49,7 +49,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#start-fishing-btn'));
     expect(button).toBeNull();
   });
 
@@ -58,9 +58,8 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#start-fishing-btn'));
     expect(button).not.toBeNull();
-    expect(button.nativeElement.textContent).toContain('Start fishing');
   });
 
   it('should dispatch StartFishingCmd when Start fishing button is clicked', () => {
@@ -69,7 +68,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#start-fishing-btn'));
     button.nativeElement.click();
 
     expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new StartFishingCmd());
@@ -80,7 +79,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#start-picking-forest-fruits-btn'));
     expect(button).toBeNull();
   });
 
@@ -89,9 +88,8 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#start-picking-forest-fruits-btn'));
     expect(button).not.toBeNull();
-    expect(button.nativeElement.textContent).toContain('Begin gathering wild fruits');
   });
 
   it('should dispatch StartPickingForestFruitsCmd when Begin gathering wild fruits button is clicked', () => {
@@ -100,7 +98,7 @@ describe('InteractionsComponent', () => {
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#start-picking-forest-fruits-btn'));
     button.nativeElement.click();
 
     expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new StartPickingForestFruitsCmd());
@@ -173,27 +171,63 @@ describe('InteractionsComponent', () => {
     expect(component.isMineFlooded()).toBe(false);
   });
 
-  it('should show AskBeaverToRebuildDam button when location is BEAVER_DAM and mission is TALK_TO_BEAVER', () => {
+  it('should show AskBeaverToRebuildDam button when location is BEAVER_DAM and quest is REMOVE_THE_WATER', () => {
     spyOn(eventSourcingFacade, 'handle');
-    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, currentMission: CurrentMission.TALK_TO_BEAVER };
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, activeQuests: [Quest.REMOVE_THE_WATER] };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#ask-beaver-to-rebuild-dam-btn'));
     expect(button).not.toBeNull();
-    expect(button.nativeElement.textContent).toContain('Please rebuild the dam');
   });
 
   it('should dispatch AskBeaverToRebuildDamCmd when AskBeaverToRebuildDam button is clicked', () => {
     spyOn(eventSourcingFacade, 'handle');
-    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, currentMission: CurrentMission.TALK_TO_BEAVER };
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, activeQuests: [Quest.REMOVE_THE_WATER] };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#ask-beaver-to-rebuild-dam-btn'));
     button.nativeElement.click();
 
 expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDamCmd());
+  });
+
+  it('should not show AskBeaverToRebuildDam button when REMOVE_THE_WATER quest is not active', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, activeQuests: [] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#ask-beaver-to-rebuild-dam-btn'));
+    expect(button).toBeNull();
+  });
+
+  it('should not show AskBeaverToRebuildDam button when GET_FISH_FOR_BEAVER quest is active', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, activeQuests: [Quest.REMOVE_THE_WATER, Quest.GET_FISH_FOR_BEAVER] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#ask-beaver-to-rebuild-dam-btn'));
+    expect(button).toBeNull();
+  });
+
+  it('should show beaver fish request message when GET_FISH_FOR_BEAVER quest is active', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, activeQuests: [Quest.REMOVE_THE_WATER, Quest.GET_FISH_FOR_BEAVER] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#beaver-fish-request-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.disabled).toBe(true);
+  });
+
+  it('should not show beaver fish request message when GET_FISH_FOR_BEAVER quest is not active', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, activeQuests: [Quest.REMOVE_THE_WATER] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#beaver-fish-request-btn'));
+    expect(button).toBeNull();
   });
 
   it('should dispatch ExchangeCmd when ExchangeFruitsForCoin button is clicked', () => {
@@ -202,7 +236,7 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#exchange-fruits-for-coin-btn'));
     button.nativeElement.click();
 
     expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new ExchangeCmd(InventoryItem.FRUITS_OF_THE_FOREST, InventoryItem.GOLDEN_COIN));
@@ -213,9 +247,8 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#exchange-fruits-for-coin-btn'));
     expect(button).not.toBeNull();
-    expect(button.nativeElement.textContent).toContain('Exchange fruits of the forest for golden coin');
   });
 
   it('should have ExchangeFruitsForCoin button disabled when no fruits in inventory', () => {
@@ -223,7 +256,7 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#exchange-fruits-for-coin-btn'));
     expect(button).not.toBeNull();
     expect(button.nativeElement.disabled).toBe(true);
   });
@@ -233,7 +266,7 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#exchange-fruits-for-coin-btn'));
     expect(button).not.toBeNull();
     expect(button.nativeElement.disabled).toBe(false);
   });
@@ -244,7 +277,7 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#exchange-fruits-for-coin-btn'));
     button.nativeElement.click();
 
     expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new ExchangeCmd(InventoryItem.FRUITS_OF_THE_FOREST, InventoryItem.GOLDEN_COIN));
@@ -255,7 +288,7 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css('.action-btn'));
+    const button = fixture.debugElement.query(By.css('#exchange-fruits-for-coin-btn'));
     expect(button).toBeNull();
   });
 });

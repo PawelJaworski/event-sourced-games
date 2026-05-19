@@ -15,8 +15,9 @@ export enum InventoryItem {
   FRUITS_OF_THE_FOREST = 'FRUITS_OF_THE_FOREST'
 }
 
-export enum CurrentMission {
-  TALK_TO_BEAVER = 'TALK_TO_BEAVER'
+export enum Quest {
+  REMOVE_THE_WATER = 'REMOVE_THE_WATER',
+  GET_FISH_FOR_BEAVER = 'GET_FISH_FOR_BEAVER'
 }
 
 export interface GnomeGameState {
@@ -25,7 +26,7 @@ export interface GnomeGameState {
   isFishingInProgress: boolean;
   isPickingForestFruitsInProgress: boolean;
   isMineFlooded: boolean;
-  currentMission: CurrentMission;
+  activeQuests: Quest[];
 }
 
 export const gameStartState: GnomeGameState = {
@@ -34,7 +35,7 @@ export const gameStartState: GnomeGameState = {
   isFishingInProgress: false,
   isPickingForestFruitsInProgress: false,
   isMineFlooded: true,
-  currentMission: CurrentMission.TALK_TO_BEAVER
+  activeQuests: [Quest.REMOVE_THE_WATER]
 }
 
 
