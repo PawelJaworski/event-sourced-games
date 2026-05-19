@@ -3,26 +3,22 @@ import {createSelector, createFeatureSelector} from '@ngrx/store';
 import {gameStartState, GnomeGameState, InventoryItem, Locations} from './gnome-game.state';
 import {EventType} from './events/events';
 
-export interface GameAggregateState {
-
-}
-
+export interface GameAggregateState {}
 export const initialAggregateState: GameAggregateState = {}
 
 export interface GnomeGameEventsState {
   events: any[];
   gnomeGameState: GnomeGameState;
 }
+export const initialEventsState: GnomeGameEventsState = {
+  events: [],
+  gnomeGameState: gameStartState
+};
 
 export const addEvents = createAction(
   '[Gnome Game] Add Events',
   props<{ events: any[] }>()
 );
-
-export const initialEventsState: GnomeGameEventsState = {
-  events: [],
-  gnomeGameState: gameStartState
-};
 
 export const currentLocationProjector = (state: Locations, events: any[]): Locations =>
   events
@@ -79,9 +75,4 @@ export const selectGnomeGameState = createFeatureSelector<GnomeGameEventsState>(
 export const selectGameState = createSelector(
   selectGnomeGameState,
   (state) => state.gnomeGameState
-);
-
-export const selectAllEvents = createSelector(
-  selectGnomeGameState,
-  (state) => state.events
 );
