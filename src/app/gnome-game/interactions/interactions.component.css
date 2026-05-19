@@ -71,3 +71,17 @@ h4 {
 .action-btn:active {
   background-color: #555;
 }
+
+.action-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  background-color: #2d2d2d;
+  color: #ffcc00;
+  border-color: #ffcc00;
+}
+
+.action-btn:disabled:hover {
+  background-color: #2d2d2d;
+  border-color: #ffcc00;
+  color: #ffcc00;
+}
