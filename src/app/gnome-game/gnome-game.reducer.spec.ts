@@ -1,5 +1,5 @@
-import {activeQuestsProjector, currentGameProjector} from './gnome-game.reducer';
-import {gameStartState, Quest} from './gnome-game.state';
+import {activeQuestsProjector, currentGameProjector, inventoryProjector} from './gnome-game.reducer';
+import {gameStartState, InventoryItem, Quest} from './gnome-game.state';
 import {EventType} from './events/events';
 
 describe('Quest System', () => {
@@ -61,6 +61,37 @@ describe('Quest System', () => {
 
       expect(result.currentLocation).toBe(gameStartState.currentLocation);
       expect(result.isMineFlooded).toBe(gameStartState.isMineFlooded);
+    });
+  });
+
+  describe('inventoryProjector', () => {
+    it('should start with empty inventory', () => {
+      const result = inventoryProjector([], []);
+      expect(result).toEqual([]);
+    });
+
+    it('should add fishing net when inventory is exchanged for net', () => {
+      const events = [
+        {eventType: EventType.FRUITS_OF_THE_FOREST_TAKEN},
+        {eventType: EventType.INVENTORY_EXCHANGED, from: InventoryItem.FRUITS_OF_THE_FOREST, to: InventoryItem.GOLDEN_COIN},
+        {eventType: EventType.INVENTORY_EXCHANGED, from: InventoryItem.GOLDEN_COIN, to: InventoryItem.FISHING_NET}
+      ];
+
+      const result = inventoryProjector([], events);
+
+      expect(result).toContain(InventoryItem.FISHING_NET);
+    });
+
+    it('should remove spent item when inventory is exchanged', () => {
+      const events = [
+        {eventType: EventType.FRUITS_OF_THE_FOREST_TAKEN},
+        {eventType: EventType.INVENTORY_EXCHANGED, from: InventoryItem.FRUITS_OF_THE_FOREST, to: InventoryItem.GOLDEN_COIN}
+      ];
+
+      const result = inventoryProjector([], events);
+
+      expect(result).toContain(InventoryItem.GOLDEN_COIN);
+      expect(result).not.toContain(InventoryItem.FRUITS_OF_THE_FOREST);
     });
   });
 });

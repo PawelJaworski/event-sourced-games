@@ -54,7 +54,7 @@ describe('InteractionsComponent', () => {
   });
 
   it('should show Start fishing button when location is FISHERY_GROUND', () => {
-    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND };
+    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND, inventory: [InventoryItem.FISHING_NET] };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -62,9 +62,29 @@ describe('InteractionsComponent', () => {
     expect(button).not.toBeNull();
   });
 
-  it('should dispatch StartFishingCmd when Start fishing button is clicked', () => {
+  it('should have Start fishing button disabled when no fishing net in inventory', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND, inventory: [] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#start-fishing-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.disabled).toBe(true);
+  });
+
+  it('should have Start fishing button enabled when fishing net in inventory', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND, inventory: [InventoryItem.FISHING_NET] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#start-fishing-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.disabled).toBe(false);
+  });
+
+  it('should dispatch StartFishingCmd when Start fishing button is clicked with fishing net', () => {
     spyOn(eventSourcingFacade, 'handle');
-    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND };
+    component.gameState = { ...gameStartState, currentLocation: Locations.FISHERY_GROUND, inventory: [InventoryItem.FISHING_NET] };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
@@ -289,6 +309,56 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     fixture.detectChanges();
 
     const button = fixture.debugElement.query(By.css('#exchange-fruits-for-coin-btn'));
+    expect(button).toBeNull();
+  });
+
+  it('should show ExchangeCoinForNet button when location is MARKETPLACE', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [InventoryItem.GOLDEN_COIN] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#exchange-coin-for-net-btn'));
+    expect(button).not.toBeNull();
+  });
+
+  it('should have ExchangeCoinForNet button disabled when no golden coin in inventory', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#exchange-coin-for-net-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.disabled).toBe(true);
+  });
+
+  it('should have ExchangeCoinForNet button enabled when golden coin in inventory', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [InventoryItem.GOLDEN_COIN] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#exchange-coin-for-net-btn'));
+    expect(button).not.toBeNull();
+    expect(button.nativeElement.disabled).toBe(false);
+  });
+
+  it('should dispatch ExchangeCmd when ExchangeCoinForNet button is clicked', () => {
+    spyOn(eventSourcingFacade, 'handle');
+    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [InventoryItem.GOLDEN_COIN] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#exchange-coin-for-net-btn'));
+    button.nativeElement.click();
+
+    expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new ExchangeCmd(InventoryItem.GOLDEN_COIN, InventoryItem.FISHING_NET));
+  });
+
+  it('should not show ExchangeCoinForNet button when location is not MARKETPLACE', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT, inventory: [InventoryItem.GOLDEN_COIN] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#exchange-coin-for-net-btn'));
     expect(button).toBeNull();
   });
 });

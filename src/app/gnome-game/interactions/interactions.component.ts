@@ -43,6 +43,10 @@ export class InteractionsComponent implements OnInit, OnDestroy {
     this.commandGateway.handle(new StartFishingCmd());
   }
 
+  canStartFishing(): boolean {
+    return this.gameState?.inventory?.includes(InventoryItem.FISHING_NET) ?? false;
+  }
+
   onStartPickingForestFruits(): void {
     this.commandGateway.handle(new StartPickingForestFruitsCmd());
   }
@@ -56,13 +60,13 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   }
 
   showAskBeaverToRebuildDam(): boolean {
-    return this.gameState?.currentLocation === Locations.BEAVER_DAM && 
+    return this.gameState?.currentLocation === Locations.BEAVER_DAM &&
            this.gameState?.activeQuests?.includes(Quest.REMOVE_THE_WATER) &&
            !this.gameState?.activeQuests?.includes(Quest.GET_FISH_FOR_BEAVER);
   }
 
   showBeaverFishRequest(): boolean {
-    return this.gameState?.currentLocation === Locations.BEAVER_DAM && 
+    return this.gameState?.currentLocation === Locations.BEAVER_DAM &&
            this.gameState?.activeQuests?.includes(Quest.GET_FISH_FOR_BEAVER);
   }
 
@@ -76,6 +80,14 @@ export class InteractionsComponent implements OnInit, OnDestroy {
 
   canExchangeFruits(): boolean {
     return this.gameState?.inventory?.includes(InventoryItem.FRUITS_OF_THE_FOREST) ?? false;
+  }
+
+  onExchangeCoinForNet(): void {
+    this.commandGateway.handle(new ExchangeCmd(InventoryItem.GOLDEN_COIN, InventoryItem.FISHING_NET));
+  }
+
+  canExchangeCoinForNet(): boolean {
+    return this.gameState?.inventory?.includes(InventoryItem.GOLDEN_COIN) ?? false;
   }
 
   getLocationImage(): string {
@@ -92,13 +104,13 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   }
 
   isMineFlooded(): boolean {
-    return this.gameState?.isMineFlooded === true && 
+    return this.gameState?.isMineFlooded === true &&
            (this.gameState?.currentLocation === Locations.GOLD_MINE || this.gameState?.currentLocation === Locations.GNOMES_HUT);
   }
 
   getMineFloodedMessage(): string {
     if (this.gameState?.currentLocation === Locations.GNOMES_HUT) {
-      return 'The water flooded my mine. Please help me!';
+      return 'Gnome: "The water flooded my mine. Please help me!"';
     }
     return 'A beaver built a dam, and the water from the river flooded the mine. Ask the beaver to rebuild the dam so that the water does not flood the mine.';
   }

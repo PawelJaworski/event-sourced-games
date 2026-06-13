@@ -11,6 +11,7 @@ import {CatchFishCmd} from './commands/catch-fish-cmd';
 import {StartFishingCmd} from './commands/start-fishing-cmd';
 import {StartPickingForestFruitsCmd} from './commands/start-picking-forest-fruits-cmd';
 import {TakeFruitsOfTheForestCmd} from './commands/take-fruits-of-the-forest-cmd';
+import {ExchangeCmd} from './commands/exchange-cmd';
 
 describe('EventSourcingFacadeService', () => {
   let service: EventSourcingFacadeService;
@@ -244,5 +245,38 @@ describe('EventSourcingFacadeService', () => {
 
     expect(state.isPickingForestFruitsInProgress).toBe(false);
     expect(state.currentLocation).toBe(Locations.GNOMES_HUT);
+  }));
+
+  it('when golden coin is exchanged for fishing net, net is added to inventory and coin is removed', fakeAsync(() => {
+    let state: any;
+
+    service.handle(new TakeFruitsOfTheForestCmd());
+    tick();
+
+    service.handle(new ExchangeCmd(InventoryItem.FRUITS_OF_THE_FOREST, InventoryItem.GOLDEN_COIN));
+    tick();
+
+    store.select(selectGameState).pipe(
+      take(1)
+    ).subscribe(s => {
+      state = s;
+    });
+    tick();
+
+    expect(state.inventory).toContain(InventoryItem.GOLDEN_COIN);
+    expect(state.inventory).not.toContain(InventoryItem.FRUITS_OF_THE_FOREST);
+
+    service.handle(new ExchangeCmd(InventoryItem.GOLDEN_COIN, InventoryItem.FISHING_NET));
+    tick();
+
+    store.select(selectGameState).pipe(
+      take(1)
+    ).subscribe(s => {
+      state = s;
+    });
+    tick();
+
+    expect(state.inventory).toContain(InventoryItem.FISHING_NET);
+    expect(state.inventory).not.toContain(InventoryItem.GOLDEN_COIN);
   }));
 });

@@ -18,7 +18,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
   private readonly itemImages: Record<string, string> = {
     [InventoryItem.FISH]: 'assets/img/inventory/fish.png',
     [InventoryItem.FRUITS_OF_THE_FOREST]: 'assets/img/inventory/fruits-of-the-forest.png',
-    [InventoryItem.GOLDEN_COIN]: 'assets/img/inventory/golden-coin.png'
+    [InventoryItem.GOLDEN_COIN]: 'assets/img/inventory/golden-coin.png',
+    [InventoryItem.FISHING_NET]: 'assets/img/inventory/fishing-net.png'
   };
 
   constructor(private readonly store: Store<AppState>) {}

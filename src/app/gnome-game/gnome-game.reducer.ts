@@ -27,25 +27,22 @@ export const currentLocationProjector = (state: Locations, events: any[]): Locat
     .reduce((_: any, s: Locations) => s, state);
 
 export const inventoryProjector = (state: InventoryItem[], events: any[]): InventoryItem[] => {
-  const fish = events
-    .filter((e: any) => e?.eventType === EventType.FISH_CATCHED)
-    .map(() => InventoryItem.FISH);
+  const baseItems: InventoryItem[] = [
+    ...events.filter((e: any) => e?.eventType === EventType.FISH_CATCHED).map(() => InventoryItem.FISH),
+    ...events.filter((e: any) => e?.eventType === EventType.FRUITS_OF_THE_FOREST_TAKEN).map(() => InventoryItem.FRUITS_OF_THE_FOREST),
+  ];
 
-  const fruits = events
-    .filter((e: any) => e?.eventType === EventType.FRUITS_OF_THE_FOREST_TAKEN)
-    .map(() => InventoryItem.FRUITS_OF_THE_FOREST);
+  const exchanges = events.filter((e: any) => e?.eventType === EventType.INVENTORY_EXCHANGED);
 
-  const goldenCoins = events
-    .filter((e: any) => e?.eventType === EventType.GOLDEN_COIN_EARNED)
-    .map(() => InventoryItem.GOLDEN_COIN);
+  for (const exchange of exchanges) {
+    baseItems.push(exchange.to);
+    const fromIndex = baseItems.indexOf(exchange.from);
+    if (fromIndex !== -1) {
+      baseItems.splice(fromIndex, 1);
+    }
+  }
 
-  const removedFruits = events
-    .filter((e: any) => e?.eventType === EventType.GOLDEN_COIN_EARNED && e?.from === InventoryItem.FRUITS_OF_THE_FOREST)
-    .length;
-
-  const filteredFruits = fruits.slice(0, fruits.length - removedFruits);
-
-  return [...fish, ...filteredFruits, ...goldenCoins];
+  return baseItems;
 };
 
 export const activeQuestsProjector = (state: Quest[], events: any[]): Quest[] => {

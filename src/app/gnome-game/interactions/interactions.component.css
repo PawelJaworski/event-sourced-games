@@ -43,6 +43,24 @@ h4 {
   margin: 0;
 }
 
+.conversation-message {
+  display: block;
+  width: 100%;
+  padding: 20px 24px;
+  background-color: #2d2d2d;
+  color: #ffcc00;
+  border: 2px solid #ffcc00;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.message {
+  margin-bottom: 16px;
+}
+
 .actions {
   margin-top: 16px;
 }

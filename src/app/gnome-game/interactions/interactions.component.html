@@ -2,12 +2,16 @@
   <img [src]="getLocationImage()" [alt]="gameState?.currentLocation" />
 </div>
 
-<div class="message" *ngIf="isMineFlooded()">
+<div class="conversation-message message" *ngIf="isMineFlooded()">
   {{ getMineFloodedMessage() }}
 </div>
 
 <div class="actions" *ngIf="gameState?.currentLocation === Locations.FISHERY_GROUND">
-  <button id="start-fishing-btn" class="action-btn" (click)="onStartFishing()">Start fishing</button>
+  <button id="start-fishing-btn" class="action-btn"
+          (click)="onStartFishing()"
+          [disabled]="!canStartFishing()">
+    {{ canStartFishing() ? 'Start fishing' : 'You need a fishing net to start fishing' }}
+  </button>
 </div>
 <div class="actions" *ngIf="gameState?.currentLocation === Locations.FRUITS_OF_THE_FOREST">
   <button id="start-picking-forest-fruits-btn" class="action-btn" (click)="onStartPickingForestFruits()">Begin gathering wild fruits</button>
@@ -22,6 +26,13 @@
   <button id="exchange-fruits-for-coin-btn" class="action-btn"
           (click)="onExchangeFruitsForCoin()"
           [disabled]="!canExchangeFruits()">
-    {{ canExchangeFruits() ? 'Exchange fruits of the forest for golden coin' : 'Seller: A fishing net costs 1 gold coin. I will give you golden coin if you bring me fruit of the forest.' }}
+    {{ canExchangeFruits() ? 'Exchange fruits of the forest for golden coin' : 'Seller: "A fishing net costs 1 gold coin. I will give you golden coin if you bring me fruit of the forest."' }}
+  </button>
+</div>
+<div class="actions" *ngIf="showExchangeFruitsForCoin()">
+  <button id="exchange-coin-for-net-btn" class="action-btn"
+          (click)="onExchangeCoinForNet()"
+          [disabled]="!canExchangeCoinForNet()">
+    {{ canExchangeCoinForNet() ? 'Exchange golden coin for fishing net' : 'Seller: "A fishing net costs 1 gold coin. You need a golden coin to buy a fishing net."' }}
   </button>
 </div>
