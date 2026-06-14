@@ -89,6 +89,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private readonly questLocationMap: Partial<Record<Quest, Locations>> = {
+    [Quest.FIND_OUT_WHY_MINE_IS_FLOODED]: Locations.GOLD_MINE,
     [Quest.REMOVE_THE_WATER]: Locations.BEAVER_DAM,
     [Quest.GET_FISH_FOR_BEAVER]: Locations.FISHERY_GROUND
   };

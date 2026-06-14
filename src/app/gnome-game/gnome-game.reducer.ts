@@ -24,10 +24,10 @@ export const currentLocationProjector = (state: Locations, events: any[]): Locat
     .map((e: any) => e.location)
     .reduce((_: any, s: Locations) => s, state);
 
-export const inventoryProjector = (state: InventoryItem[], events: any[]): InventoryItem[] => {
+export const inventoryProjector = (state: InventoryItem[], newEvents: any[]): InventoryItem[] => {
   const items = [...state];
 
-  for (const event of events) {
+  for (const event of newEvents) {
     if (event?.eventType === EventType.FISH_CATCHED) {
       items.push(InventoryItem.FISH);
     } else if (event?.eventType === EventType.FRUITS_OF_THE_FOREST_TAKEN) {
@@ -53,17 +53,27 @@ export const activeQuestsProjector = (state: Quest[], events: any[]): Quest[] =>
   const fishQuest = hasFishCatched ? [Quest.GET_FISH_FOR_BEAVER] : [];
 
   const allQuests = [...state, ...addedQuests, ...fishQuest];
-  return [...new Set(allQuests)];
+  let quests = [...new Set(allQuests)];
+
+  const enteredGoldMine = events.some(
+    (e: any) => e?.eventType === EventType.WENT_TO_LOCATION && e?.location === Locations.GOLD_MINE
+  );
+  if (enteredGoldMine && state.includes(Quest.FIND_OUT_WHY_MINE_IS_FLOODED)) {
+    quests = quests.filter(q => q !== Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
+    quests = [...new Set([...quests, Quest.REMOVE_THE_WATER])];
+  }
+
+  return quests;
 };
 
-export const currentGameProjector = (state: GnomeGameState, events: any[]): GnomeGameState => ({
+export const currentGameProjector = (state: GnomeGameState, newEvents: any[]): GnomeGameState => ({
   ...state,
-  currentLocation: currentLocationProjector(state.currentLocation, events),
-  inventory: inventoryProjector(state.inventory, events),
-  isFishingInProgress: events[events.length - 1]?.eventType == EventType.FISHING_STARTED,
-  isPickingForestFruitsInProgress: events[events.length - 1]?.eventType == EventType.PICKING_FOREST_FRUITS_STARTED,
+  currentLocation: currentLocationProjector(state.currentLocation, newEvents),
+  inventory: inventoryProjector(state.inventory, newEvents),
+  isFishingInProgress: newEvents.some(it => it.eventType == EventType.FISHING_STARTED),
+  isPickingForestFruitsInProgress: newEvents.some(it => it.eventType == EventType.PICKING_FOREST_FRUITS_STARTED),
   isMineFlooded: state.isMineFlooded,
-  activeQuests: activeQuestsProjector(state.activeQuests, events)
+  activeQuests: activeQuestsProjector(state.activeQuests, newEvents)
 });
 
 export const gnomeGameEventsReducer = createReducer(

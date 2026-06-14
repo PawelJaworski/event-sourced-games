@@ -1,12 +1,12 @@
 import {activeQuestsProjector, currentGameProjector, inventoryProjector} from './gnome-game.reducer';
-import {gameStartState, InventoryItem, Quest} from './gnome-game.state';
+import {gameStartState, InventoryItem, Locations, Quest} from './gnome-game.state';
 import {EventType} from './events/events';
 
 describe('Quest System', () => {
   describe('activeQuestsProjector', () => {
     it('should start with initial quests', () => {
       const result = activeQuestsProjector(gameStartState.activeQuests, []);
-      expect(result).toEqual([Quest.REMOVE_THE_WATER]);
+      expect(result).toEqual([Quest.FIND_OUT_WHY_MINE_IS_FLOODED]);
     });
 
     it('should add GET_FISH_FOR_BEAVER quest when QUEST_ADDED event occurs', () => {
@@ -14,9 +14,9 @@ describe('Quest System', () => {
         {eventType: EventType.QUEST_ADDED, quest: Quest.GET_FISH_FOR_BEAVER}
       ];
 
-      const result = activeQuestsProjector([Quest.REMOVE_THE_WATER], events);
+      const result = activeQuestsProjector([Quest.FIND_OUT_WHY_MINE_IS_FLOODED], events);
 
-      expect(result).toEqual([Quest.REMOVE_THE_WATER, Quest.GET_FISH_FOR_BEAVER]);
+      expect(result).toEqual([Quest.FIND_OUT_WHY_MINE_IS_FLOODED, Quest.GET_FISH_FOR_BEAVER]);
     });
 
     it('should preserve existing quests when new quest is added', () => {
@@ -26,7 +26,44 @@ describe('Quest System', () => {
 
       const result = activeQuestsProjector(gameStartState.activeQuests, events);
 
+      expect(result).toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
+      expect(result).toContain(Quest.GET_FISH_FOR_BEAVER);
+    });
+
+    it('should transition from FIND_OUT_WHY_MINE_IS_FLOODED to REMOVE_THE_WATER when entering gold mine', () => {
+      const events = [
+        {eventType: EventType.WENT_TO_LOCATION, location: Locations.GOLD_MINE}
+      ];
+
+      const result = activeQuestsProjector([Quest.FIND_OUT_WHY_MINE_IS_FLOODED], events);
+
+      expect(result).not.toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
       expect(result).toContain(Quest.REMOVE_THE_WATER);
+    });
+
+    it('should preserve other quests when transitioning from FIND_OUT_WHY_MINE_IS_FLOODED to REMOVE_THE_WATER', () => {
+      const events = [
+        {eventType: EventType.WENT_TO_LOCATION, location: Locations.GOLD_MINE}
+      ];
+
+      const result = activeQuestsProjector(
+        [Quest.FIND_OUT_WHY_MINE_IS_FLOODED, Quest.GET_FISH_FOR_BEAVER],
+        events
+      );
+
+      expect(result).not.toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
+      expect(result).toContain(Quest.REMOVE_THE_WATER);
+      expect(result).toContain(Quest.GET_FISH_FOR_BEAVER);
+    });
+
+    it('should not add REMOVE_THE_WATER when entering gold mine without FIND_OUT_WHY_MINE_IS_FLOODED', () => {
+      const events = [
+        {eventType: EventType.WENT_TO_LOCATION, location: Locations.GOLD_MINE}
+      ];
+
+      const result = activeQuestsProjector([Quest.GET_FISH_FOR_BEAVER], events);
+
+      expect(result).not.toContain(Quest.REMOVE_THE_WATER);
       expect(result).toContain(Quest.GET_FISH_FOR_BEAVER);
     });
   });
@@ -39,7 +76,7 @@ describe('Quest System', () => {
 
       const result = currentGameProjector(gameStartState, events);
 
-      expect(result.activeQuests).toEqual([Quest.REMOVE_THE_WATER, Quest.GET_FISH_FOR_BEAVER]);
+      expect(result.activeQuests).toEqual([Quest.FIND_OUT_WHY_MINE_IS_FLOODED, Quest.GET_FISH_FOR_BEAVER]);
     });
 
     it('should add GET_FISH_FOR_BEAVER quest when fish is catched', () => {
@@ -61,6 +98,18 @@ describe('Quest System', () => {
 
       expect(result.currentLocation).toBe(gameStartState.currentLocation);
       expect(result.isMineFlooded).toBe(gameStartState.isMineFlooded);
+    });
+
+    it('should transition quests when entering gold mine', () => {
+      const events = [
+        {eventType: EventType.WENT_TO_LOCATION, location: Locations.GOLD_MINE}
+      ];
+
+      const result = currentGameProjector(gameStartState, events);
+
+      expect(result.activeQuests).not.toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
+      expect(result.activeQuests).toContain(Quest.REMOVE_THE_WATER);
+      expect(result.currentLocation).toBe(Locations.GOLD_MINE);
     });
   });
 

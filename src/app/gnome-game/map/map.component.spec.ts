@@ -99,6 +99,12 @@ describe('MapComponent', () => {
   });
 
   describe('Quest-marked locations', () => {
+    it('should mark gold mine when FIND_OUT_WHY_MINE_IS_FLOODED quest is active', () => {
+      component['gameState'] = { ...gameStartState, activeQuests: [Quest.FIND_OUT_WHY_MINE_IS_FLOODED] };
+      const marked = component['getQuestMarkedLocations']();
+      expect(marked.has(Locations.GOLD_MINE)).toBe(true);
+    });
+
     it('should mark beaver dam when REMOVE_THE_WATER quest is active', () => {
       component['gameState'] = { ...gameStartState, activeQuests: [Quest.REMOVE_THE_WATER] };
       const marked = component['getQuestMarkedLocations']();

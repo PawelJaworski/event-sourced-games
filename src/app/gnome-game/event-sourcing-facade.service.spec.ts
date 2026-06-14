@@ -2,7 +2,7 @@ import {TestBed, fakeAsync, tick} from '@angular/core/testing';
 import {Store, StoreModule} from '@ngrx/store';
 import {EventSourcingFacadeService} from './event-sourcing-facade.service';
 import {EventStoreService} from './event-store.service';
-import {InventoryItem, Locations} from './gnome-game.state';
+import {InventoryItem, Locations, Quest} from './gnome-game.state';
 import {selectGameState} from './gnome-game.reducer';
 import {reducers} from '../state/app.reducer';
 import {take} from 'rxjs/operators';
@@ -278,5 +278,24 @@ describe('EventSourcingFacadeService', () => {
 
     expect(state.inventory).toContain(InventoryItem.FISHING_NET);
     expect(state.inventory).not.toContain(InventoryItem.GOLDEN_COIN);
+  }));
+
+  it('when entering gold mine, FIND_OUT_WHY_MINE_IS_FLOODED should transition to REMOVE_THE_WATER', fakeAsync(() => {
+    let state: any;
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    expect(state.activeQuests).toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
+
+    service.handle(new GoToLocationCmd(Locations.GOLD_MINE));
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    expect(state.activeQuests).not.toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
+    expect(state.activeQuests).toContain(Quest.REMOVE_THE_WATER);
+    expect(state.currentLocation).toBe(Locations.GOLD_MINE);
   }));
 });

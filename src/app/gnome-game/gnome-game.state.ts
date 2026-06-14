@@ -16,6 +16,7 @@ export enum InventoryItem {
 }
 
 export enum Quest {
+  FIND_OUT_WHY_MINE_IS_FLOODED = 'FIND_OUT_WHY_MINE_IS_FLOOD',
   REMOVE_THE_WATER = 'REMOVE_THE_WATER',
   GET_FISH_FOR_BEAVER = 'GET_FISH_FOR_BEAVER'
 }
@@ -35,7 +36,7 @@ export const gameStartState: GnomeGameState = {
   isFishingInProgress: false,
   isPickingForestFruitsInProgress: false,
   isMineFlooded: true,
-  activeQuests: [Quest.REMOVE_THE_WATER]
+  activeQuests: [Quest.FIND_OUT_WHY_MINE_IS_FLOODED]
 }
 
 
