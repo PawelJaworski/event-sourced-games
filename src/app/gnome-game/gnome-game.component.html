@@ -8,7 +8,10 @@
 </div>
 <div class="canvas-container" [class.horizontal]="isHorizontal" [class.vertical]="!isHorizontal">
   <div class="map-section">
-    <app-map></app-map>
+    <div class="map-wrapper">
+      <app-map></app-map>
+      <app-quests></app-quests>
+    </div>
     <app-inventory></app-inventory>
   </div>
   <app-interactions></app-interactions>

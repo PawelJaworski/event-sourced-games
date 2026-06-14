@@ -9,6 +9,7 @@ import {FisheryGameDialogComponent} from './fishery-game/fishery-game-dialog.com
 import {FisheryGameComponent} from './fishery-game/fishery-game.component';
 import {InteractionsComponent} from './interactions/interactions.component';
 import {InventoryComponent} from './inventory/inventory.component';
+import {QuestsComponent} from './quests/quests.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import {InventoryComponent} from './inventory/inventory.component';
     FisheryGameDialogComponent,
     FisheryGameComponent,
     InteractionsComponent,
-    InventoryComponent
+    InventoryComponent,
+    QuestsComponent
   ],
   imports: [
     CommonModule

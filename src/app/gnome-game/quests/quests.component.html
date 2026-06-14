@@ -1,0 +1,10 @@
+<div class="quests-container">
+  <span class="quests-label">Active Quests:</span>
+  <div class="quests-list">
+    <div *ngFor="let quest of activeQuests; trackBy: trackByQuest" class="quest-item">
+      <span class="quest-bullet">&#9679;</span>
+      <span class="quest-text">{{ getQuestLabel(quest) }}</span>
+    </div>
+    <span *ngIf="!activeQuests.length" class="quests-empty">No active quests</span>
+  </div>
+</div>
