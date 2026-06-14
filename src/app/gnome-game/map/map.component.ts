@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Store} from '@ngrx/store';
-import {gameStartState, GnomeGameState, Locations} from '../gnome-game.state';
+import {gameStartState, GnomeGameState, Locations, Quest} from '../gnome-game.state';
 import {GameTokenService} from '../service/game-token.service';
 import {selectGameState} from '../gnome-game.reducer';
 import {AppState} from '../../state/app.state';
@@ -83,9 +83,25 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
       ctx.clearRect(0, 0, this.canvas!.nativeElement.width, this.canvas!.nativeElement.height);
       ctx.drawImage(mapImg, 0, 0);
 
-      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded);
+      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded, this.getQuestMarkedLocations());
     };
     mapImg.src = './assets/img/map.png';
+  }
+
+  private readonly questLocationMap: Partial<Record<Quest, Locations>> = {
+    [Quest.REMOVE_THE_WATER]: Locations.BEAVER_DAM,
+    [Quest.GET_FISH_FOR_BEAVER]: Locations.FISHERY_GROUND
+  };
+
+  private getQuestMarkedLocations(): Set<Locations> {
+    const marked = new Set<Locations>();
+    for (const quest of this.gameState.activeQuests) {
+      const location = this.questLocationMap[quest];
+      if (location) {
+        marked.add(location);
+      }
+    }
+    return marked;
   }
 
   private loadMapImage(): void {
@@ -101,7 +117,7 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
       ctx.drawImage(mapImg, 0, 0);
 
       this.gameTokenService.initializeTokens(ctx);
-      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded);
+      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded, this.getQuestMarkedLocations());
     };
     mapImg.src = './assets/img/map.png';
   }

@@ -129,9 +129,9 @@ describe('InteractionsComponent', () => {
     expect(component.getLocationImage()).toBe('assets/img/gnome.png');
   });
 
-  it('should return gnome-house.png when location is GNOMES_HUT', () => {
+  it('should return gnome.png when location is GNOMES_HUT', () => {
     component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT };
-    expect(component.getLocationImage()).toBe('assets/img/gnome-house.png');
+    expect(component.getLocationImage()).toBe('assets/img/gnome.png');
   });
 
   it('should return fishery-grounds.png when location is FISHERY_GROUND', () => {
@@ -168,7 +168,7 @@ describe('InteractionsComponent', () => {
     expect(imageContainer).not.toBeNull();
     const img = fixture.debugElement.query(By.css('.location-image img'));
     expect(img).not.toBeNull();
-    expect(img.nativeElement.src).toContain('assets/img/gnome-house.png');
+    expect(img.nativeElement.src).toContain('assets/img/gnome.png');
   });
 
   it('should return false for isMineFlooded when isMineFlooded is false', () => {

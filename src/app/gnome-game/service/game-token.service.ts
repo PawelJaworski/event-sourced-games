@@ -19,7 +19,7 @@ export class GameTokenService {
 
   constructor() {}
 
-  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken, isGrayed: boolean = false): void {
+  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken, isGrayed: boolean = false, isMarked: boolean = false): void {
     this.drawShadow(ctx, token);
 
     const img = new Image();
@@ -37,11 +37,26 @@ export class GameTokenService {
       ctx.drawImage(img, token.x, token.y, token.size, token.size);
 
       ctx.restore();
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
-      ctx.stroke();
+
+      if (isMarked) {
+        ctx.strokeStyle = '#FF8C00';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.font = 'bold 20px Arial';
+        ctx.fillStyle = '#FF8C00';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('!', token.x + token.size/2, token.y - 4);
+      } else {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
+        ctx.stroke();
+      }
     };
     img.src = token.imageUrl;
   }
@@ -188,7 +203,7 @@ export class GameTokenService {
     };
   }
 
-  renderTokens(currentLocation: Locations, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE, isMineFlooded: boolean = false): void {
+  renderTokens(currentLocation: Locations, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE, isMineFlooded: boolean = false, questMarkedLocations: Set<Locations> = new Set()): void {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
@@ -227,7 +242,9 @@ export class GameTokenService {
     }
 
     for (const token of this.locationTokens.values()) {
-      this.drawRoundToken(ctx, token, token.location === Locations.GOLD_MINE && isMineFlooded);
+      const isGrayed = token.location === Locations.GOLD_MINE && isMineFlooded;
+      const isMarked = questMarkedLocations.has(token.location);
+      this.drawRoundToken(ctx, token, isGrayed, isMarked);
     }
   }
 

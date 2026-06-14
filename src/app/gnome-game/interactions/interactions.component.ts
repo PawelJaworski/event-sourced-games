@@ -93,7 +93,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   getLocationImage(): string {
     const imageMap: Record<string, string> = {
       [Locations.NONE]: 'assets/img/gnome.png',
-      [Locations.GNOMES_HUT]: 'assets/img/gnome-house.png',
+      [Locations.GNOMES_HUT]: 'assets/img/gnome.png',
       [Locations.FISHERY_GROUND]: 'assets/img/fishery-grounds.png',
       [Locations.GOLD_MINE]: 'assets/img/gold-mine.png',
       [Locations.BEAVER_DAM]: 'assets/img/beaver-dam.png',

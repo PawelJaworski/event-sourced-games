@@ -6,7 +6,7 @@ import {Store} from '@ngrx/store';
 import {AppState} from '../../state/app.state';
 import {StoreModule} from '@ngrx/store';
 import {reducers} from '../../state/app.reducer';
-import {Locations} from '../gnome-game.state';
+import {Locations, Quest, gameStartState} from '../gnome-game.state';
 import {ElementRef} from '@angular/core';
 import {GoToLocationCmd} from '../commands/go-to-location-cmd';
 
@@ -95,6 +95,33 @@ describe('MapComponent', () => {
 
         expect((component as any).previewLocation).toBe(location);
       });
+    });
+  });
+
+  describe('Quest-marked locations', () => {
+    it('should mark beaver dam when REMOVE_THE_WATER quest is active', () => {
+      component['gameState'] = { ...gameStartState, activeQuests: [Quest.REMOVE_THE_WATER] };
+      const marked = component['getQuestMarkedLocations']();
+      expect(marked.has(Locations.BEAVER_DAM)).toBe(true);
+    });
+
+    it('should mark fishery grounds when GET_FISH_FOR_BEAVER quest is active', () => {
+      component['gameState'] = { ...gameStartState, activeQuests: [Quest.GET_FISH_FOR_BEAVER] };
+      const marked = component['getQuestMarkedLocations']();
+      expect(marked.has(Locations.FISHERY_GROUND)).toBe(true);
+    });
+
+    it('should mark both locations when both quests are active', () => {
+      component['gameState'] = { ...gameStartState, activeQuests: [Quest.REMOVE_THE_WATER, Quest.GET_FISH_FOR_BEAVER] };
+      const marked = component['getQuestMarkedLocations']();
+      expect(marked.has(Locations.BEAVER_DAM)).toBe(true);
+      expect(marked.has(Locations.FISHERY_GROUND)).toBe(true);
+    });
+
+    it('should return empty set when no quests are active', () => {
+      component['gameState'] = { ...gameStartState, activeQuests: [] };
+      const marked = component['getQuestMarkedLocations']();
+      expect(marked.size).toBe(0);
     });
   });
 

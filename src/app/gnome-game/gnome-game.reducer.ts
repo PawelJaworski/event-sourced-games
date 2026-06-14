@@ -7,11 +7,9 @@ export interface GameAggregateState {}
 export const initialAggregateState: GameAggregateState = {}
 
 export interface GnomeGameEventsState {
-  events: any[];
   gnomeGameState: GnomeGameState;
 }
 export const initialEventsState: GnomeGameEventsState = {
-  events: [],
   gnomeGameState: gameStartState
 };
 
@@ -27,22 +25,23 @@ export const currentLocationProjector = (state: Locations, events: any[]): Locat
     .reduce((_: any, s: Locations) => s, state);
 
 export const inventoryProjector = (state: InventoryItem[], events: any[]): InventoryItem[] => {
-  const baseItems: InventoryItem[] = [
-    ...events.filter((e: any) => e?.eventType === EventType.FISH_CATCHED).map(() => InventoryItem.FISH),
-    ...events.filter((e: any) => e?.eventType === EventType.FRUITS_OF_THE_FOREST_TAKEN).map(() => InventoryItem.FRUITS_OF_THE_FOREST),
-  ];
+  const items = [...state];
 
-  const exchanges = events.filter((e: any) => e?.eventType === EventType.INVENTORY_EXCHANGED);
-
-  for (const exchange of exchanges) {
-    baseItems.push(exchange.to);
-    const fromIndex = baseItems.indexOf(exchange.from);
-    if (fromIndex !== -1) {
-      baseItems.splice(fromIndex, 1);
+  for (const event of events) {
+    if (event?.eventType === EventType.FISH_CATCHED) {
+      items.push(InventoryItem.FISH);
+    } else if (event?.eventType === EventType.FRUITS_OF_THE_FOREST_TAKEN) {
+      items.push(InventoryItem.FRUITS_OF_THE_FOREST);
+    } else if (event?.eventType === EventType.INVENTORY_EXCHANGED) {
+      items.push(event.to);
+      const fromIndex = items.indexOf(event.from);
+      if (fromIndex !== -1) {
+        items.splice(fromIndex, 1);
+      }
     }
   }
 
-  return baseItems;
+  return items;
 };
 
 export const activeQuestsProjector = (state: Quest[], events: any[]): Quest[] => {
@@ -69,14 +68,10 @@ export const currentGameProjector = (state: GnomeGameState, events: any[]): Gnom
 
 export const gnomeGameEventsReducer = createReducer(
   initialEventsState,
-  on(addEvents, (state, {events}) => {
-    const allEvents = [...state.events, ...events];
-    return {
-      ...state,
-      events: allEvents,
-      gnomeGameState: currentGameProjector(state.gnomeGameState, allEvents)
-    };
-  })
+  on(addEvents, (state, {events}) => ({
+    ...state,
+    gnomeGameState: currentGameProjector(state.gnomeGameState, events)
+  }))
 );
 
 export const selectGnomeGameState = createFeatureSelector<GnomeGameEventsState>('gnomeGameEvents');
