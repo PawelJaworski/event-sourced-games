@@ -35,7 +35,7 @@ describe('EventSourcingFacadeService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should emit when state changes', fakeAsync(() => {
+  it('given player is at Gnome\'s Hut, when player goes to Fruits of the Forest, then player arrives at Fruits of the Forest', fakeAsync(() => {
     const emissions: any[] = [];
     const sub = store.select(selectGameState).subscribe(state => {
       emissions.push(state);
@@ -51,7 +51,7 @@ describe('EventSourcingFacadeService', () => {
     expect(emissions[1].currentLocation).toBe(Locations.FRUITS_OF_THE_FOREST);
   }));
 
-  it('should emit when state changes (same location)', fakeAsync(() => {
+  it('given player is at Gnome\'s Hut, when player goes to Gnome\'s Hut, then player stays at Gnome\'s Hut', fakeAsync(() => {
     const emissions: any[] = [];
     store.select(selectGameState).pipe(
       take(1)
@@ -67,7 +67,7 @@ describe('EventSourcingFacadeService', () => {
     expect(emissions[0].currentLocation).toBe(Locations.GNOMES_HUT);
   }));
 
-  it('when fish is caught it\'s available in inventory', fakeAsync(() => {
+  it('given player catches a fish, then fish is in inventory', fakeAsync(() => {
     let state: any;
     store.select(selectGameState).pipe(
       take(1)
@@ -92,7 +92,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.inventory.length).toBe(1);
   }));
 
-  it('when fishing is started isFishingInProgress should be true', fakeAsync(() => {
+  it('given player is at Fishery Ground with fishing net, when player starts fishing, then fishing is in progress', fakeAsync(() => {
     let state: any;
 
     service.handle(new GoToLocationCmd(Locations.FISHERY_GROUND));
@@ -111,7 +111,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.isFishingInProgress).toBe(true);
   }));
 
-  it('when fish is caught after fishing started isFishingInProgress should be false', fakeAsync(() => {
+  it('given player is fishing at Fishery Ground, when player catches a fish, then fish is in inventory and fishing is no longer in progress', fakeAsync(() => {
     let state: any;
 
     service.handle(new GoToLocationCmd(Locations.FISHERY_GROUND));
@@ -134,7 +134,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.inventory).toContain(InventoryItem.FISH);
   }));
 
-  it('when go to other location isFishingInProgress should be false', fakeAsync(() => {
+  it('given player is fishing at Fishery Ground, when player goes to Gnome\'s Hut, then fishing is no longer in progress and player is at Gnome\'s Hut', fakeAsync(() => {
     let state: any;
 
     service.handle(new GoToLocationCmd(Locations.FISHERY_GROUND));
@@ -157,7 +157,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.currentLocation).toBe(Locations.GNOMES_HUT);
   }));
 
-  it('when picking forest fruits is started isPickingForestFruitsInProgress should be true', fakeAsync(() => {
+  it('given player is at Fruits of the Forest, when player starts picking, then picking is in progress', fakeAsync(() => {
     let state: any;
 
     service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
@@ -176,7 +176,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.isPickingForestFruitsInProgress).toBe(true);
   }));
 
-  it('when fruits are taken after picking started isPickingForestFruitsInProgress should be false', fakeAsync(() => {
+  it('given player is picking fruits at Fruits of the Forest, when player takes the fruits, then fruits are in inventory and picking is no longer in progress', fakeAsync(() => {
     let state: any;
 
     service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
@@ -199,7 +199,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.inventory).toContain(InventoryItem.FRUITS_OF_THE_FOREST);
   }));
 
-  it('when fruits of the forest are taken they\'re available in inventory', fakeAsync(() => {
+  it('given player takes fruits of the forest, then fruits are in inventory', fakeAsync(() => {
     let state: any;
     store.select(selectGameState).pipe(
       take(1)
@@ -224,7 +224,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.inventory.length).toBe(1);
   }));
 
-  it('when go to other location isPickingForestFruitsInProgress should be false', fakeAsync(() => {
+  it('given player is picking fruits at Fruits of the Forest, when player goes to Gnome\'s Hut, then picking is no longer in progress and player is at Gnome\'s Hut', fakeAsync(() => {
     let state: any;
 
     service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
@@ -247,7 +247,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.currentLocation).toBe(Locations.GNOMES_HUT);
   }));
 
-  it('when golden coin is exchanged for fishing net, net is added to inventory and coin is removed', fakeAsync(() => {
+  it('given player has fruits of the forest, when player exchanges fruits for golden coin, then golden coin is in inventory and fruit is removed; when player exchanges golden coin for fishing net, then net is in inventory and coin is removed', fakeAsync(() => {
     let state: any;
 
     service.handle(new TakeFruitsOfTheForestCmd());
@@ -280,7 +280,7 @@ describe('EventSourcingFacadeService', () => {
     expect(state.inventory).not.toContain(InventoryItem.GOLDEN_COIN);
   }));
 
-  it('when entering gold mine, FIND_OUT_WHY_MINE_IS_FLOODED should transition to REMOVE_THE_WATER', fakeAsync(() => {
+  it('given player has FIND_OUT_WHY_MINE_IS_FLOODED quest, when player enters Gold Mine, then FIND_OUT_WHY_MINE_IS_FLOODED is done, REMOVE_THE_WATER is active, and player is at Gold Mine', fakeAsync(() => {
     let state: any;
 
     store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
