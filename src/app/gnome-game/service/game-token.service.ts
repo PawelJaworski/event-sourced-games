@@ -16,49 +16,61 @@ export class GameTokenService {
   private readonly locationTokens = new Map<Locations, GameToken>();
   private readonly originalTokenSize = 40;
   private readonly enlargedTokenSize = 80;
+  private readonly imageCache = new Map<string, HTMLImageElement>();
 
   constructor() {}
 
-  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken, isGrayed: boolean = false, isMarked: boolean = false): void {
+  preloadImages(): Promise<void> {
+    const urls = [...new Set(Array.from(this.locationTokens.values()).map(t => t.imageUrl))];
+    return Promise.all(urls.map(url => new Promise<void>(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        this.imageCache.set(url, img);
+        resolve();
+      };
+      img.src = url;
+    }))).then(() => {});
+  }
+
+  drawRoundToken(ctx: CanvasRenderingContext2D, token: GameToken, isGrayed: boolean = false, isMarked: boolean = false, blinkVisible: boolean = true): void {
     this.drawShadow(ctx, token);
 
-    const img = new Image();
-    img.onload = () => {
-      ctx.save();
+    const img = this.imageCache.get(token.imageUrl);
+    if (!img) return;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    if (isGrayed) {
+      ctx.filter = 'grayscale(100%)';
+    }
+
+    ctx.drawImage(img, token.x, token.y, token.size, token.size);
+
+    ctx.restore();
+
+    if (isMarked && blinkVisible) {
+      ctx.strokeStyle = '#FF8C00';
+      ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
+      ctx.stroke();
 
-      if (isGrayed) {
-        ctx.filter = 'grayscale(100%)';
-      }
-
-      ctx.drawImage(img, token.x, token.y, token.size, token.size);
-
-      ctx.restore();
-
-      if (isMarked) {
-        ctx.strokeStyle = '#FF8C00';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.font = 'bold 20px Arial';
-        ctx.fillStyle = '#FF8C00';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText('!', token.x + token.size/2, token.y - 4);
-      } else {
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-    };
-    img.src = token.imageUrl;
+      ctx.font = 'bold 20px Arial';
+      ctx.fillStyle = '#FF8C00';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('!', token.x + token.size/2, token.y - 4);
+    } else {
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(token.x + token.size/2, token.y + token.size/2, token.size/2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
   }
 
   private drawShadow(ctx: CanvasRenderingContext2D, token: GameToken): void {
@@ -203,7 +215,7 @@ export class GameTokenService {
     };
   }
 
-  renderTokens(currentLocation: Locations, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE, isMineFlooded: boolean = false, questMarkedLocations: Set<Locations> = new Set()): void {
+  renderTokens(currentLocation: Locations, ctx: CanvasRenderingContext2D, previewLocation: Locations = Locations.NONE, isMineFlooded: boolean = false, questMarkedLocations: Set<Locations> = new Set(), blinkVisible: boolean = true): void {
     const gnomeToken = this.locationTokens.get(Locations.GNOMES_HUT);
     const fisheryToken = this.locationTokens.get(Locations.FISHERY_GROUND);
     const goldMineToken = this.locationTokens.get(Locations.GOLD_MINE);
@@ -244,7 +256,28 @@ export class GameTokenService {
     for (const token of this.locationTokens.values()) {
       const isGrayed = token.location === Locations.GOLD_MINE && isMineFlooded;
       const isMarked = questMarkedLocations.has(token.location);
-      this.drawRoundToken(ctx, token, isGrayed, isMarked);
+      this.drawRoundToken(ctx, token, isGrayed, isMarked, blinkVisible);
+    }
+  }
+
+  drawQuestMarkers(ctx: CanvasRenderingContext2D, questMarkedLocations: Set<Locations>): void {
+    for (const token of this.locationTokens.values()) {
+      if (questMarkedLocations.has(token.location)) {
+        const centerX = token.x + token.size / 2;
+        const centerY = token.y + token.size / 2;
+
+        ctx.strokeStyle = '#FF8C00';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, token.size / 2, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.font = 'bold 20px Arial';
+        ctx.fillStyle = '#FF8C00';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('!', centerX, token.y - 4);
+      }
     }
   }
 

@@ -21,6 +21,12 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
   private gameState: GnomeGameState = gameStartState;
   private previewLocation: Locations = Locations.NONE;
+  private mapImage: HTMLImageElement | null = null;
+  private baseCanvas: HTMLCanvasElement | null = null;
+  private blinkVisible = true;
+  private animationFrameId = 0;
+  private lastBlinkTime = 0;
+  private readonly BLINK_INTERVAL_MS = 600;
 
   constructor(
     private readonly store: Store<AppState>,
@@ -39,11 +45,15 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
     this.subscriptions.unsubscribe();
   }
 
   ngAfterViewInit(): void {
     this.loadMapImage();
+    this.startBlinkLoop();
   }
 
   onCanvasClick(event: MouseEvent): void {
@@ -78,14 +88,32 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     const ctx = this.canvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
+    if (this.mapImage) {
+      this.drawFrame(ctx);
+      return;
+    }
+
     const mapImg = new Image();
     mapImg.onload = () => {
-      ctx.clearRect(0, 0, this.canvas!.nativeElement.width, this.canvas!.nativeElement.height);
-      ctx.drawImage(mapImg, 0, 0);
-
-      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded, this.getQuestMarkedLocations());
+      this.mapImage = mapImg;
+      this.canvas!.nativeElement.width = mapImg.width;
+      this.canvas!.nativeElement.height = mapImg.height;
+      this.drawFrame(ctx);
     };
     mapImg.src = './assets/img/map.png';
+  }
+
+  private drawFrame(ctx: CanvasRenderingContext2D): void {
+    if (!this.mapImage || !this.canvas) return;
+
+    ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    ctx.drawImage(this.mapImage, 0, 0);
+    this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded, this.getQuestMarkedLocations(), false);
+    this.refreshBaseCache(ctx);
+
+    if (this.blinkVisible) {
+      this.gameTokenService.drawQuestMarkers(ctx, this.getQuestMarkedLocations());
+    }
   }
 
   private readonly questLocationMap: Partial<Record<Quest, Locations>> = {
@@ -105,6 +133,43 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     return marked;
   }
 
+  private startBlinkLoop(): void {
+    this.lastBlinkTime = performance.now();
+    const loop = (time: number) => {
+      if (this.gameState.activeQuests.length > 0) {
+        if (time - this.lastBlinkTime >= this.BLINK_INTERVAL_MS) {
+          this.blinkVisible = !this.blinkVisible;
+          this.lastBlinkTime = time;
+          this.applyBlink();
+        }
+      }
+      this.animationFrameId = requestAnimationFrame(loop);
+    };
+    this.animationFrameId = requestAnimationFrame(loop);
+  }
+
+  private applyBlink(): void {
+    if (!this.canvas || !this.baseCanvas) return;
+    const ctx = this.canvas.nativeElement.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    ctx.drawImage(this.baseCanvas, 0, 0);
+
+    if (this.blinkVisible) {
+      this.gameTokenService.drawQuestMarkers(ctx, this.getQuestMarkedLocations());
+    }
+  }
+
+  private refreshBaseCache(ctx: CanvasRenderingContext2D): void {
+    this.baseCanvas = document.createElement('canvas');
+    this.baseCanvas.width = ctx.canvas.width;
+    this.baseCanvas.height = ctx.canvas.height;
+    const baseCtx = this.baseCanvas.getContext('2d');
+    if (!baseCtx) return;
+    baseCtx.drawImage(ctx.canvas, 0, 0);
+  }
+
   private loadMapImage(): void {
     if (!this.canvas) return;
 
@@ -112,13 +177,14 @@ export class MapComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!ctx) return;
 
     const mapImg = new Image();
-    mapImg.onload = () => {
+    mapImg.onload = async () => {
+      this.mapImage = mapImg;
       this.canvas!.nativeElement.width = mapImg.width;
       this.canvas!.nativeElement.height = mapImg.height;
-      ctx.drawImage(mapImg, 0, 0);
 
       this.gameTokenService.initializeTokens(ctx);
-      this.gameTokenService.renderTokens(this.gameState.currentLocation, ctx, this.previewLocation, this.gameState.isMineFlooded, this.getQuestMarkedLocations());
+      await this.gameTokenService.preloadImages();
+      this.drawFrame(ctx);
     };
     mapImg.src = './assets/img/map.png';
   }

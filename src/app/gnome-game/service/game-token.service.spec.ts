@@ -30,7 +30,7 @@ describe('GameTokenService', () => {
       service.renderTokens(Locations.GNOMES_HUT, mockCtx, Locations.NONE, false, questMarkedLocations);
 
       const beaverDamToken = (service as any).locationTokens.get(Locations.BEAVER_DAM);
-      expect(service.drawRoundToken).toHaveBeenCalledWith(mockCtx, beaverDamToken, false, true);
+      expect(service.drawRoundToken).toHaveBeenCalledWith(mockCtx, beaverDamToken, false, true, true);
     });
 
     it('should call drawRoundToken with isMarked=true for fishery grounds when FISHERY_GROUND is in questMarkedLocations', () => {
@@ -41,7 +41,7 @@ describe('GameTokenService', () => {
       service.renderTokens(Locations.GNOMES_HUT, mockCtx, Locations.NONE, false, questMarkedLocations);
 
       const fisheryToken = (service as any).locationTokens.get(Locations.FISHERY_GROUND);
-      expect(service.drawRoundToken).toHaveBeenCalledWith(mockCtx, fisheryToken, false, true);
+      expect(service.drawRoundToken).toHaveBeenCalledWith(mockCtx, fisheryToken, false, true, true);
     });
 
     it('should call drawRoundToken with isMarked=false when no questMarkedLocations match', () => {
@@ -51,7 +51,7 @@ describe('GameTokenService', () => {
       service.renderTokens(Locations.GNOMES_HUT, mockCtx, Locations.NONE, false);
 
       const gnomeToken = (service as any).locationTokens.get(Locations.GNOMES_HUT);
-      expect(service.drawRoundToken).toHaveBeenCalledWith(mockCtx, gnomeToken, false, false);
+      expect(service.drawRoundToken).toHaveBeenCalledWith(mockCtx, gnomeToken, false, false, true);
     });
   });
 });
