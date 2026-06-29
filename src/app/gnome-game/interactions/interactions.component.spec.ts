@@ -321,14 +321,13 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     expect(button).not.toBeNull();
   });
 
-  it('should have ExchangeCoinForNet button disabled when no golden coin in inventory', () => {
+  it('should not show ExchangeCoinForNet button when no golden coin in inventory', () => {
     component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [] };
     fixture.changeDetectorRef.markForCheck();
     fixture.detectChanges();
 
     const button = fixture.debugElement.query(By.css('#exchange-coin-for-net-btn'));
-    expect(button).not.toBeNull();
-    expect(button.nativeElement.disabled).toBe(true);
+    expect(button).toBeNull();
   });
 
   it('should have ExchangeCoinForNet button enabled when golden coin in inventory', () => {

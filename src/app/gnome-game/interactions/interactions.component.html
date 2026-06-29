@@ -1,38 +1,76 @@
-<div class="location-image" *ngIf="getLocationImage()">
-  <img [src]="getLocationImage()" [alt]="gameState?.currentLocation" />
-</div>
+@if (getLocationImage()) {
+  <div class="location-image">
+    <img [src]="getLocationImage()" [alt]="gameState?.currentLocation" />
+  </div>
+}
 
-<div class="conversation-message message" *ngIf="isMineFlooded()">
-  {{ getMineFloodedMessage() }}
-</div>
+@if (isMineFlooded()) {
+  <div class="conversation-message message">
+    {{ getMineFloodedMessage() }}
+  </div>
+}
 
-<div class="actions" *ngIf="gameState?.currentLocation === Locations.FISHERY_GROUND">
-  <button id="start-fishing-btn" class="action-btn"
-          (click)="onStartFishing()"
-          [disabled]="!canStartFishing()">
-    {{ canStartFishing() ? 'Start fishing' : 'You need a fishing net to start fishing' }}
-  </button>
-</div>
-<div class="actions" *ngIf="gameState?.currentLocation === Locations.FRUITS_OF_THE_FOREST">
-  <button id="start-picking-forest-fruits-btn" class="action-btn" (click)="onStartPickingForestFruits()">Begin gathering wild fruits</button>
-</div>
-<div class="actions" *ngIf="showAskBeaverToRebuildDam()">
-  <button id="ask-beaver-to-rebuild-dam-btn" class="action-btn" (click)="onAskBeaverToRebuildDam()">Please rebuild the dam so that the water from the river does not flood my mine.</button>
-</div>
-<div class="actions" *ngIf="showBeaverFishRequest()">
-  <button id="beaver-fish-request-btn" class="action-btn" disabled>{{ getBeaverMessage() }}</button>
-</div>
-<div class="actions" *ngIf="showExchangeFruitsForCoin()">
-  <button id="exchange-fruits-for-coin-btn" class="action-btn"
-          (click)="onExchangeFruitsForCoin()"
-          [disabled]="!canExchangeFruits()">
-    {{ canExchangeFruits() ? 'Exchange fruits of the forest for golden coin' : 'Seller: "A fishing net costs 1 gold coin. I will give you golden coin if you bring me fruit of the forest."' }}
-  </button>
-</div>
-<div class="actions" *ngIf="showExchangeFruitsForCoin()">
-  <button id="exchange-coin-for-net-btn" class="action-btn"
-          (click)="onExchangeCoinForNet()"
-          [disabled]="!canExchangeCoinForNet()">
-    {{ canExchangeCoinForNet() ? 'Exchange golden coin for fishing net' : 'Seller: "A fishing net costs 1 gold coin. You need a golden coin to buy a fishing net."' }}
-  </button>
-</div>
+@if (gameState?.currentLocation === Locations.FISHERY_GROUND) {
+  <div class="actions">
+    <button id="start-fishing-btn" class="action-btn"
+            (click)="onStartFishing()"
+            [disabled]="!canStartFishing()">
+      {{ canStartFishing() ? 'Start fishing' : 'You need a fishing net to start fishing' }}
+    </button>
+  </div>
+}
+
+@if (gameState?.currentLocation === Locations.FRUITS_OF_THE_FOREST) {
+  <div class="actions">
+    <button id="start-picking-forest-fruits-btn" class="action-btn" (click)="onStartPickingForestFruits()">Begin gathering wild fruits</button>
+  </div>
+}
+
+@if (showAskBeaverToRebuildDam()) {
+  <div class="actions">
+    <button id="ask-beaver-to-rebuild-dam-btn" class="action-btn" (click)="onAskBeaverToRebuildDam()">Please rebuild the dam so that the water from the river does not flood my mine.</button>
+  </div>
+}
+
+@if (showBeaverFishRequest()) {
+  <div class="actions">
+    <button id="beaver-fish-request-btn" class="action-btn" disabled>{{ getBeaverMessage() }}</button>
+  </div>
+}
+
+@if (showExchangeFruitsForCoin()) {
+  <div id="marketplace-prices" class="price-list">
+    <div class="price-list-header">Marketplace</div>
+    <div class="price-list-section">
+      <div class="price-list-section-title">Will buy:</div>
+      <div class="price-list-item">
+        <span class="item-name">Fruits of the forest</span>
+        <span class="item-arrows">&rarr;</span>
+        <span class="item-price">1 golden coin</span>
+      </div>
+    </div>
+    <div class="price-list-section">
+      <div class="price-list-section-title">Will sell:</div>
+      <div class="price-list-item">
+        <span class="item-name">Fishing net</span>
+        <span class="item-arrows">&rarr;</span>
+        <span class="item-price">1 golden coin</span>
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <button id="exchange-fruits-for-coin-btn" class="action-btn"
+            (click)="onExchangeFruitsForCoin()"
+            [disabled]="!canExchangeFruits()">
+      {{ canExchangeFruits() ? 'Sell fruits of the forest' : 'Seller: "A fishing net costs 1 gold coin. I will give you golden coin if you bring me fruit of the forest."' }}
+    </button>
+  </div>
+  <div class="actions">
+    @if (canExchangeCoinForNet()) {
+      <button id="exchange-coin-for-net-btn" class="action-btn"
+              (click)="onExchangeCoinForNet()">
+        'Buy fishing net'
+      </button>
+    }
+  </div>
+}
