@@ -71,7 +71,7 @@ export class InteractionsComponent implements OnInit, OnDestroy {
   }
 
   getBeaverMessage(): string {
-    return 'Beaver: I\'d like to eat a tasty fish. If you give me a fish, I will rebuild the dam and remove the water from the mine.';
+    return 'Beaver: "I\'d like to eat a tasty fish. If you give me a fish, I will rebuild the dam and remove the water from the mine."';
   }
 
   showExchangeFruitsForCoin(): boolean {

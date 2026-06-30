@@ -144,6 +144,9 @@ const locationProjector: Projector<GnomeGameState> = (state: GnomeGameState, eve
 }
 ```
 
+### Projector Purity Rule
+Projectors must derive state purely from events. A projector should never accept or depend on state from another projector slice (e.g., passing inventory into the quests projector). Cross-projector conditions belong in the orchestrating projector (`currentGameProjector`), where all projected slices are available — not in individual sub-projectors.
+
 ### Adding New Commands & Events
 
 **File locations:**

@@ -101,6 +101,53 @@ describe('Quest System', () => {
       expect(result.currentLocation).toBe(gameStartState.currentLocation);
       expect(result.isMineFlooded).toBe(gameStartState.isMineFlooded);
     });
+
+    it('given GET_FISH_FOR_BEAVER quest is active and no fishing net in inventory, when player enters Fishery Ground, then GET_FISHING_NET quest is added', () => {
+      const state = {
+        ...gameStartState,
+        activeQuests: [Quest.FIND_OUT_WHY_MINE_IS_FLOODED, Quest.GET_FISH_FOR_BEAVER],
+        inventory: []
+      };
+      const events = [
+        {eventType: EventType.WENT_TO_LOCATION, location: Locations.FISHERY_GROUND}
+      ];
+
+      const result = currentGameProjector(state, events);
+
+      expect(result.activeQuests).toContain(Quest.GET_FISH_FOR_BEAVER);
+      expect(result.activeQuests).toContain(Quest.GET_FISHING_NET);
+    });
+
+    it('given GET_FISH_FOR_BEAVER quest is active and player has fishing net in inventory, when player enters Fishery Ground, then GET_FISHING_NET quest is not added', () => {
+      const state = {
+        ...gameStartState,
+        activeQuests: [Quest.FIND_OUT_WHY_MINE_IS_FLOODED, Quest.GET_FISH_FOR_BEAVER],
+        inventory: [InventoryItem.FISHING_NET]
+      };
+      const events = [
+        {eventType: EventType.WENT_TO_LOCATION, location: Locations.FISHERY_GROUND}
+      ];
+
+      const result = currentGameProjector(state, events);
+
+      expect(result.activeQuests).toContain(Quest.GET_FISH_FOR_BEAVER);
+      expect(result.activeQuests).not.toContain(Quest.GET_FISHING_NET);
+    });
+
+    it('given no GET_FISH_FOR_BEAVER quest and no fishing net, when player enters Fishery Ground, then GET_FISHING_NET quest is not added', () => {
+      const state = {
+        ...gameStartState,
+        activeQuests: [Quest.FIND_OUT_WHY_MINE_IS_FLOODED],
+        inventory: []
+      };
+      const events = [
+        {eventType: EventType.WENT_TO_LOCATION, location: Locations.FISHERY_GROUND}
+      ];
+
+      const result = currentGameProjector(state, events);
+
+      expect(result.activeQuests).not.toContain(Quest.GET_FISHING_NET);
+    });
   });
 
   describe('inventoryProjector', () => {

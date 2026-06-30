@@ -18,7 +18,8 @@ export class QuestsComponent implements OnInit, OnDestroy {
   private readonly questLabels: Record<string, string> = {
     [Quest.FIND_OUT_WHY_MINE_IS_FLOODED]: 'Find out why the mine is flooded',
     [Quest.REMOVE_THE_WATER]: 'Remove the water from the mine',
-    [Quest.GET_FISH_FOR_BEAVER]: 'Get fish for the beaver'
+    [Quest.GET_FISH_FOR_BEAVER]: 'Get fish for the beaver',
+    [Quest.GET_FISHING_NET]: 'Get fishing net'
   };
 
   constructor(private readonly store: Store<AppState>) {}
@@ -26,7 +27,7 @@ export class QuestsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions.add(
       this.store.select(selectGameState).subscribe(state => {
-        this.activeQuests = state.activeQuests;
+        this.activeQuests = [...state.activeQuests].reverse();
       })
     );
   }

@@ -59,18 +59,15 @@
     </div>
   </div>
   <div class="actions">
+    @if (canExchangeFruits()) {
     <button id="exchange-fruits-for-coin-btn" class="action-btn"
-            (click)="onExchangeFruitsForCoin()"
-            [disabled]="!canExchangeFruits()">
-      {{ canExchangeFruits() ? 'Sell fruits of the forest' : 'Seller: "A fishing net costs 1 gold coin. I will give you golden coin if you bring me fruit of the forest."' }}
-    </button>
+            (click)="onExchangeFruitsForCoin()">Sell fruits of the forest</button>
+    }
   </div>
   <div class="actions">
     @if (canExchangeCoinForNet()) {
       <button id="exchange-coin-for-net-btn" class="action-btn"
-              (click)="onExchangeCoinForNet()">
-        'Buy fishing net'
-      </button>
+              (click)="onExchangeCoinForNet()">Buy fishing net</button>
     }
   </div>
 }

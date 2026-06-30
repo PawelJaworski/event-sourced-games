@@ -271,16 +271,6 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
     expect(button).not.toBeNull();
   });
 
-  it('should have ExchangeFruitsForCoin button disabled when no fruits in inventory', () => {
-    component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [] };
-    fixture.changeDetectorRef.markForCheck();
-    fixture.detectChanges();
-
-    const button = fixture.debugElement.query(By.css('#exchange-fruits-for-coin-btn'));
-    expect(button).not.toBeNull();
-    expect(button.nativeElement.disabled).toBe(true);
-  });
-
   it('should have ExchangeFruitsForCoin button enabled when fruits in inventory', () => {
     component.gameState = { ...gameStartState, currentLocation: Locations.MARKETPLACE, inventory: [InventoryItem.FRUITS_OF_THE_FOREST] };
     fixture.changeDetectorRef.markForCheck();

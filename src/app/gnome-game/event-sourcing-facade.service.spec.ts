@@ -12,6 +12,7 @@ import {StartFishingCmd} from './commands/start-fishing-cmd';
 import {StartPickingForestFruitsCmd} from './commands/start-picking-forest-fruits-cmd';
 import {TakeFruitsOfTheForestCmd} from './commands/take-fruits-of-the-forest-cmd';
 import {ExchangeCmd} from './commands/exchange-cmd';
+import {AskBeaverToRebuildDamCmd} from './commands/ask-beaver-to-rebuild-dam-cmd';
 
 describe('EventSourcingFacadeService', () => {
   let service: EventSourcingFacadeService;
@@ -297,5 +298,30 @@ describe('EventSourcingFacadeService', () => {
     expect(state.activeQuests).not.toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
     expect(state.activeQuests).toContain(Quest.REMOVE_THE_WATER);
     expect(state.currentLocation).toBe(Locations.GOLD_MINE);
+  }));
+
+  it('given GET_FISH_FOR_BEAVER quest is active and no fishing net in inventory, when player enters Fishery Ground, then GET_FISHING_NET quest is added', fakeAsync(() => {
+    let state: any;
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    expect(state.inventory).not.toContain(InventoryItem.FISHING_NET);
+
+    service.handle(new AskBeaverToRebuildDamCmd());
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    expect(state.activeQuests).toContain(Quest.GET_FISH_FOR_BEAVER);
+
+    service.handle(new GoToLocationCmd(Locations.FISHERY_GROUND));
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    expect(state.activeQuests).toContain(Quest.GET_FISHING_NET);
   }));
 });

@@ -66,15 +66,29 @@ export const activeQuestsProjector = (state: Quest[], events: any[]): Quest[] =>
   return quests;
 };
 
-export const currentGameProjector = (state: GnomeGameState, newEvents: any[]): GnomeGameState => ({
-  ...state,
-  currentLocation: currentLocationProjector(state.currentLocation, newEvents),
-  inventory: inventoryProjector(state.inventory, newEvents),
-  isFishingInProgress: newEvents.some(it => it.eventType == EventType.FISHING_STARTED),
-  isPickingForestFruitsInProgress: newEvents.some(it => it.eventType == EventType.PICKING_FOREST_FRUITS_STARTED),
-  isMineFlooded: state.isMineFlooded,
-  activeQuests: activeQuestsProjector(state.activeQuests, newEvents)
-});
+export const currentGameProjector = (state: GnomeGameState, newEvents: any[]): GnomeGameState => {
+  const inventory = inventoryProjector(state.inventory, newEvents);
+  const activeQuests = activeQuestsProjector(state.activeQuests, newEvents);
+
+  const enteredFisheryGround = newEvents.some(
+    (e: any) => e?.eventType === EventType.WENT_TO_LOCATION && e?.location === Locations.FISHERY_GROUND
+  );
+  const updatedQuests = enteredFisheryGround
+    && activeQuests.includes(Quest.GET_FISH_FOR_BEAVER)
+    && !inventory.includes(InventoryItem.FISHING_NET)
+    ? [...new Set([...activeQuests, Quest.GET_FISHING_NET])]
+    : activeQuests;
+
+  return {
+    ...state,
+    currentLocation: currentLocationProjector(state.currentLocation, newEvents),
+    inventory,
+    isFishingInProgress: newEvents.some(it => it.eventType == EventType.FISHING_STARTED),
+    isPickingForestFruitsInProgress: newEvents.some(it => it.eventType == EventType.PICKING_FOREST_FRUITS_STARTED),
+    isMineFlooded: state.isMineFlooded,
+    activeQuests: updatedQuests
+  };
+};
 
 export const gnomeGameEventsReducer = createReducer(
   initialEventsState,
