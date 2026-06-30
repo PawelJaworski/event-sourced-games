@@ -300,6 +300,47 @@ describe('EventSourcingFacadeService', () => {
     expect(state.currentLocation).toBe(Locations.GOLD_MINE);
   }));
 
+  it('given GET_FISHING_NET quest is active, when player exchanges golden coin for fishing net, then GET_FISHING_NET quest is removed and fishing net is in inventory', fakeAsync(() => {
+    let state: any;
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    service.handle(new AskBeaverToRebuildDamCmd());
+    tick();
+
+    service.handle(new GoToLocationCmd(Locations.FISHERY_GROUND));
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+    expect(state.activeQuests).toContain(Quest.GET_FISHING_NET);
+
+    service.handle(new GoToLocationCmd(Locations.FRUITS_OF_THE_FOREST));
+    tick();
+
+    service.handle(new StartPickingForestFruitsCmd());
+    tick();
+
+    service.handle(new TakeFruitsOfTheForestCmd());
+    tick();
+
+    service.handle(new GoToLocationCmd(Locations.MARKETPLACE));
+    tick();
+
+    service.handle(new ExchangeCmd(InventoryItem.FRUITS_OF_THE_FOREST, InventoryItem.GOLDEN_COIN));
+    tick();
+
+    service.handle(new ExchangeCmd(InventoryItem.GOLDEN_COIN, InventoryItem.FISHING_NET));
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    expect(state.inventory).toContain(InventoryItem.FISHING_NET);
+    expect(state.activeQuests).not.toContain(Quest.GET_FISHING_NET);
+  }));
+
   it('given GET_FISH_FOR_BEAVER quest is active and no fishing net in inventory, when player enters Fishery Ground, then GET_FISHING_NET quest is added', fakeAsync(() => {
     let state: any;
 

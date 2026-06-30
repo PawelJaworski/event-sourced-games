@@ -134,6 +134,22 @@ describe('Quest System', () => {
       expect(result.activeQuests).not.toContain(Quest.GET_FISHING_NET);
     });
 
+    it('given GET_FISHING_NET quest is active, when player exchanges golden coin for fishing net, then GET_FISHING_NET quest is removed', () => {
+      const state = {
+        ...gameStartState,
+        activeQuests: [Quest.FIND_OUT_WHY_MINE_IS_FLOODED, Quest.GET_FISHING_NET],
+        inventory: [InventoryItem.GOLDEN_COIN]
+      };
+      const events = [
+        {eventType: EventType.INVENTORY_EXCHANGED, from: InventoryItem.GOLDEN_COIN, to: InventoryItem.FISHING_NET}
+      ];
+
+      const result = currentGameProjector(state, events);
+
+      expect(result.activeQuests).not.toContain(Quest.GET_FISHING_NET);
+      expect(result.activeQuests).toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
+    });
+
     it('given no GET_FISH_FOR_BEAVER quest and no fishing net, when player enters Fishery Ground, then GET_FISHING_NET quest is not added', () => {
       const state = {
         ...gameStartState,

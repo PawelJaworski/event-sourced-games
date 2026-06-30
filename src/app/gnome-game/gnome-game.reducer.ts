@@ -66,18 +66,26 @@ export const activeQuestsProjector = (state: Quest[], events: any[]): Quest[] =>
   return quests;
 };
 
-export const currentGameProjector = (state: GnomeGameState, newEvents: any[]): GnomeGameState => {
-  const inventory = inventoryProjector(state.inventory, newEvents);
-  const activeQuests = activeQuestsProjector(state.activeQuests, newEvents);
-
-  const enteredFisheryGround = newEvents.some(
+const deriveActiveQuests = (quests: Quest[], events: any[], inventory: InventoryItem[]): Quest[] => {
+  const enteredFisheryGround = events.some(
     (e: any) => e?.eventType === EventType.WENT_TO_LOCATION && e?.location === Locations.FISHERY_GROUND
   );
-  const updatedQuests = enteredFisheryGround
-    && activeQuests.includes(Quest.GET_FISH_FOR_BEAVER)
+  const withFishingNetQuest = enteredFisheryGround
+    && quests.includes(Quest.GET_FISH_FOR_BEAVER)
     && !inventory.includes(InventoryItem.FISHING_NET)
-    ? [...new Set([...activeQuests, Quest.GET_FISHING_NET])]
-    : activeQuests;
+    ? [...new Set([...quests, Quest.GET_FISHING_NET])]
+    : quests;
+
+  const exchangedForNet = events.some(
+    (e: any) => e?.eventType === EventType.INVENTORY_EXCHANGED && e?.to === InventoryItem.FISHING_NET
+  );
+  return exchangedForNet
+    ? withFishingNetQuest.filter(q => q !== Quest.GET_FISHING_NET)
+    : withFishingNetQuest;
+};
+
+export const currentGameProjector = (state: GnomeGameState, newEvents: any[]): GnomeGameState => {
+  const inventory = inventoryProjector(state.inventory, newEvents);
 
   return {
     ...state,
@@ -86,7 +94,7 @@ export const currentGameProjector = (state: GnomeGameState, newEvents: any[]): G
     isFishingInProgress: newEvents.some(it => it.eventType == EventType.FISHING_STARTED),
     isPickingForestFruitsInProgress: newEvents.some(it => it.eventType == EventType.PICKING_FOREST_FRUITS_STARTED),
     isMineFlooded: state.isMineFlooded,
-    activeQuests: updatedQuests
+    activeQuests: deriveActiveQuests(activeQuestsProjector(state.activeQuests, newEvents), newEvents, inventory),
   };
 };
 
