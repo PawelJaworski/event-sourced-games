@@ -9,6 +9,7 @@ import {StartFishingCmd} from '../commands/start-fishing-cmd';
 import {StartPickingForestFruitsCmd} from '../commands/start-picking-forest-fruits-cmd';
 import {AskBeaverToRebuildDamCmd} from '../commands/ask-beaver-to-rebuild-dam-cmd';
 import {ExchangeCmd} from '../commands/exchange-cmd';
+import {GiveFishToBeaverCmd} from '../commands/give-fish-to-beaver-cmd';
 
 @Component({
   selector: 'app-interactions',
@@ -80,6 +81,19 @@ export class InteractionsComponent implements OnInit, OnDestroy {
 
   canExchangeFruits(): boolean {
     return this.gameState?.inventory?.includes(InventoryItem.FRUITS_OF_THE_FOREST) ?? false;
+  }
+
+  onGiveFishToBeaver(): void {
+    this.commandGateway.handle(new GiveFishToBeaverCmd());
+  }
+
+  canGiveFishToBeaver(): boolean {
+    return this.gameState?.inventory?.includes(InventoryItem.FISH) ?? false;
+  }
+
+  showGiveFishToBeaver(): boolean {
+    return this.gameState?.currentLocation === Locations.BEAVER_DAM &&
+           this.canGiveFishToBeaver();
   }
 
   onExchangeCoinForNet(): void {

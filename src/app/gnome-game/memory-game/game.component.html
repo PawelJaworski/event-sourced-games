@@ -3,13 +3,10 @@
     <span class="stat">Moves: {{ moves }}</span>
     <span class="stat">Pairs: {{ matchedPairs }}/8</span>
   </div>
-  <canvas 
+  <canvas
     #gameCanvas
     class="game-canvas"
     (click)="onCanvasClick($event)"
     (touchstart)="onTouchStart($event)">
   </canvas>
-  <div class="game-controls">
-    <button class="reset-button" (click)="resetGame()">New Game</button>
-  </div>
 </div>

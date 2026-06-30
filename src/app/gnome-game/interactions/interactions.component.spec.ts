@@ -11,6 +11,7 @@ import {StartFishingCmd} from '../commands/start-fishing-cmd';
 import {StartPickingForestFruitsCmd} from '../commands/start-picking-forest-fruits-cmd';
 import {AskBeaverToRebuildDamCmd} from '../commands/ask-beaver-to-rebuild-dam-cmd';
 import {ExchangeCmd} from '../commands/exchange-cmd';
+import {GiveFishToBeaverCmd} from '../commands/give-fish-to-beaver-cmd';
 
 describe('InteractionsComponent', () => {
   let component: InteractionsComponent;
@@ -349,5 +350,44 @@ expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new AskBeaverToRebuildDa
 
     const button = fixture.debugElement.query(By.css('#exchange-coin-for-net-btn'));
     expect(button).toBeNull();
+  });
+
+  it('given player is at Beaver Dam with fish, when GiveFishToBeaver button is shown, then button is visible', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, inventory: [InventoryItem.FISH] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#give-fish-to-beaver-btn'));
+    expect(button).not.toBeNull();
+  });
+
+  it('given player is at Beaver Dam without fish, then GiveFishToBeaver button is not shown', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, inventory: [] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#give-fish-to-beaver-btn'));
+    expect(button).toBeNull();
+  });
+
+  it('given player has fish but is not at Beaver Dam, then GiveFishToBeaver button is not shown', () => {
+    component.gameState = { ...gameStartState, currentLocation: Locations.GNOMES_HUT, inventory: [InventoryItem.FISH] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#give-fish-to-beaver-btn'));
+    expect(button).toBeNull();
+  });
+
+  it('should dispatch GiveFishToBeaverCmd when GiveFishToBeaver button is clicked', () => {
+    spyOn(eventSourcingFacade, 'handle');
+    component.gameState = { ...gameStartState, currentLocation: Locations.BEAVER_DAM, inventory: [InventoryItem.FISH] };
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css('#give-fish-to-beaver-btn'));
+    button.nativeElement.click();
+
+    expect(eventSourcingFacade.handle).toHaveBeenCalledWith(new GiveFishToBeaverCmd());
   });
 });

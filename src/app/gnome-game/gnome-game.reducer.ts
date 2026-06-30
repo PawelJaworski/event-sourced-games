@@ -38,6 +38,11 @@ export const inventoryProjector = (state: InventoryItem[], newEvents: any[]): In
       if (fromIndex !== -1) {
         items.splice(fromIndex, 1);
       }
+    } else if (event?.eventType === EventType.FISH_GIVEN_TO_BEAVER) {
+      const fishIndex = items.indexOf(InventoryItem.FISH);
+      if (fishIndex !== -1) {
+        items.splice(fishIndex, 1);
+      }
     }
   }
 
@@ -79,9 +84,18 @@ const deriveActiveQuests = (quests: Quest[], events: any[], inventory: Inventory
   const exchangedForNet = events.some(
     (e: any) => e?.eventType === EventType.INVENTORY_EXCHANGED && e?.to === InventoryItem.FISHING_NET
   );
-  return exchangedForNet
+  let result = exchangedForNet
     ? withFishingNetQuest.filter(q => q !== Quest.GET_FISHING_NET)
     : withFishingNetQuest;
+
+  const fishGivenToBeaver = events.some(
+    (e: any) => e?.eventType === EventType.FISH_GIVEN_TO_BEAVER
+  );
+  if (fishGivenToBeaver) {
+    result = result.filter(q => q !== Quest.GET_FISH_FOR_BEAVER);
+  }
+
+  return result;
 };
 
 export const currentGameProjector = (state: GnomeGameState, newEvents: any[]): GnomeGameState => {
@@ -93,7 +107,7 @@ export const currentGameProjector = (state: GnomeGameState, newEvents: any[]): G
     inventory,
     isFishingInProgress: newEvents.some(it => it.eventType == EventType.FISHING_STARTED),
     isPickingForestFruitsInProgress: newEvents.some(it => it.eventType == EventType.PICKING_FOREST_FRUITS_STARTED),
-    isMineFlooded: state.isMineFlooded,
+    isMineFlooded: newEvents.some(it => it.eventType == EventType.FISH_GIVEN_TO_BEAVER) ? false : state.isMineFlooded,
     activeQuests: deriveActiveQuests(activeQuestsProjector(state.activeQuests, newEvents), newEvents, inventory),
   };
 };

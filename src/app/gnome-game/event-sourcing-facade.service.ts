@@ -8,6 +8,7 @@ import {StartPickingForestFruitsCmd, startPickingForestFruitsHandler} from "./co
 import {TakeFruitsOfTheForestCmd, takeFruitsOfTheForestHandler} from "./commands/take-fruits-of-the-forest-cmd";
 import {AskBeaverToRebuildDamCmd, askBeaverToRebuildDamHandler} from "./commands/ask-beaver-to-rebuild-dam-cmd";
 import {ExchangeCmd, exchangeCmdHandler} from "./commands/exchange-cmd";
+import {GiveFishToBeaverCmd, giveFishToBeaverHandler} from "./commands/give-fish-to-beaver-cmd";
 import {EventStoreService} from "./event-store.service";
 import {addEvents, initialAggregateState} from "./gnome-game.reducer";
 import {AppState} from "../state/app.state";
@@ -32,7 +33,8 @@ export class EventSourcingFacadeService {
       [StartPickingForestFruitsCmd, startPickingForestFruitsHandler],
       [TakeFruitsOfTheForestCmd, takeFruitsOfTheForestHandler],
       [AskBeaverToRebuildDamCmd, askBeaverToRebuildDamHandler],
-      [ExchangeCmd, exchangeCmdHandler]
+      [ExchangeCmd, exchangeCmdHandler],
+      [GiveFishToBeaverCmd, giveFishToBeaverHandler]
     ]), eventStoreService.eventStore);
 
     (window as any).cheat = {
@@ -46,18 +48,19 @@ export class EventSourcingFacadeService {
       startPickingForestFruits: () => this.handle(new StartPickingForestFruitsCmd()),
       takeFruits: () => this.handle(new TakeFruitsOfTheForestCmd()),
       askBeaverToRebuildDam: () => this.handle(new AskBeaverToRebuildDamCmd()),
+      giveFishToBeaver: () => this.handle(new GiveFishToBeaverCmd()),
       exchange: (from: string, to: string) => {
         const fromItem = InventoryItem[from as keyof typeof InventoryItem];
         const toItem = InventoryItem[to as keyof typeof InventoryItem];
         if (!fromItem || !toItem) { console.error('Invalid inventory item:', from, to); return; }
         this.handle(new ExchangeCmd(fromItem, toItem));
       },
-      help: () => console.log('Available commands: goTo(location), catchFish, startFishing, startPickingForestFruits, takeFruits, askBeaverToRebuildDam, exchange(from, to)')
+      help: () => console.log('Available commands: goTo(location), catchFish, startFishing, startPickingForestFruits, takeFruits, askBeaverToRebuildDam, giveFishToBeaver, exchange(from, to)')
     };
     console.log('Cheat commands available: window.cheat.help()');
   }
 
-  handle(cmd: GoToLocationCmd | CatchFishCmd | StartFishingCmd | StartPickingForestFruitsCmd | TakeFruitsOfTheForestCmd | AskBeaverToRebuildDamCmd | ExchangeCmd) {
+  handle(cmd: GoToLocationCmd | CatchFishCmd | StartFishingCmd | StartPickingForestFruitsCmd | TakeFruitsOfTheForestCmd | AskBeaverToRebuildDamCmd | ExchangeCmd | GiveFishToBeaverCmd) {
     console.log("handling", cmd);
     const result = this.commandGateway.handle(this.gateAggregateState, cmd);
     if (result.isFailure) {

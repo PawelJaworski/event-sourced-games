@@ -45,12 +45,6 @@
   }
 }
 
-.game-controls {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
 .reset-button {
   background: linear-gradient(135deg, #4CAF50, #2E7D32);
   color: white;

@@ -150,6 +150,41 @@ describe('Quest System', () => {
       expect(result.activeQuests).toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
     });
 
+    it('given player has fish and GET_FISH_FOR_BEAVER quest, when FISH_GIVEN_TO_BEAVER fires, then GET_FISH_FOR_BEAVER quest is removed, fish is removed, and mine is no longer flooded', () => {
+      const state = {
+        ...gameStartState,
+        activeQuests: [Quest.FIND_OUT_WHY_MINE_IS_FLOODED, Quest.GET_FISH_FOR_BEAVER],
+        inventory: [InventoryItem.FISH]
+      };
+      const events = [
+        {eventType: EventType.FISH_GIVEN_TO_BEAVER}
+      ];
+
+      const result = currentGameProjector(state, events);
+
+      expect(result.inventory).not.toContain(InventoryItem.FISH);
+      expect(result.activeQuests).not.toContain(Quest.GET_FISH_FOR_BEAVER);
+      expect(result.isMineFlooded).toBe(false);
+    });
+
+    it('given FISH_GIVEN_TO_BEAVER fires without GET_FISH_FOR_BEAVER quest, then no quest is affected', () => {
+      const state = {
+        ...gameStartState,
+        activeQuests: [Quest.FIND_OUT_WHY_MINE_IS_FLOODED],
+        inventory: [InventoryItem.FISH]
+      };
+      const events = [
+        {eventType: EventType.FISH_GIVEN_TO_BEAVER}
+      ];
+
+      const result = currentGameProjector(state, events);
+
+      expect(result.inventory).not.toContain(InventoryItem.FISH);
+      expect(result.activeQuests).toContain(Quest.FIND_OUT_WHY_MINE_IS_FLOODED);
+      expect(result.activeQuests).not.toContain(Quest.GET_FISH_FOR_BEAVER);
+      expect(result.isMineFlooded).toBe(false);
+    });
+
     it('given no GET_FISH_FOR_BEAVER quest and no fishing net, when player enters Fishery Ground, then GET_FISHING_NET quest is not added', () => {
       const state = {
         ...gameStartState,
@@ -203,6 +238,27 @@ describe('Quest System', () => {
 
       expect(result).toContain(InventoryItem.GOLDEN_COIN);
       expect(result).not.toContain(InventoryItem.FRUITS_OF_THE_FOREST);
+    });
+
+    it('given player gives fish to beaver, then fish is removed from inventory', () => {
+      const events = [
+        {eventType: EventType.FISH_CATCHED},
+        {eventType: EventType.FISH_GIVEN_TO_BEAVER}
+      ];
+
+      const result = inventoryProjector([], events);
+
+      expect(result).not.toContain(InventoryItem.FISH);
+    });
+
+    it('given player gives fish to beaver without having fish, then inventory is unchanged', () => {
+      const events = [
+        {eventType: EventType.FISH_GIVEN_TO_BEAVER}
+      ];
+
+      const result = inventoryProjector([], events);
+
+      expect(result).toEqual([]);
     });
 
     it('given player exchanges golden coin for fishing net, then coin is removed and net is added', () => {

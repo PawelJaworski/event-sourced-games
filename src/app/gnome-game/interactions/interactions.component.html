@@ -38,6 +38,12 @@
   </div>
 }
 
+@if (showGiveFishToBeaver()) {
+  <div class="actions">
+    <button id="give-fish-to-beaver-btn" class="action-btn" (click)="onGiveFishToBeaver()">Give fish to the beaver.</button>
+  </div>
+}
+
 @if (showExchangeFruitsForCoin()) {
   <div id="marketplace-prices" class="price-list">
     <div class="price-list-header">Marketplace</div>

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {Subscription} from 'rxjs';
 import {AppState} from '../../state/app.state';
@@ -15,12 +15,16 @@ export class MemoryGameDialogComponent implements OnInit, OnDestroy {
 
   isOpen = false;
 
-  constructor(private readonly store: Store<AppState>) {}
+  constructor(
+    private readonly store: Store<AppState>,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.subscriptions.add(
       this.store.select(selectGameState).subscribe(state => {
         this.isOpen = state.isPickingForestFruitsInProgress;
+        this.cdr.detectChanges();
       })
     );
   }

@@ -13,6 +13,7 @@ import {StartPickingForestFruitsCmd} from './commands/start-picking-forest-fruit
 import {TakeFruitsOfTheForestCmd} from './commands/take-fruits-of-the-forest-cmd';
 import {ExchangeCmd} from './commands/exchange-cmd';
 import {AskBeaverToRebuildDamCmd} from './commands/ask-beaver-to-rebuild-dam-cmd';
+import {GiveFishToBeaverCmd} from './commands/give-fish-to-beaver-cmd';
 
 describe('EventSourcingFacadeService', () => {
   let service: EventSourcingFacadeService;
@@ -339,6 +340,51 @@ describe('EventSourcingFacadeService', () => {
 
     expect(state.inventory).toContain(InventoryItem.FISHING_NET);
     expect(state.activeQuests).not.toContain(Quest.GET_FISHING_NET);
+  }));
+
+  it('given player has fish at Beaver Dam, when player gives fish to the beaver, then fish is removed from inventory and GET_FISH_FOR_BEAVER quest is done and mine is no longer flooded', fakeAsync(() => {
+    let state: any;
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    service.handle(new AskBeaverToRebuildDamCmd());
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+    expect(state.activeQuests).toContain(Quest.GET_FISH_FOR_BEAVER);
+
+    service.handle(new GoToLocationCmd(Locations.FISHERY_GROUND));
+    tick();
+
+    service.handle(new StartFishingCmd());
+    tick();
+
+    service.handle(new CatchFishCmd());
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+    expect(state.inventory).toContain(InventoryItem.FISH);
+    expect(state.isMineFlooded).toBe(true);
+
+    service.handle(new GoToLocationCmd(Locations.BEAVER_DAM));
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+    expect(state.currentLocation).toBe(Locations.BEAVER_DAM);
+
+    service.handle(new GiveFishToBeaverCmd());
+    tick();
+
+    store.select(selectGameState).pipe(take(1)).subscribe(s => { state = s; });
+    tick();
+
+    expect(state.inventory).not.toContain(InventoryItem.FISH);
+    expect(state.activeQuests).not.toContain(Quest.GET_FISH_FOR_BEAVER);
+    expect(state.isMineFlooded).toBe(false);
   }));
 
   it('given GET_FISH_FOR_BEAVER quest is active and no fishing net in inventory, when player enters Fishery Ground, then GET_FISHING_NET quest is added', fakeAsync(() => {

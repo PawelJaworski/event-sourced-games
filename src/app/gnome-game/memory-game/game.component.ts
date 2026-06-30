@@ -184,10 +184,7 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
       this.matchedPairs++;
 
       if (this.matchedPairs === this.fruitTypes.length) {
-        setTimeout(() => {
-          this.showGameComplete();
-          this.commandGateway.handle(new TakeFruitsOfTheForestCmd());
-        }, 500);
+        this.commandGateway.handle(new TakeFruitsOfTheForestCmd());
       }
     } else {
       card1.isFlipped = false;
@@ -197,34 +194,6 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
     this.flippedCards = [];
     this.canFlip = true;
     this.drawGame();
-  }
-
-  private showGameComplete(): void {
-    if (!this.canvas) return;
-
-    const ctx = this.canvas.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    const canvasWidth = this.canvas.nativeElement.width;
-    const canvasHeight = this.canvas.nativeElement.height;
-    const titleSize = Math.max(18, Math.floor(canvasWidth * 0.08));
-    const subtitleSize = Math.max(14, Math.floor(canvasWidth * 0.05));
-    const hintSize = Math.max(12, Math.floor(canvasWidth * 0.04));
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-    ctx.fillStyle = '#4CAF50';
-    ctx.font = `bold ${titleSize}px Arial`;
-    ctx.textAlign = 'center';
-    ctx.fillText('Congratulations!', canvasWidth / 2, canvasHeight * 0.35);
-
-    ctx.fillStyle = 'white';
-    ctx.font = `${subtitleSize}px Arial`;
-    ctx.fillText(`Completed in ${this.moves} moves`, canvasWidth / 2, canvasHeight * 0.5);
-
-    ctx.font = `${hintSize}px Arial`;
-    ctx.fillText('Tap anywhere to play again', canvasWidth / 2, canvasHeight * 0.65);
   }
 
   private drawGame(): void {
@@ -294,10 +263,5 @@ export class MemoryGameComponent implements OnInit, AfterViewInit {
     ctx.textAlign = 'left';
     ctx.fillText(`Moves: ${this.moves}`, 10, scoreY);
     ctx.fillText(`Pairs: ${this.matchedPairs}/${this.fruitTypes.length}`, 10, scoreY + fontSize + 5);
-  }
-
-  resetGame(): void {
-    this.initializeGame();
-    this.drawGame();
   }
 }
